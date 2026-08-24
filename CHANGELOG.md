@@ -3,6 +3,47 @@
 All notable changes to this project are documented here. This project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.0] - 2026-08-24
+
+Renames every identifier onto a single `mrdw` namespace. 1.4.0 kept the predecessors' names so the
+merge would be a drop-in replacement; this release drops that constraint so the plugin reads as one
+plugin rather than two bolted together.
+
+### Breaking
+
+- **REST namespaces collapse into one.** `packrelay/v1` and `tailsignal/v1` are both now `mrdw/v1`.
+  Route paths are otherwise unchanged, so only the namespace segment moves.
+- **Options renamed** — `packrelay_*` to `mrdw_forms_*`, `tailsignal_*` to `mrdw_push_*`,
+  `mrdemonwolf_modules` to `mrdw_modules`.
+- **Database tables renamed** — `{prefix}packrelay_entries` to `{prefix}mrdw_forms_entries`, and
+  `{prefix}tailsignal_*` to `{prefix}mrdw_push_*`. **Data is not migrated**; the new tables are
+  created empty. Export entries and devices to CSV before upgrading.
+- **Capability renamed** — `tailsignal_manage` is now the plugin-wide `mrdw_manage`.
+- **Classes renamed** — `PackRelay_*` to `MRDW_Forms_*`, `TailSignal_*` to `MRDW_Push_*`.
+- **Admin page slugs renamed** — `packrelay-entries` to `mrdw-form-entries`, `tailsignal-*` to
+  `mrdw-push-*`. Page hook suffixes are now `mrdw_page_*`.
+- **Text domain** is now `mrdw`, from `mrdemonwolf`.
+- **Cron hooks, post meta, nonces, AJAX actions and asset handles** all move to the `mrdw_forms_` /
+  `mrdw_push_` prefixes.
+- **Minimum PHP is 8.3.** The Firebase SDK the Forms module depends on requires it; the 8.1 that
+  1.4.0 advertised was never actually installable.
+
+### Changed
+
+- The bootstrap no longer maps legacy constants onto the module directories. Modules use
+  `MRDW_FORMS_DIR` / `MRDW_PUSH_DIR` directly.
+- Every class file, asset and test file renamed to match its class.
+- JavaScript globals renamed: `tailsignal` to `mrdwPush`, `packrelayAdmin` to `mrdwFormsAdmin`.
+- The Tailwind scope moved from `#tailsignal-app` to `#mrdw-push-app`.
+- phpcs now allows only the `mrdw` / `MRDW` prefixes.
+
+### Unchanged
+
+- REST route paths, request and response shapes, and both authentication schemes.
+- Module behaviour. Nothing about how forms are submitted or notifications are delivered changed.
+
+[2.0.0]: https://github.com/MrDemonWolf/mrdemonwolf-wp-plugin/releases/tag/v2.0.0
+
 ## [1.4.0] - 2026-08-23
 
 First release of the merged plugin. It supersedes PackRelay 1.3.0 and TailSignal 1.2.0, which are

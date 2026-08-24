@@ -1,12 +1,12 @@
 <?php
 /**
- * Tests for PackRelay_Loader.
+ * Tests for MRDW_Forms_Loader.
  *
- * @package    PackRelay
+ * @package    MrDemonWolf
  * @copyright  2026 MrDemonWolf, Inc.
  */
 
-namespace PackRelay\Tests;
+namespace MRDW_Forms\Tests;
 
 use Brain\Monkey\Functions;
 use Brain\Monkey\Actions;
@@ -14,11 +14,11 @@ use Brain\Monkey\Filters;
 
 class LoaderTest extends TestCase {
 
-	private \PackRelay_Loader $loader;
+	private \MRDW_Forms_Loader $loader;
 
 	protected function setUp(): void {
 		parent::setUp();
-		$this->loader = new \PackRelay_Loader();
+		$this->loader = new \MRDW_Forms_Loader();
 	}
 
 	public function test_add_action_stores_hook(): void {

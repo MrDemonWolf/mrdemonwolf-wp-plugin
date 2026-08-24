@@ -22,7 +22,7 @@ class MRDW_Admin {
 	/**
 	 * Slug of the top-level menu every module hangs off.
 	 */
-	const MENU_SLUG = 'mrdemonwolf';
+	const MENU_SLUG = 'mrdw';
 
 	/**
 	 * Capability required to manage the plugin as a whole.
@@ -32,7 +32,7 @@ class MRDW_Admin {
 	/**
 	 * Settings API group name.
 	 */
-	const SETTINGS_GROUP = 'mrdemonwolf_general';
+	const SETTINGS_GROUP = 'mrdw_general';
 
 	/**
 	 * Register hooks.
@@ -50,8 +50,8 @@ class MRDW_Admin {
 	 */
 	public static function register_menu() {
 		add_menu_page(
-			__( 'MrDemonWolf', 'mrdemonwolf' ),
-			__( 'MrDemonWolf', 'mrdemonwolf' ),
+			__( 'MrDemonWolf', 'mrdw' ),
+			__( 'MrDemonWolf', 'mrdw' ),
 			self::CAPABILITY,
 			self::MENU_SLUG,
 			array( __CLASS__, 'render_page' ),
@@ -61,8 +61,8 @@ class MRDW_Admin {
 
 		add_submenu_page(
 			self::MENU_SLUG,
-			__( 'General', 'mrdemonwolf' ),
-			__( 'General', 'mrdemonwolf' ),
+			__( 'General', 'mrdw' ),
+			__( 'General', 'mrdw' ),
 			self::CAPABILITY,
 			self::MENU_SLUG,
 			array( __CLASS__, 'render_page' )
@@ -84,37 +84,37 @@ class MRDW_Admin {
 		);
 
 		add_settings_section(
-			'mrdemonwolf_modules_section',
-			__( 'Modules', 'mrdemonwolf' ),
+			'mrdw_modules_section',
+			__( 'Modules', 'mrdw' ),
 			array( __CLASS__, 'render_section_intro' ),
 			self::MENU_SLUG
 		);
 
 		add_settings_field(
-			'mrdemonwolf_module_forms',
-			__( 'Forms', 'mrdemonwolf' ),
+			'mrdw_module_forms',
+			__( 'Forms', 'mrdw' ),
 			array( __CLASS__, 'render_module_field' ),
 			self::MENU_SLUG,
-			'mrdemonwolf_modules_section',
+			'mrdw_modules_section',
 			array(
 				'module'      => 'forms',
-				'label'       => __( 'Accept form submissions over the REST API', 'mrdemonwolf' ),
-				'description' => __( 'Bridges external apps to Divi, WPForms and Gravity Forms, protected by Firebase App Check.', 'mrdemonwolf' ),
-				'label_for'   => 'mrdemonwolf_module_forms',
+				'label'       => __( 'Accept form submissions over the REST API', 'mrdw' ),
+				'description' => __( 'Bridges external apps to Divi, WPForms and Gravity Forms, protected by Firebase App Check.', 'mrdw' ),
+				'label_for'   => 'mrdw_module_forms',
 			)
 		);
 
 		add_settings_field(
-			'mrdemonwolf_module_push',
-			__( 'Push', 'mrdemonwolf' ),
+			'mrdw_module_push',
+			__( 'Push', 'mrdw' ),
 			array( __CLASS__, 'render_module_field' ),
 			self::MENU_SLUG,
-			'mrdemonwolf_modules_section',
+			'mrdw_modules_section',
 			array(
 				'module'      => 'push',
-				'label'       => __( 'Send Expo push notifications', 'mrdemonwolf' ),
-				'description' => __( 'Device registry, groups, scheduling and delivery receipts.', 'mrdemonwolf' ),
-				'label_for'   => 'mrdemonwolf_module_push',
+				'label'       => __( 'Send Expo push notifications', 'mrdw' ),
+				'description' => __( 'Device registry, groups, scheduling and delivery receipts.', 'mrdw' ),
+				'label_for'   => 'mrdw_module_push',
 			)
 		);
 	}
@@ -125,7 +125,7 @@ class MRDW_Admin {
 	public static function render_section_intro() {
 		echo '<p>' . esc_html__(
 			'Turning a module off unregisters its hooks and REST routes. Stored data is left untouched, so it returns unchanged when switched back on.',
-			'mrdemonwolf'
+			'mrdw'
 		) . '</p>';
 	}
 
@@ -140,7 +140,7 @@ class MRDW_Admin {
 			return;
 		}
 
-		$id      = 'mrdemonwolf_module_' . $module;
+		$id      = 'mrdw_module_' . $module;
 		$enabled = MRDW_Modules::is_enabled( $module );
 		?>
 		<label for="<?php echo esc_attr( $id ); ?>">
@@ -164,13 +164,13 @@ class MRDW_Admin {
 	 */
 	public static function render_page() {
 		if ( ! current_user_can( self::CAPABILITY ) ) {
-			wp_die( esc_html__( 'You do not have permission to manage this plugin.', 'mrdemonwolf' ) );
+			wp_die( esc_html__( 'You do not have permission to manage this plugin.', 'mrdw' ) );
 		}
 
 		$channel = MRDW_Updater::channel();
 		?>
 		<div class="wrap">
-			<h1><?php echo esc_html__( 'MrDemonWolf', 'mrdemonwolf' ); ?></h1>
+			<h1><?php echo esc_html__( 'MrDemonWolf', 'mrdw' ); ?></h1>
 
 			<form action="options.php" method="post">
 				<?php
@@ -180,29 +180,29 @@ class MRDW_Admin {
 				?>
 			</form>
 
-			<h2><?php echo esc_html__( 'Updates', 'mrdemonwolf' ); ?></h2>
+			<h2><?php echo esc_html__( 'Updates', 'mrdw' ); ?></h2>
 			<table class="widefat striped">
 				<tbody>
 					<tr>
-						<th scope="row"><?php echo esc_html__( 'Installed version', 'mrdemonwolf' ); ?></th>
+						<th scope="row"><?php echo esc_html__( 'Installed version', 'mrdw' ); ?></th>
 						<td><code><?php echo esc_html( MRDW_VERSION ); ?></code></td>
 					</tr>
 					<tr>
-						<th scope="row"><?php echo esc_html__( 'Update channel', 'mrdemonwolf' ); ?></th>
+						<th scope="row"><?php echo esc_html__( 'Update channel', 'mrdw' ); ?></th>
 						<td>
 							<code><?php echo esc_html( $channel ); ?></code>
 							<p class="description">
 								<?php
 								printf(
 									/* translators: %s: name of the PHP constant to define. */
-									esc_html__( 'Set %s in wp-config.php to switch channels. Nightly builds are pre-releases cut from the main branch and are not production tested.', 'mrdemonwolf' ),
+									esc_html__( 'Set %s in wp-config.php to switch channels. Nightly builds are pre-releases cut from the main branch and are not production tested.', 'mrdw' ),
 									esc_html( MRDW_Updater::CHANNEL_CONSTANT )
 								);
 								?>
 							</p>
 							<?php if ( MRDW_Updater::is_nightly() ) : ?>
 								<p class="description">
-									<?php echo esc_html__( 'WordPress never offers a lower version than the one installed, so returning to stable means reinstalling the stable zip by hand.', 'mrdemonwolf' ); ?>
+									<?php echo esc_html__( 'WordPress never offers a lower version than the one installed, so returning to stable means reinstalling the stable zip by hand.', 'mrdw' ); ?>
 								</p>
 							<?php endif; ?>
 						</td>

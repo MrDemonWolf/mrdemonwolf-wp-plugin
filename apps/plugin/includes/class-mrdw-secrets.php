@@ -4,7 +4,7 @@
  *
  * Secrets are read from wp-config.php constants first so a site can keep them
  * out of the database entirely. The legacy option is honoured as a fallback so
- * existing TailSignal installs keep working after the merge.
+ * existing MRDW_Push installs keep working after the merge.
  *
  * @package    MrDemonWolf
  * @copyright  2026 MrDemonWolf, Inc.
@@ -26,9 +26,9 @@ class MRDW_Secrets {
 	const EXPO_TOKEN_CONSTANT = 'MRDW_EXPO_ACCESS_TOKEN';
 
 	/**
-	 * Legacy option name, kept for backwards compatibility with TailSignal.
+	 * Legacy option name, kept for backwards compatibility with MRDW_Push.
 	 */
-	const EXPO_TOKEN_OPTION = 'tailsignal_expo_access_token';
+	const EXPO_TOKEN_OPTION = 'mrdw_push_expo_access_token';
 
 	/**
 	 * Whether the Expo token is supplied by a wp-config.php constant.

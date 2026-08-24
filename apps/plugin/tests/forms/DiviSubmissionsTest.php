@@ -1,27 +1,27 @@
 <?php
 /**
- * Tests for PackRelay_Divi_Submissions.
+ * Tests for MRDW_Forms_Divi_Submissions.
  *
- * @package    PackRelay
+ * @package    MrDemonWolf
  * @copyright  2026 MrDemonWolf, Inc.
  */
 
-namespace PackRelay\Tests;
+namespace MRDW_Forms\Tests;
 
 use Brain\Monkey\Functions;
 use Mockery;
 
 class DiviSubmissionsTest extends TestCase {
 
-	private \PackRelay_Entry_Store $store;
+	private \MRDW_Forms_Entry_Store $store;
 
-	private \PackRelay_Divi_Submissions $submissions;
+	private \MRDW_Forms_Divi_Submissions $submissions;
 
 	protected function setUp(): void {
 		parent::setUp();
 
-		$this->store       = Mockery::mock( \PackRelay_Entry_Store::class );
-		$this->submissions = new \PackRelay_Divi_Submissions( $this->store );
+		$this->store       = Mockery::mock( \MRDW_Forms_Entry_Store::class );
+		$this->submissions = new \MRDW_Forms_Divi_Submissions( $this->store );
 	}
 
 	public function test_save_submission_stores_entry(): void {
@@ -97,21 +97,21 @@ class DiviSubmissionsTest extends TestCase {
 
 	public function test_extract_name_finds_name_field(): void {
 		$fields = array( 'Name' => 'John Doe', 'Email' => 'john@example.com' );
-		$this->assertSame( 'John Doe', \PackRelay_Divi_Submissions::extract_name( $fields ) );
+		$this->assertSame( 'John Doe', \MRDW_Forms_Divi_Submissions::extract_name( $fields ) );
 	}
 
 	public function test_extract_name_returns_empty_when_no_name(): void {
 		$fields = array( 'Subject' => 'Hello', 'Message' => 'Hi there' );
-		$this->assertSame( '', \PackRelay_Divi_Submissions::extract_name( $fields ) );
+		$this->assertSame( '', \MRDW_Forms_Divi_Submissions::extract_name( $fields ) );
 	}
 
 	public function test_extract_email_finds_email_field(): void {
 		$fields = array( 'Name' => 'John Doe', 'Email' => 'john@example.com' );
-		$this->assertSame( 'john@example.com', \PackRelay_Divi_Submissions::extract_email( $fields ) );
+		$this->assertSame( 'john@example.com', \MRDW_Forms_Divi_Submissions::extract_email( $fields ) );
 	}
 
 	public function test_extract_email_returns_empty_when_no_email(): void {
 		$fields = array( 'Name' => 'John', 'Message' => 'Hi' );
-		$this->assertSame( '', \PackRelay_Divi_Submissions::extract_email( $fields ) );
+		$this->assertSame( '', \MRDW_Forms_Divi_Submissions::extract_email( $fields ) );
 	}
 }

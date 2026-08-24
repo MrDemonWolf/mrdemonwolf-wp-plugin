@@ -10,7 +10,7 @@
 
 use Brain\Monkey\Functions;
 
-class Test_MRDW_Glue extends TailSignal_TestCase {
+class Test_MRDW_Glue extends MRDW_Push_TestCase {
 
 	protected function setUp(): void {
 		parent::setUp();

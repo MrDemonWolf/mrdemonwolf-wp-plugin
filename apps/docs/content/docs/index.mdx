@@ -29,9 +29,9 @@ Both halves shipped as separate plugins before:
 | PackRelay  | The **Forms** module |
 | TailSignal | The **Push** module  |
 
-The module code was carried over unchanged. REST namespaces (`packrelay/v1`, `tailsignal/v1`),
-option names, database tables and the `tailsignal_manage` capability are all identical, so the app
-keeps working and existing sites keep their data. See [Migrating](/docs/migrating).
+The module code was carried over, but 2.0.0 renames every identifier onto a single `mrdw`
+namespace so this reads as one plugin rather than two bolted together. Anything integrating with
+the old plugins must be updated. See [Migrating](/docs/migrating).
 
 ## Requirements
 
@@ -49,5 +49,5 @@ for App Check. The Push module needs nothing beyond WordPress; an Expo access to
 Everything lives under a single **MrDemonWolf** menu:
 
 - **General** — turn modules on and off, and see which update channel the site is on.
-- **Form Entries**, **Forms Settings** — the Forms module.
-- **Push**, **Send**, **Devices**, **Groups**, **History**, **Push Settings** — the Push module.
+- **Form Entries**, **Forms Settings** — the Forms module (`mrdw-form-entries`, `mrdw-forms`).
+- **Push**, **Send**, **Devices**, **Groups**, **History**, **Push Settings** — the Push module (`mrdw-push-*`).

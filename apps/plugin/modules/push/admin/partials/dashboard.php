@@ -2,36 +2,36 @@
 /**
  * Dashboard admin page template.
  *
- * @package TailSignal
+ * @package MrDemonWolf
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 ?>
-<div id="tailsignal-app" class="wrap">
+<div id="mrdw-push-app" class="wrap">
 	<!-- Page Header -->
-	<div class="tailsignal-page-header tw-flex tw-items-start tw-justify-between">
+	<div class="mrdw-push-page-header tw-flex tw-items-start tw-justify-between">
 		<div>
 			<h1>
-				<span class="tailsignal-page-header-icon"><span class="dashicons dashicons-chart-area"></span></span>
-				<?php esc_html_e( 'Dashboard', 'mrdemonwolf' ); ?>
+				<span class="mrdw-push-page-header-icon"><span class="dashicons dashicons-chart-area"></span></span>
+				<?php esc_html_e( 'Dashboard', 'mrdw' ); ?>
 			</h1>
-			<p class="tailsignal-page-desc"><?php esc_html_e( 'Overview of your push notification activity.', 'mrdemonwolf' ); ?></p>
+			<p class="mrdw-push-page-desc"><?php esc_html_e( 'Overview of your push notification activity.', 'mrdw' ); ?></p>
 		</div>
 		<?php if ( $dev_mode ) : ?>
-			<span class="tailsignal-dev-pill"><?php esc_html_e( 'Dev Mode: ON', 'mrdemonwolf' ); ?></span>
+			<span class="mrdw-push-dev-pill"><?php esc_html_e( 'Dev Mode: ON', 'mrdw' ); ?></span>
 		<?php endif; ?>
 	</div>
 
 	<?php if ( $dev_mode ) : ?>
-		<div class="tailsignal-dev-banner tw-mb-6">
-			<span class="tailsignal-dev-banner-icon">&#x26A0;&#xFE0F;</span>
+		<div class="mrdw-push-dev-banner tw-mb-6">
+			<span class="mrdw-push-dev-banner-icon">&#x26A0;&#xFE0F;</span>
 			<p>
 				<?php
 				printf(
 					/* translators: %d: dev device count */
-					esc_html__( 'Dev Mode is ON — notifications only go to dev devices (%d).', 'mrdemonwolf' ),
+					esc_html__( 'Dev Mode is ON — notifications only go to dev devices (%d).', 'mrdw' ),
 					(int) $dev_count
 				);
 				?>
@@ -42,15 +42,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<!-- Stats Cards -->
 	<div class="tw-grid tw-grid-cols-1 md:tw-grid-cols-3 tw-gap-4 tw-mb-6">
 		<!-- Devices Card -->
-		<div class="tailsignal-stat-card tailsignal-stat-card--brand">
-			<div class="tailsignal-stat-icon tailsignal-stat-icon--brand"><span class="dashicons dashicons-smartphone"></span></div>
-			<div class="tailsignal-stat-label"><?php esc_html_e( 'Devices', 'mrdemonwolf' ); ?></div>
-			<div class="tailsignal-stat-value"><?php echo esc_html( $device_count ); ?></div>
-			<div class="tailsignal-stat-detail">
+		<div class="mrdw-push-stat-card mrdw-push-stat-card--brand">
+			<div class="mrdw-push-stat-icon mrdw-push-stat-icon--brand"><span class="dashicons dashicons-smartphone"></span></div>
+			<div class="mrdw-push-stat-label"><?php esc_html_e( 'Devices', 'mrdw' ); ?></div>
+			<div class="mrdw-push-stat-value"><?php echo esc_html( $device_count ); ?></div>
+			<div class="mrdw-push-stat-detail">
 				<?php
 				printf(
 					/* translators: 1: iOS count, 2: Android count */
-					esc_html__( '%1$d iOS, %2$d Android', 'mrdemonwolf' ),
+					esc_html__( '%1$d iOS, %2$d Android', 'mrdw' ),
 					(int) $platform_counts['ios'],
 					(int) $platform_counts['android']
 				);
@@ -59,46 +59,46 @@ if ( ! defined( 'ABSPATH' ) ) {
 		</div>
 
 		<!-- Sent Card -->
-		<div class="tailsignal-stat-card tailsignal-stat-card--green">
-			<div class="tailsignal-stat-icon tailsignal-stat-icon--green"><span class="dashicons dashicons-email-alt"></span></div>
-			<div class="tailsignal-stat-label"><?php esc_html_e( 'Sent This Month', 'mrdemonwolf' ); ?></div>
-			<div class="tailsignal-stat-value"><?php echo esc_html( $monthly_sent ); ?></div>
-			<div class="tailsignal-stat-detail"><?php esc_html_e( 'notifications delivered', 'mrdemonwolf' ); ?></div>
+		<div class="mrdw-push-stat-card mrdw-push-stat-card--green">
+			<div class="mrdw-push-stat-icon mrdw-push-stat-icon--green"><span class="dashicons dashicons-email-alt"></span></div>
+			<div class="mrdw-push-stat-label"><?php esc_html_e( 'Sent This Month', 'mrdw' ); ?></div>
+			<div class="mrdw-push-stat-value"><?php echo esc_html( $monthly_sent ); ?></div>
+			<div class="mrdw-push-stat-detail"><?php esc_html_e( 'notifications delivered', 'mrdw' ); ?></div>
 		</div>
 
 		<!-- Success Rate Card -->
-		<div class="tailsignal-stat-card tailsignal-stat-card--purple">
-			<div class="tailsignal-stat-icon tailsignal-stat-icon--purple"><span class="dashicons dashicons-yes-alt"></span></div>
-			<div class="tailsignal-stat-label"><?php esc_html_e( 'Success Rate', 'mrdemonwolf' ); ?></div>
-			<div class="tailsignal-stat-value"><?php echo esc_html( $success_rate ); ?>%</div>
-			<div class="tailsignal-stat-detail"><?php esc_html_e( 'delivery rate', 'mrdemonwolf' ); ?></div>
+		<div class="mrdw-push-stat-card mrdw-push-stat-card--purple">
+			<div class="mrdw-push-stat-icon mrdw-push-stat-icon--purple"><span class="dashicons dashicons-yes-alt"></span></div>
+			<div class="mrdw-push-stat-label"><?php esc_html_e( 'Success Rate', 'mrdw' ); ?></div>
+			<div class="mrdw-push-stat-value"><?php echo esc_html( $success_rate ); ?>%</div>
+			<div class="mrdw-push-stat-detail"><?php esc_html_e( 'delivery rate', 'mrdw' ); ?></div>
 		</div>
 	</div>
 
 	<!-- Monthly Trends Chart -->
-	<div class="tailsignal-card tw-mb-6">
-		<div class="tailsignal-card-header">
-			<h2><?php esc_html_e( 'Monthly Trends', 'mrdemonwolf' ); ?></h2>
+	<div class="mrdw-push-card tw-mb-6">
+		<div class="mrdw-push-card-header">
+			<h2><?php esc_html_e( 'Monthly Trends', 'mrdw' ); ?></h2>
 		</div>
-		<div class="tailsignal-card-body" style="<?php echo empty( $chart_stats ) ? 'padding: 24px 20px;' : ''; ?>">
+		<div class="mrdw-push-card-body" style="<?php echo empty( $chart_stats ) ? 'padding: 24px 20px;' : ''; ?>">
 			<?php if ( ! empty( $chart_stats ) ) : ?>
-				<canvas id="tailsignal-chart" height="280" style="max-height: 280px;" aria-label="<?php esc_attr_e( 'Monthly notification trends chart', 'mrdemonwolf' ); ?>" role="img"></canvas>
+				<canvas id="mrdw-push-chart" height="280" style="max-height: 280px;" aria-label="<?php esc_attr_e( 'Monthly notification trends chart', 'mrdw' ); ?>" role="img"></canvas>
 			<?php else : ?>
 				<div style="text-align: center; color: var(--ts-text-muted);">
 					<span style="font-size: 24px; opacity: 0.4;">&#x1F4CA;</span>
-					<p style="margin: 8px 0 0; font-size: 13px;"><?php esc_html_e( 'No notification data yet. Send your first notification to see trends here.', 'mrdemonwolf' ); ?></p>
+					<p style="margin: 8px 0 0; font-size: 13px;"><?php esc_html_e( 'No notification data yet. Send your first notification to see trends here.', 'mrdw' ); ?></p>
 				</div>
 			<?php endif; ?>
 		</div>
 	</div>
 
 	<!-- Recent Notifications -->
-	<div class="tailsignal-card">
-		<div class="tailsignal-card-header">
-			<h2><?php esc_html_e( 'Recent Notifications', 'mrdemonwolf' ); ?></h2>
+	<div class="mrdw-push-card">
+		<div class="mrdw-push-card-header">
+			<h2><?php esc_html_e( 'Recent Notifications', 'mrdw' ); ?></h2>
 			<?php if ( ! empty( $recent ) ) : ?>
-				<button type="button" id="tailsignal-clear-recent" class="button button-small tailsignal-btn-danger">
-					<?php esc_html_e( 'Clear All', 'mrdemonwolf' ); ?>
+				<button type="button" id="mrdw-push-clear-recent" class="button button-small mrdw-push-btn-danger">
+					<?php esc_html_e( 'Clear All', 'mrdw' ); ?>
 				</button>
 			<?php endif; ?>
 		</div>
@@ -106,11 +106,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<table class="tw-w-full">
 				<thead>
 					<tr>
-						<th scope="col" class="tw-px-5 tw-py-3 tw-text-left tw-text-xs tw-font-semibold tw-text-gray-400 tw-uppercase tw-tracking-wider"><?php esc_html_e( 'Title', 'mrdemonwolf' ); ?></th>
-						<th scope="col" class="tw-px-5 tw-py-3 tw-text-left tw-text-xs tw-font-semibold tw-text-gray-400 tw-uppercase tw-tracking-wider"><?php esc_html_e( 'Type', 'mrdemonwolf' ); ?></th>
-						<th scope="col" class="tw-px-5 tw-py-3 tw-text-left tw-text-xs tw-font-semibold tw-text-gray-400 tw-uppercase tw-tracking-wider"><?php esc_html_e( 'Devices', 'mrdemonwolf' ); ?></th>
-						<th scope="col" class="tw-px-5 tw-py-3 tw-text-left tw-text-xs tw-font-semibold tw-text-gray-400 tw-uppercase tw-tracking-wider"><?php esc_html_e( 'Status', 'mrdemonwolf' ); ?></th>
-						<th scope="col" class="tw-px-5 tw-py-3 tw-text-left tw-text-xs tw-font-semibold tw-text-gray-400 tw-uppercase tw-tracking-wider"><?php esc_html_e( 'Date', 'mrdemonwolf' ); ?></th>
+						<th scope="col" class="tw-px-5 tw-py-3 tw-text-left tw-text-xs tw-font-semibold tw-text-gray-400 tw-uppercase tw-tracking-wider"><?php esc_html_e( 'Title', 'mrdw' ); ?></th>
+						<th scope="col" class="tw-px-5 tw-py-3 tw-text-left tw-text-xs tw-font-semibold tw-text-gray-400 tw-uppercase tw-tracking-wider"><?php esc_html_e( 'Type', 'mrdw' ); ?></th>
+						<th scope="col" class="tw-px-5 tw-py-3 tw-text-left tw-text-xs tw-font-semibold tw-text-gray-400 tw-uppercase tw-tracking-wider"><?php esc_html_e( 'Devices', 'mrdw' ); ?></th>
+						<th scope="col" class="tw-px-5 tw-py-3 tw-text-left tw-text-xs tw-font-semibold tw-text-gray-400 tw-uppercase tw-tracking-wider"><?php esc_html_e( 'Status', 'mrdw' ); ?></th>
+						<th scope="col" class="tw-px-5 tw-py-3 tw-text-left tw-text-xs tw-font-semibold tw-text-gray-400 tw-uppercase tw-tracking-wider"><?php esc_html_e( 'Date', 'mrdw' ); ?></th>
 					</tr>
 				</thead>
 				<tbody>
@@ -120,13 +120,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 							<td class="tw-px-5 tw-py-3.5">
 								<?php
 								$type_badges = array(
-									'post'      => 'tailsignal-badge-green',
-									'manual'    => 'tailsignal-badge-blue',
-									'scheduled' => 'tailsignal-badge-purple',
+									'post'      => 'mrdw-push-badge-green',
+									'manual'    => 'mrdw-push-badge-blue',
+									'scheduled' => 'mrdw-push-badge-purple',
 								);
-								$badge_class = $type_badges[ $notification->type ] ?? 'tailsignal-badge-gray';
+								$badge_class = $type_badges[ $notification->type ] ?? 'mrdw-push-badge-gray';
 								?>
-								<span class="tailsignal-badge <?php echo esc_attr( $badge_class ); ?>">
+								<span class="mrdw-push-badge <?php echo esc_attr( $badge_class ); ?>">
 									<?php echo esc_html( $notification->type ); ?>
 								</span>
 							</td>
@@ -134,31 +134,31 @@ if ( ! defined( 'ABSPATH' ) ) {
 							<td class="tw-px-5 tw-py-3.5">
 								<?php
 								$status_badges = array(
-									'sent'             => array( 'tailsignal-badge-green', __( 'ok', 'mrdemonwolf' ) ),
-									'receipts_checked' => array( 'tailsignal-badge-green', __( 'ok', 'mrdemonwolf' ) ),
-									'pending'          => array( 'tailsignal-badge-gray', __( 'pending', 'mrdemonwolf' ) ),
-									'scheduled'        => array( 'tailsignal-badge-yellow', __( 'scheduled', 'mrdemonwolf' ) ),
-									'failed'           => array( 'tailsignal-badge-red', __( 'failed', 'mrdemonwolf' ) ),
-									'cancelled'        => array( 'tailsignal-badge-gray-muted', __( 'cancelled', 'mrdemonwolf' ) ),
+									'sent'             => array( 'mrdw-push-badge-green', __( 'ok', 'mrdw' ) ),
+									'receipts_checked' => array( 'mrdw-push-badge-green', __( 'ok', 'mrdw' ) ),
+									'pending'          => array( 'mrdw-push-badge-gray', __( 'pending', 'mrdw' ) ),
+									'scheduled'        => array( 'mrdw-push-badge-yellow', __( 'scheduled', 'mrdw' ) ),
+									'failed'           => array( 'mrdw-push-badge-red', __( 'failed', 'mrdw' ) ),
+									'cancelled'        => array( 'mrdw-push-badge-gray-muted', __( 'cancelled', 'mrdw' ) ),
 								);
-								$status_info   = $status_badges[ $notification->status ] ?? array( 'tailsignal-badge-gray', $notification->status );
+								$status_info   = $status_badges[ $notification->status ] ?? array( 'mrdw-push-badge-gray', $notification->status );
 								?>
-								<span class="tailsignal-badge <?php echo esc_attr( $status_info[0] ); ?>">
+								<span class="mrdw-push-badge <?php echo esc_attr( $status_info[0] ); ?>">
 									<?php echo esc_html( $status_info[1] ); ?>
 								</span>
 							</td>
 							<td class="tw-px-5 tw-py-3.5 tw-text-sm tw-text-gray-500">
 								<?php echo esc_html( human_time_diff( strtotime( $notification->created_at ), time() ) ); ?>
-								<?php esc_html_e( 'ago', 'mrdemonwolf' ); ?>
+								<?php esc_html_e( 'ago', 'mrdw' ); ?>
 							</td>
 						</tr>
 					<?php endforeach; ?>
 				</tbody>
 			</table>
 		<?php else : ?>
-			<div class="tailsignal-empty-state">
-				<div class="tailsignal-empty-state-icon">&#x1F514;</div>
-				<p><?php esc_html_e( 'No notifications sent yet. Your recent sends will appear here.', 'mrdemonwolf' ); ?></p>
+			<div class="mrdw-push-empty-state">
+				<div class="mrdw-push-empty-state-icon">&#x1F514;</div>
+				<p><?php esc_html_e( 'No notifications sent yet. Your recent sends will appear here.', 'mrdw' ); ?></p>
 			</div>
 		<?php endif; ?>
 	</div>

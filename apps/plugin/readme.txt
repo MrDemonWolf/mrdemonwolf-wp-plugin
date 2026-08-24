@@ -4,7 +4,7 @@ Tags: rest-api, push-notifications, expo, gravity-forms, divi
 Requires at least: 6.0
 Tested up to: 7.1
 Requires PHP: 8.3
-Stable tag: 1.4.0
+Stable tag: 2.0.0
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -35,8 +35,8 @@ only: push tokens and message content go to Expo (`exp.host`) in order to be del
 
 == Installation ==
 
-1. Deactivate PackRelay and TailSignal if either is installed. Do not delete them — deleting drops
-   their database tables.
+1. Export any entries and devices you want to keep, then deactivate PackRelay and TailSignal if
+   either is installed. Do not delete them yet — deleting drops their database tables.
 2. Upload the plugin zip under Plugins → Add New → Upload Plugin.
 3. Activate it.
 4. Configure the modules under MrDemonWolf → General.
@@ -69,20 +69,32 @@ option cannot be written.
 
 == Changelog ==
 
+= 2.0.0 =
+* Breaking: every identifier renamed onto a single `mrdw` namespace.
+* Breaking: REST namespaces `packrelay/v1` and `tailsignal/v1` collapse into `mrdw/v1`. Route paths
+  are otherwise unchanged.
+* Breaking: options, database tables, capability, classes, page slugs, cron hooks, post meta and
+  asset handles all renamed to the mrdw_forms_ / mrdw_push_ prefixes.
+* Breaking: data is NOT migrated. New tables are created empty; export first.
+* Breaking: capability tailsignal_manage is now mrdw_manage.
+* Breaking: text domain is now mrdw.
+* Breaking: minimum PHP is 8.3, required by the Firebase SDK.
+* Unchanged: REST route paths, request and response shapes, both authentication schemes, and all
+  module behaviour.
+
 = 1.4.0 =
 * First release of the merged plugin, superseding PackRelay 1.3.0 and TailSignal 1.2.0.
 * Added: single MrDemonWolf admin menu, per-module enable/disable switches.
-* Added: stable and nightly update channels via `MRDW_UPDATE_CHANNEL`.
-* Added: `MRDW_EXPO_ACCESS_TOKEN` constant so the Expo token need not be stored in the database.
+* Added: stable and nightly update channels via MRDW_UPDATE_CHANNEL.
+* Added: MRDW_EXPO_ACCESS_TOKEN constant so the Expo token need not be stored in the database.
 * Added: conflict guard that refuses to load while PackRelay or TailSignal is still active.
-* Changed: text domain unified to `mrdemonwolf`; PHP floor raised to 8.1.
 * Changed: codebase brought up to WordPress Coding Standards.
-* Fixed: a settings template overwrote the `$page` WordPress global.
-* Fixed: missing `wp_unslash()` on several admin request reads; unsanitised bulk-action input.
-* Unchanged: REST namespaces and routes, database tables, option names, capabilities, page slugs.
+* Fixed: a settings template overwrote the $page WordPress global.
+* Fixed: missing wp_unslash() on several admin request reads; unsanitised bulk-action input.
 
 == Upgrade Notice ==
 
-= 1.4.0 =
-Deactivate PackRelay and TailSignal before activating this plugin — do not delete them, as deleting
-drops their tables. Custom translation files must be renamed to the `mrdemonwolf` text domain.
+= 2.0.0 =
+Breaking release. Every option, table, capability and REST namespace is renamed, and existing data
+is NOT migrated. Export your entries and devices to CSV first, then update the app to call
+/wp-json/mrdw/v1/. Requires PHP 8.3.

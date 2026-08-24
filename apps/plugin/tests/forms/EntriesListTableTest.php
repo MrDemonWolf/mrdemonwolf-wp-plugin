@@ -1,16 +1,16 @@
 <?php
 /**
- * Tests for PackRelay_Entries_List_Table.
+ * Tests for MRDW_Forms_Entries_List_Table.
  *
- * @package    PackRelay
+ * @package    MrDemonWolf
  * @copyright  2026 MrDemonWolf, Inc.
  */
 
-namespace PackRelay\Tests;
+namespace MRDW_Forms\Tests;
 
 class EntriesListTableTest extends TestCase {
 
-	private \PackRelay_Entries_List_Table $table;
+	private \MRDW_Forms_Entries_List_Table $table;
 
 	protected function setUp(): void {
 		parent::setUp();
@@ -19,30 +19,30 @@ class EntriesListTableTest extends TestCase {
 		$wpdb         = \Mockery::mock();
 		$wpdb->prefix = 'wp_';
 
-		$this->table = new \PackRelay_Entries_List_Table();
+		$this->table = new \MRDW_Forms_Entries_List_Table();
 	}
 
 	// === column_source ===
 
 	public function test_column_source_mobile_badge_for_divi(): void {
 		$result = $this->table->column_source( array( 'provider' => 'divi' ) );
-		$this->assertStringContainsString( 'packrelay-source-badge mobile', $result );
+		$this->assertStringContainsString( 'mrdw-forms-source-badge mobile', $result );
 		$this->assertStringContainsString( 'Mobile App', $result );
 	}
 
 	public function test_column_source_mobile_badge_for_wpforms(): void {
 		$result = $this->table->column_source( array( 'provider' => 'wpforms' ) );
-		$this->assertStringContainsString( 'packrelay-source-badge mobile', $result );
+		$this->assertStringContainsString( 'mrdw-forms-source-badge mobile', $result );
 	}
 
 	public function test_column_source_mobile_badge_for_gravityforms(): void {
 		$result = $this->table->column_source( array( 'provider' => 'gravityforms' ) );
-		$this->assertStringContainsString( 'packrelay-source-badge mobile', $result );
+		$this->assertStringContainsString( 'mrdw-forms-source-badge mobile', $result );
 	}
 
 	public function test_column_source_frontend_badge_for_divi_frontend(): void {
 		$result = $this->table->column_source( array( 'provider' => 'divi_frontend' ) );
-		$this->assertStringContainsString( 'packrelay-source-badge frontend', $result );
+		$this->assertStringContainsString( 'mrdw-forms-source-badge frontend', $result );
 		$this->assertStringContainsString( 'Divi Frontend', $result );
 	}
 
@@ -56,31 +56,31 @@ class EntriesListTableTest extends TestCase {
 
 	public function test_column_provider_badge_for_divi(): void {
 		$result = $this->table->column_provider( array( 'provider' => 'divi' ) );
-		$this->assertStringContainsString( 'packrelay-provider-badge', $result );
+		$this->assertStringContainsString( 'mrdw-forms-provider-badge', $result );
 		$this->assertStringContainsString( 'Divi', $result );
 	}
 
 	public function test_column_provider_badge_for_divi_frontend(): void {
 		$result = $this->table->column_provider( array( 'provider' => 'divi_frontend' ) );
-		$this->assertStringContainsString( 'packrelay-provider-badge', $result );
+		$this->assertStringContainsString( 'mrdw-forms-provider-badge', $result );
 		$this->assertStringContainsString( 'Divi', $result );
 	}
 
 	public function test_column_provider_badge_for_wpforms(): void {
 		$result = $this->table->column_provider( array( 'provider' => 'wpforms' ) );
-		$this->assertStringContainsString( 'packrelay-provider-badge', $result );
+		$this->assertStringContainsString( 'mrdw-forms-provider-badge', $result );
 		$this->assertStringContainsString( 'WPForms', $result );
 	}
 
 	public function test_column_provider_badge_for_gravityforms(): void {
 		$result = $this->table->column_provider( array( 'provider' => 'gravityforms' ) );
-		$this->assertStringContainsString( 'packrelay-provider-badge', $result );
+		$this->assertStringContainsString( 'mrdw-forms-provider-badge', $result );
 		$this->assertStringContainsString( 'Gravity Forms', $result );
 	}
 
 	public function test_column_provider_falls_back_to_raw_value_for_unknown_provider(): void {
 		$result = $this->table->column_provider( array( 'provider' => 'custom_builder' ) );
-		$this->assertStringContainsString( 'packrelay-provider-badge', $result );
+		$this->assertStringContainsString( 'mrdw-forms-provider-badge', $result );
 		$this->assertStringContainsString( 'custom_builder', $result );
 	}
 

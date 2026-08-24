@@ -1,18 +1,18 @@
 <?php
 /**
- * Tests for PackRelay_Entry_Store.
+ * Tests for MRDW_Forms_Entry_Store.
  *
- * @package    PackRelay
+ * @package    MrDemonWolf
  * @copyright  2026 MrDemonWolf, Inc.
  */
 
-namespace PackRelay\Tests;
+namespace MRDW_Forms\Tests;
 
 use Brain\Monkey\Functions;
 
 class EntryStoreTest extends TestCase {
 
-	private \PackRelay_Entry_Store $store;
+	private \MRDW_Forms_Entry_Store $store;
 
 	protected function setUp(): void {
 		parent::setUp();
@@ -21,11 +21,11 @@ class EntryStoreTest extends TestCase {
 		$wpdb = \Mockery::mock();
 		$wpdb->prefix = 'wp_';
 
-		$this->store = new \PackRelay_Entry_Store();
+		$this->store = new \MRDW_Forms_Entry_Store();
 	}
 
 	public function test_get_table_name(): void {
-		$this->assertSame( 'wp_packrelay_entries', \PackRelay_Entry_Store::get_table_name() );
+		$this->assertSame( 'wp_mrdw_forms_entries', \MRDW_Forms_Entry_Store::get_table_name() );
 	}
 
 	public function test_add_returns_insert_id(): void {
@@ -80,7 +80,7 @@ class EntryStoreTest extends TestCase {
 
 		$wpdb->shouldReceive( 'prepare' )
 			->once()
-			->andReturn( 'SELECT * FROM wp_packrelay_entries WHERE id = 1' );
+			->andReturn( 'SELECT * FROM wp_mrdw_forms_entries WHERE id = 1' );
 
 		$wpdb->shouldReceive( 'get_row' )
 			->once()
@@ -96,7 +96,7 @@ class EntryStoreTest extends TestCase {
 
 		$wpdb->shouldReceive( 'delete' )
 			->once()
-			->with( 'wp_packrelay_entries', array( 'id' => 1 ), array( '%d' ) )
+			->with( 'wp_mrdw_forms_entries', array( 'id' => 1 ), array( '%d' ) )
 			->andReturn( 1 );
 
 		$result = $this->store->delete_entry( 1 );
@@ -133,7 +133,7 @@ class EntryStoreTest extends TestCase {
 
 		$wpdb->shouldReceive( 'prepare' )
 			->once()
-			->andReturn( "SELECT COUNT(*) FROM wp_packrelay_entries WHERE provider = 'divi'" );
+			->andReturn( "SELECT COUNT(*) FROM wp_mrdw_forms_entries WHERE provider = 'divi'" );
 
 		$wpdb->shouldReceive( 'get_var' )
 			->once()

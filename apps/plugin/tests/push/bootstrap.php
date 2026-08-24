@@ -2,16 +2,16 @@
 /**
  * PHPUnit bootstrap file.
  *
- * @package TailSignal
+ * @package MrDemonWolf
  */
 
 // Define WordPress constants needed by plugin files.
 define( 'ABSPATH', '/tmp/wordpress/' );
-define( 'TAILSIGNAL_VERSION', '1.0.0' );
-define( 'TAILSIGNAL_PLUGIN_FILE', dirname( __DIR__, 2 ) . '/mrdemonwolf.php' );
-define( 'TAILSIGNAL_PLUGIN_DIR', dirname( __DIR__, 2 ) . '/modules/push/' );
-define( 'TAILSIGNAL_PLUGIN_URL', 'http://example.com/wp-content/plugins/tailsignal/' );
-define( 'TAILSIGNAL_PLUGIN_BASENAME', 'tailsignal/tailsignal.php' );
+define( 'MRDW_VERSION', '1.0.0' );
+define( 'MRDW_PLUGIN_FILE', dirname( __DIR__, 2 ) . '/mrdemonwolf.php' );
+define( 'MRDW_PUSH_DIR', dirname( __DIR__, 2 ) . '/modules/push/' );
+define( 'MRDW_PUSH_URL', 'http://example.com/wp-content/plugins/mrdemonwolf-wp-plugin/modules/push/' );
+define( 'MRDW_PLUGIN_BASENAME', 'mrdemonwolf-wp-plugin/mrdemonwolf.php' );
 
 // Create WordPress stub files needed by plugin.
 $wp_admin_dir = ABSPATH . 'wp-admin/includes/';

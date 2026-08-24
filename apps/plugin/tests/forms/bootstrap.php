@@ -2,7 +2,7 @@
 /**
  * PHPUnit bootstrap file.
  *
- * @package    PackRelay
+ * @package    MrDemonWolf
  * @copyright  2026 MrDemonWolf, Inc.
  */
 
@@ -13,11 +13,11 @@ define( 'ABSPATH', sys_get_temp_dir() . '/mrdw-wp-tests/' );
 if ( ! is_dir( ABSPATH ) ) {
 	mkdir( ABSPATH, 0755, true );
 }
-define( 'PACKRELAY_VERSION', '1.0.0' );
-define( 'PACKRELAY_PLUGIN_FILE', __DIR__ . '/../../mrdemonwolf.php' );
-define( 'PACKRELAY_PLUGIN_DIR', __DIR__ . '/../../modules/forms/' );
-define( 'PACKRELAY_PLUGIN_URL', 'https://example.com/wp-content/plugins/packrelay/' );
-define( 'PACKRELAY_PLUGIN_BASENAME', 'packrelay/packrelay.php' );
+define( 'MRDW_VERSION', '1.0.0' );
+define( 'MRDW_PLUGIN_FILE', __DIR__ . '/../../mrdemonwolf.php' );
+define( 'MRDW_FORMS_DIR', __DIR__ . '/../../modules/forms/' );
+define( 'MRDW_FORMS_URL', 'https://example.com/wp-content/plugins/mrdemonwolf-wp-plugin/modules/forms/' );
+define( 'MRDW_PLUGIN_BASENAME', 'mrdemonwolf-wp-plugin/mrdemonwolf.php' );
 
 // Load Composer autoloader.
 require_once __DIR__ . '/../../vendor/autoload.php';
@@ -224,19 +224,19 @@ if ( ! function_exists( 'is_wp_error' ) ) {
 }
 
 // Load plugin files.
-require_once __DIR__ . '/../../modules/forms/includes/providers/class-packrelay-provider.php';
-require_once __DIR__ . '/../../modules/forms/includes/providers/class-packrelay-provider-divi.php';
-require_once __DIR__ . '/../../modules/forms/includes/providers/class-packrelay-provider-wpforms.php';
-require_once __DIR__ . '/../../modules/forms/includes/providers/class-packrelay-provider-gravityforms.php';
-require_once __DIR__ . '/../../modules/forms/includes/class-packrelay-provider-factory.php';
-require_once __DIR__ . '/../../modules/forms/includes/class-packrelay-loader.php';
-require_once __DIR__ . '/../../modules/forms/includes/class-packrelay-activator.php';
-require_once __DIR__ . '/../../modules/forms/includes/class-packrelay-deactivator.php';
-require_once __DIR__ . '/../../modules/forms/includes/class-packrelay-settings.php';
-require_once __DIR__ . '/../../modules/forms/includes/class-packrelay-appcheck.php';
-require_once __DIR__ . '/../../modules/forms/includes/class-packrelay-entry-store.php';
-require_once __DIR__ . '/../../modules/forms/includes/class-packrelay-entries-list-table.php';
-require_once __DIR__ . '/../../modules/forms/includes/class-packrelay-entries-page.php';
-require_once __DIR__ . '/../../modules/forms/includes/class-packrelay-divi-submissions.php';
-require_once __DIR__ . '/../../modules/forms/includes/class-packrelay-rest-api.php';
-require_once __DIR__ . '/../../modules/forms/includes/class-packrelay.php';
+require_once __DIR__ . '/../../modules/forms/includes/providers/class-mrdw-forms-provider.php';
+require_once __DIR__ . '/../../modules/forms/includes/providers/class-mrdw-forms-provider-divi.php';
+require_once __DIR__ . '/../../modules/forms/includes/providers/class-mrdw-forms-provider-wpforms.php';
+require_once __DIR__ . '/../../modules/forms/includes/providers/class-mrdw-forms-provider-gravityforms.php';
+require_once __DIR__ . '/../../modules/forms/includes/class-mrdw-forms-provider-factory.php';
+require_once __DIR__ . '/../../modules/forms/includes/class-mrdw-forms-loader.php';
+require_once __DIR__ . '/../../modules/forms/includes/class-mrdw-forms-activator.php';
+require_once __DIR__ . '/../../modules/forms/includes/class-mrdw-forms-deactivator.php';
+require_once __DIR__ . '/../../modules/forms/includes/class-mrdw-forms-settings.php';
+require_once __DIR__ . '/../../modules/forms/includes/class-mrdw-forms-appcheck.php';
+require_once __DIR__ . '/../../modules/forms/includes/class-mrdw-forms-entry-store.php';
+require_once __DIR__ . '/../../modules/forms/includes/class-mrdw-forms-entries-list-table.php';
+require_once __DIR__ . '/../../modules/forms/includes/class-mrdw-forms-entries-page.php';
+require_once __DIR__ . '/../../modules/forms/includes/class-mrdw-forms-divi-submissions.php';
+require_once __DIR__ . '/../../modules/forms/includes/class-mrdw-forms-rest-api.php';
+require_once __DIR__ . '/../../modules/forms/includes/class-mrdw-forms.php';
