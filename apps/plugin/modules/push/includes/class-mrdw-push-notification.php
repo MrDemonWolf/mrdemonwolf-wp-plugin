@@ -135,10 +135,38 @@ class MRDW_Push_Notification {
 		}
 
 		if ( '1' === $include_image && has_post_thumbnail( $post->ID ) ) {
-			$params['image_url'] = get_the_post_thumbnail_url( $post->ID, 'large' );
+			$params['image_url'] = self::get_featured_image_url( $post->ID );
 		}
 
 		return $params;
+	}
+
+	/**
+	 * Resolve a post's featured image URL for use as a notification image.
+	 *
+	 * @param int $post_id Post ID.
+	 * @return string Image URL, or an empty string when unusable.
+	 */
+	public static function get_featured_image_url( $post_id ) {
+		/**
+		 * Filter the registered image size used for notification images.
+		 *
+		 * The device downloads this itself, so something around 1024px wide
+		 * travels better than the full-size original.
+		 *
+		 * @param string $size    Registered image size name.
+		 * @param int    $post_id Post ID.
+		 */
+		$size = apply_filters( 'mrdw_push_featured_image_size', 'large', $post_id );
+
+		$url = get_the_post_thumbnail_url( $post_id, $size );
+
+		if ( ! $url && 'large' !== $size ) {
+			// The requested size may never have been generated for this upload.
+			$url = get_the_post_thumbnail_url( $post_id, 'large' );
+		}
+
+		return MRDW_Push_Expo::validate_image_url( $url ? $url : '' );
 	}
 
 	/**

@@ -1,6 +1,14 @@
 <?php
 /**
- * Expo Push Service wrapper.
+ * Expo Push Service client.
+ *
+ * Talks to the Expo Push API directly over the WordPress HTTP API rather than
+ * through a Composer SDK. Expo's push service is two unauthenticated JSON
+ * endpoints, and the available PHP SDK does not expose `richContent` — the
+ * field this plugin needs for featured images — so wrapping it cost more than
+ * it saved.
+ *
+ * @link https://docs.expo.dev/push-notifications/sending-notifications/
  *
  * @package MrDemonWolf
  */
@@ -9,133 +17,136 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-use ExpoSDK\Expo;
-use ExpoSDK\ExpoMessage;
-use ExpoSDK\Utils;
-
 /**
- * Extended ExpoMessage that supports the "richContent" field
- * for rich push notifications with image previews on iOS and Android.
+ * Class MRDW_Push_Expo
  */
-class MRDW_Push_ExpoMessage extends ExpoMessage {
-
-	/**
-	 * Rich content payload (e.g. image URL).
-	 *
-	 * @var array|null
-	 */
-	private $richContent = null;
-
-	/**
-	 * Set the rich content payload.
-	 *
-	 * @param array|null $richContent Rich content data.
-	 * @return $this
-	 */
-	public function setRichContent( $richContent ) {
-		$this->richContent = $richContent;
-		return $this;
-	}
-
-	/**
-	 * Convert to array, including the richContent field.
-	 *
-	 * @return array
-	 */
-	public function toArray(): array {
-		$attributes = parent::toArray();
-
-		if ( null !== $this->richContent ) {
-			$attributes['richContent'] = $this->richContent;
-		}
-
-		return $attributes;
-	}
-}
-
 class MRDW_Push_Expo {
 
 	/**
-	 * Maximum messages per Expo push request.
-	 *
-	 * The Expo Push API rejects requests with more than 100 messages and the
-	 * bundled SDK does not chunk, so we must chunk here.
+	 * Expo Push API endpoints.
+	 */
+	const PUSH_ENDPOINT     = 'https://exp.host/--/api/v2/push/send';
+	const RECEIPTS_ENDPOINT = 'https://exp.host/--/api/v2/push/getReceipts';
+
+	/**
+	 * Expo rejects requests carrying more than 100 messages.
 	 */
 	const PUSH_CHUNK_SIZE = 100;
 
 	/**
-	 * Maximum receipt IDs per Expo receipts request.
+	 * Expo rejects receipt requests carrying more than 1000 ticket IDs.
 	 */
 	const RECEIPT_CHUNK_SIZE = 1000;
 
 	/**
-	 * Expo SDK instance.
-	 *
-	 * @var Expo|null
+	 * Seconds to wait on an Expo request.
 	 */
-	private static $expo = null;
+	const REQUEST_TIMEOUT = 30;
 
 	/**
-	 * Access token the cached instance was built with.
-	 *
-	 * @var string|null
+	 * The image_url column is varchar(500); anything longer would be truncated.
 	 */
-	private static $expo_token = null;
+	const MAX_IMAGE_URL_LENGTH = 500;
 
 	/**
-	 * Get or create the Expo SDK instance.
-	 *
-	 * @return Expo
-	 */
-	public static function get_instance() {
-		// Resolved from the MRDW_EXPO_ACCESS_TOKEN constant when defined, so the
-		// token can be kept out of the database entirely.
-		$access_token = MRDW_Secrets::expo_access_token();
-
-		if ( null === self::$expo || self::$expo_token !== $access_token ) {
-			if ( ! empty( $access_token ) ) {
-				self::$expo = Expo::driver( 'file' )->setAccessToken( $access_token );
-			} else {
-				self::$expo = Expo::driver( 'file' );
-			}
-			self::$expo_token = $access_token;
-		}
-
-		return self::$expo;
-	}
-
-	/**
-	 * Reset the instance (useful for testing).
+	 * Reset cached state. Retained for the test suite.
 	 */
 	public static function reset_instance() {
-		self::$expo       = null;
-		self::$expo_token = null;
+		// No client is cached any more; the access token is read per request.
 	}
 
 	/**
 	 * Validate an Expo push token.
 	 *
-	 * @param string $token The token to validate.
-	 * @return bool True if valid.
+	 * Mirrors Expo's own format: a bracketed ExponentPushToken/ExpoPushToken, or
+	 * a bare UUID for tokens issued by older SDKs.
+	 *
+	 * @param mixed $token The token to validate.
+	 * @return bool
 	 */
 	public static function is_valid_token( $token ) {
-		return Utils::isExpoPushToken( $token );
+		if ( ! is_string( $token ) || strlen( $token ) < 15 ) {
+			return false;
+		}
+
+		if ( (bool) preg_match( '/^Expo(nent)?PushToken\[[^\[\]]+\]$/', $token ) ) {
+			return true;
+		}
+
+		return (bool) preg_match(
+			'/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i',
+			$token
+		);
 	}
 
 	/**
-	 * Build an ExpoMessage.
+	 * Validate an image URL for use as a rich notification attachment.
 	 *
-	 * @param array $params Message parameters.
-	 * @return ExpoMessage
+	 * The device downloads this URL itself, so it has to be publicly reachable
+	 * over HTTPS. A plain-HTTP or private-network URL is not an error Expo
+	 * reports — the notification simply arrives without its image — so reject
+	 * those here instead of failing silently on the handset.
+	 *
+	 * @param mixed $url Candidate URL.
+	 * @return string The URL when usable, or an empty string.
+	 */
+	public static function validate_image_url( $url ) {
+		if ( ! is_string( $url ) || '' === trim( $url ) ) {
+			return '';
+		}
+
+		$url = trim( $url );
+
+		if ( strlen( $url ) > self::MAX_IMAGE_URL_LENGTH ) {
+			return '';
+		}
+
+		$parts = wp_parse_url( $url );
+
+		if ( empty( $parts['scheme'] ) || empty( $parts['host'] ) ) {
+			return '';
+		}
+
+		// iOS App Transport Security refuses plain HTTP attachments.
+		if ( 'https' !== strtolower( $parts['scheme'] ) ) {
+			return '';
+		}
+
+		$host = strtolower( $parts['host'] );
+
+		// Hosts that exist only inside the site's own network can never be
+		// fetched by a phone on mobile data.
+		if ( 'localhost' === $host || preg_match( '/\.(local|test|internal|localhost)$/', $host ) ) {
+			return '';
+		}
+
+		if ( filter_var( $host, FILTER_VALIDATE_IP ) ) {
+			$public = filter_var(
+				$host,
+				FILTER_VALIDATE_IP,
+				FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE
+			);
+			if ( false === $public ) {
+				return '';
+			}
+		}
+
+		return $url;
+	}
+
+	/**
+	 * Build the Expo message payload shared by every recipient in a send.
+	 *
+	 * @param array $params Message parameters (title, body, data, image_url).
+	 * @return array Payload without the `to` field.
 	 */
 	public static function build_message( $params ) {
-		$attributes = array(
-			'title' => $params['title'] ?? '',
-			'body'  => $params['body'] ?? '',
+		$message = array(
+			'title' => (string) ( $params['title'] ?? '' ),
+			'body'  => (string) ( $params['body'] ?? '' ),
 			'sound' => 'default',
 		);
 
-		// Custom data payload.
 		$data = array();
 		if ( ! empty( $params['data'] ) ) {
 			$parsed = is_string( $params['data'] ) ? json_decode( $params['data'], true ) : $params['data'];
@@ -145,25 +156,33 @@ class MRDW_Push_Expo {
 		}
 
 		if ( ! empty( $data ) ) {
-			$attributes['data'] = $data;
+			$message['data'] = $data;
 		}
 
-		// Rich notification with image via Expo's richContent field.
-		// mutableContent is required for iOS to process the image attachment.
-		if ( ! empty( $params['image_url'] ) ) {
-			$attributes['richContent']    = array( 'image' => $params['image_url'] );
-			$attributes['mutableContent'] = true;
+		// Rich notification image. Android renders this without any app change;
+		// iOS needs a Notification Service Extension in the app, and only runs
+		// it when mutableContent tells APNs the payload may be intercepted.
+		$image_url = self::validate_image_url( $params['image_url'] ?? '' );
+		if ( '' !== $image_url ) {
+			$message['richContent']    = array( 'image' => $image_url );
+			$message['mutableContent'] = true;
 		}
 
-		return new MRDW_Push_ExpoMessage( $attributes );
+		/**
+		 * Filter the Expo message payload before it is sent.
+		 *
+		 * @param array $message The payload, minus the `to` field.
+		 * @param array $params  The parameters it was built from.
+		 */
+		return apply_filters( 'mrdw_push_message', $message, $params );
 	}
 
 	/**
 	 * Send push notifications.
 	 *
-	 * @param array $tokens  Array of Expo push tokens.
-	 * @param array $params  Message parameters (title, body, data, image_url).
-	 * @return array Result with 'ticket_ids', 'ticket_token_map', 'success_count', 'failed_count', 'stale_tokens'.
+	 * @param array $tokens Array of Expo push tokens.
+	 * @param array $params Message parameters (title, body, data, image_url).
+	 * @return array Result with ticket_ids, ticket_token_map, success_count, failed_count, stale_tokens.
 	 */
 	public static function send( $tokens, $params ) {
 		$result = array(
@@ -178,58 +197,51 @@ class MRDW_Push_Expo {
 			return $result;
 		}
 
-		// Filter valid tokens.
-		$valid_tokens           = array_filter( $tokens, array( __CLASS__, 'is_valid_token' ) );
+		$valid_tokens           = array_values( array_filter( $tokens, array( __CLASS__, 'is_valid_token' ) ) );
 		$result['failed_count'] = count( $tokens ) - count( $valid_tokens );
 
 		if ( empty( $valid_tokens ) ) {
 			return $result;
 		}
 
-		$expo    = self::get_instance();
 		$message = self::build_message( $params );
 
-		// Expo rejects more than 100 messages per request and the SDK does
-		// not chunk, so split into batches ourselves.
-		$chunks = array_chunk( array_values( $valid_tokens ), self::PUSH_CHUNK_SIZE );
+		foreach ( array_chunk( $valid_tokens, self::PUSH_CHUNK_SIZE ) as $chunk_tokens ) {
+			$payload = array_merge( $message, array( 'to' => $chunk_tokens ) );
 
-		foreach ( $chunks as $chunk_tokens ) {
-			try {
-				$response = $expo->send( $message )->to( $chunk_tokens )->push();
+			$tickets = self::request( self::PUSH_ENDPOINT, $payload );
 
-				$data = $response ? $response->getData() : null;
+			if ( null === $tickets || ! is_array( $tickets ) ) {
+				$result['failed_count'] += count( $chunk_tokens );
+				continue;
+			}
 
-				if ( empty( $data ) ) {
+			foreach ( $tickets as $index => $ticket ) {
+				if ( isset( $ticket['status'] ) && 'ok' === $ticket['status'] ) {
+					++$result['success_count'];
+
+					if ( isset( $ticket['id'] ) ) {
+						$result['ticket_ids'][] = $ticket['id'];
+						if ( isset( $chunk_tokens[ $index ] ) ) {
+							$result['ticket_token_map'][ $ticket['id'] ] = $chunk_tokens[ $index ];
+						}
+					}
 					continue;
 				}
 
-				foreach ( $data as $index => $ticket ) {
-					if ( isset( $ticket['status'] ) && 'ok' === $ticket['status'] ) {
-						++$result['success_count'];
-						if ( isset( $ticket['id'] ) ) {
-							$result['ticket_ids'][] = $ticket['id'];
-							if ( isset( $chunk_tokens[ $index ] ) ) {
-								$result['ticket_token_map'][ $ticket['id'] ] = $chunk_tokens[ $index ];
-							}
-						}
-					} else {
-						++$result['failed_count'];
+				++$result['failed_count'];
 
-						// Track DeviceNotRegistered for cleanup.
-						if ( isset( $ticket['details']['error'] ) && 'DeviceNotRegistered' === $ticket['details']['error'] ) {
-							if ( isset( $chunk_tokens[ $index ] ) ) {
-								$result['stale_tokens'][] = $chunk_tokens[ $index ];
-							}
-						}
+				// Expo reports a permanently dead token here; drop it so we stop
+				// paying to deliver to a device that uninstalled the app.
+				if ( isset( $ticket['details']['error'] ) && 'DeviceNotRegistered' === $ticket['details']['error'] ) {
+					$stale = $ticket['details']['expoPushToken'] ?? ( $chunk_tokens[ $index ] ?? null );
+					if ( $stale ) {
+						$result['stale_tokens'][] = $stale;
 					}
 				}
-			} catch ( \Exception $e ) {
-				$result['failed_count'] += count( $chunk_tokens );
-				error_log( 'MRDW_Push Expo send error: ' . $e->getMessage() ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
 			}
 		}
 
-		// Auto-remove stale tokens.
 		if ( ! empty( $result['stale_tokens'] ) ) {
 			MRDW_Push_DB::deactivate_tokens( $result['stale_tokens'] );
 		}
@@ -241,32 +253,90 @@ class MRDW_Push_Expo {
 	 * Check receipt status for ticket IDs.
 	 *
 	 * @param array $ticket_ids Array of Expo ticket IDs.
-	 * @return array Receipt data.
+	 * @return array Receipts keyed by ticket ID.
 	 */
 	public static function check_receipts( $ticket_ids ) {
 		if ( empty( $ticket_ids ) ) {
 			return array();
 		}
 
-		$expo     = self::get_instance();
 		$receipts = array();
 
-		// Expo caps receipt requests, so chunk large backlogs.
 		foreach ( array_chunk( array_values( $ticket_ids ), self::RECEIPT_CHUNK_SIZE ) as $chunk ) {
-			try {
-				$response = $expo->getReceipts( $chunk )->check();
+			$data = self::request( self::RECEIPTS_ENDPOINT, array( 'ids' => $chunk ) );
 
-				if ( $response ) {
-					$data = $response->getData();
-					if ( ! empty( $data ) && is_array( $data ) ) {
-						$receipts = array_merge( $receipts, $data );
-					}
-				}
-			} catch ( \Exception $e ) {
-				error_log( 'MRDW_Push receipt check error: ' . $e->getMessage() ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+			if ( is_array( $data ) ) {
+				// Keyed by ticket ID, so merge preserves the association.
+				$receipts = array_merge( $receipts, $data );
 			}
 		}
 
 		return $receipts;
+	}
+
+	/**
+	 * POST a JSON body to Expo and return the decoded `data` member.
+	 *
+	 * @param string $endpoint Expo endpoint URL.
+	 * @param array  $body     Request body.
+	 * @return array|null Decoded data, or null on failure.
+	 */
+	private static function request( $endpoint, $body ) {
+		$headers = array(
+			'Accept'          => 'application/json',
+			'Accept-Encoding' => 'gzip, deflate',
+			'Content-Type'    => 'application/json',
+		);
+
+		// Optional: raises rate limits and is required by projects that have
+		// enabled Expo's enhanced push security.
+		$access_token = MRDW_Secrets::expo_access_token();
+		if ( '' !== $access_token ) {
+			$headers['Authorization'] = 'Bearer ' . $access_token;
+		}
+
+		$response = wp_remote_post(
+			$endpoint,
+			array(
+				'headers' => $headers,
+				'body'    => wp_json_encode( $body ),
+				'timeout' => self::REQUEST_TIMEOUT,
+			)
+		);
+
+		if ( is_wp_error( $response ) ) {
+			self::log( 'request failed: ' . $response->get_error_message() );
+			return null;
+		}
+
+		$code    = (int) wp_remote_retrieve_response_code( $response );
+		$decoded = json_decode( wp_remote_retrieve_body( $response ), true );
+
+		if ( $code < 200 || $code > 299 ) {
+			$detail = '';
+			if ( isset( $decoded['errors'][0]['message'] ) ) {
+				$detail = ' - ' . $decoded['errors'][0]['message'];
+			}
+			self::log( 'HTTP ' . $code . $detail );
+			return null;
+		}
+
+		if ( ! is_array( $decoded ) || ! isset( $decoded['data'] ) || ! is_array( $decoded['data'] ) ) {
+			self::log( 'unexpected response shape' );
+			return null;
+		}
+
+		return $decoded['data'];
+	}
+
+	/**
+	 * Log an Expo transport problem when debugging is enabled.
+	 *
+	 * @param string $message Message to record.
+	 */
+	private static function log( $message ) {
+		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+			error_log( 'MRDW Push (Expo): ' . $message ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+		}
 	}
 }

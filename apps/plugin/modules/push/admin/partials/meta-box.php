@@ -25,6 +25,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 	<p>
 		<label>
+			<input type="hidden" name="mrdw_push_image_field_present" value="1" />
 			<input type="checkbox" name="mrdw_push_include_image" value="1" <?php checked( '1', $include_img ); ?> />
 			<?php esc_html_e( 'Include featured image', 'mrdw' ); ?>
 		</label>
