@@ -87,7 +87,7 @@ define( 'MRDW_UPDATE_CHANNEL', 'nightly' );
 
 | Layer              | Technology                                                   |
 | ------------------ | ------------------------------------------------------------ |
-| Plugin             | PHP 8.1+, WordPress 6.0+ (tested to 7.1)                     |
+| Plugin             | PHP 8.3+, WordPress 6.0+ (tested to 7.1)                     |
 | Push delivery      | `ctwillie/expo-server-sdk-php`                               |
 | Token verification | `kreait/firebase-php`                                        |
 | Updates            | `yahnis-elsts/plugin-update-checker`                         |
@@ -102,7 +102,7 @@ define( 'MRDW_UPDATE_CHANNEL', 'nightly' );
 
 ### Prerequisites
 
-- PHP 8.1 or newer with Composer
+- PHP 8.3 or newer with Composer
 - Bun 1.3 or newer
 - Node.js 20 or newer
 
@@ -168,7 +168,7 @@ Inside `apps/plugin`:
 - WordPress Coding Standards enforced in full on first-party code, with the
   merged module trees held to the security and correctness sniffs while their
   style debt is paid down file by file.
-- 417 unit tests across the two modules, run against PHP 8.1 through 8.4 in CI.
+- 417 unit tests across the two modules, run against PHP 8.3 through 8.5 in CI.
 - Every GitHub Action pinned to a commit SHA, with `persist-credentials`
   disabled on checkout.
 - Prettier and ESLint for the docs workspace, verified in CI.

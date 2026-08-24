@@ -13,7 +13,7 @@
  * Description:       Connects the MrDemonWolf site to the MrDemonWolf app. Accepts form submissions over the REST API (Divi, WPForms, Gravity Forms) and sends Expo push notifications. Successor to PackRelay and TailSignal.
  * Version:           1.4.0
  * Requires at least: 6.0
- * Requires PHP:      8.1
+ * Requires PHP:      8.3
  * Author:            MrDemonWolf, Inc.
  * Author URI:        https://mrdemonwolf.com
  * License:           GPL-2.0-or-later
