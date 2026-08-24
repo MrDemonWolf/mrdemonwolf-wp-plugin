@@ -1,22 +1,22 @@
 <?php
 /**
- * Tests for PackRelay_Entries_Page.
+ * Tests for MRDW_Forms_Entries_Page.
  *
- * @package    PackRelay
+ * @package    MrDemonWolf
  * @copyright  2026 MrDemonWolf, Inc.
  */
 
-namespace PackRelay\Tests;
+namespace MRDW_Forms\Tests;
 
 use Brain\Monkey\Functions;
 
 class EntriesPageTest extends TestCase {
 
-	private \PackRelay_Entries_Page $page;
+	private \MRDW_Forms_Entries_Page $page;
 
 	protected function setUp(): void {
 		parent::setUp();
-		$this->page = new \PackRelay_Entries_Page();
+		$this->page = new \MRDW_Forms_Entries_Page();
 	}
 
 	public function test_add_menu_pages(): void {
@@ -29,7 +29,7 @@ class EntriesPageTest extends TestCase {
 				\Mockery::type( 'string' ),
 				\Mockery::type( 'string' ),
 				'manage_options',
-				'packrelay-entries',
+				'mrdw-forms-entries',
 				\Mockery::type( 'array' )
 			);
 
@@ -70,7 +70,7 @@ class EntriesPageTest extends TestCase {
 			}
 		);
 
-		$url = \PackRelay_Entries_Page::get_view_url( 7 );
+		$url = \MRDW_Forms_Entries_Page::get_view_url( 7 );
 
 		$this->assertStringContainsString( 'entry_id=7', $url );
 		$this->assertStringContainsString( 'action=view', $url );
@@ -86,7 +86,7 @@ class EntriesPageTest extends TestCase {
 		);
 		Functions\when( 'wp_nonce_url' )->returnArg();
 
-		$url = \PackRelay_Entries_Page::get_view_url( '5abc' );
+		$url = \MRDW_Forms_Entries_Page::get_view_url( '5abc' );
 		$this->assertStringContainsString( 'entry_id=5', $url );
 	}
 }

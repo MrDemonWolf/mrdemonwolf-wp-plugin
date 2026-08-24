@@ -2,7 +2,7 @@
 /**
  * Legacy plugin conflict guard.
  *
- * PackRelay and TailSignal were merged into this plugin verbatim, so their
+ * PackRelay and TailSignal were merged into this plugin, so their
  * class names and REST routes are identical. Loading this plugin alongside
  * either predecessor would be a fatal redeclare, so detect that first and
  * bail with an admin notice instead.
@@ -86,7 +86,7 @@ class MRDW_Conflict {
 				'MrDemonWolf is inactive because %s is still active. That plugin is now built in — deactivate it to finish the upgrade. Your existing settings and data are preserved.',
 				'MrDemonWolf is inactive because %s are still active. Those plugins are now built in — deactivate them to finish the upgrade. Your existing settings and data are preserved.',
 				count( $conflicts ),
-				'mrdemonwolf'
+				'mrdw'
 			),
 			implode( ', ', $conflicts )
 		);

@@ -2,7 +2,7 @@
 /**
  * Settings page template.
  *
- * @package PackRelay
+ * @package MrDemonWolf
  * @copyright 2026 MrDemonWolf, Inc.
  */
 
@@ -10,28 +10,28 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-$packrelay_provider_available = PackRelay_Activator::is_provider_available();
-$packrelay_provider           = PackRelay_Provider_Factory::create();
+$mrdw_forms_provider_available = MRDW_Forms_Activator::is_provider_available();
+$mrdw_forms_provider           = MRDW_Forms_Provider_Factory::create();
 ?>
-<div class="wrap packrelay-wrap">
+<div class="wrap mrdw-forms-wrap">
 	<h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
 
-	<div class="packrelay-header">
-		<div class="packrelay-header-icon">
+	<div class="mrdw-forms-header">
+		<div class="mrdw-forms-header-icon">
 			<span class="dashicons dashicons-rest-api"></span>
 		</div>
-		<div class="packrelay-header-info">
-			<h2><?php esc_html_e( 'PackRelay', 'mrdemonwolf' ); ?></h2>
-			<div class="packrelay-header-meta">
-				<span class="packrelay-version-badge">v<?php echo esc_html( PACKRELAY_VERSION ); ?></span>
-				<?php if ( $packrelay_provider_available ) : ?>
-					<span class="packrelay-status-pill active"><?php esc_html_e( 'Active', 'mrdemonwolf' ); ?></span>
-					<span class="packrelay-provider-badge"><?php echo esc_html( $packrelay_provider->get_label() ); ?></span>
+		<div class="mrdw-forms-header-info">
+			<h2><?php esc_html_e( 'MRDW_Forms', 'mrdw' ); ?></h2>
+			<div class="mrdw-forms-header-meta">
+				<span class="mrdw-forms-version-badge">v<?php echo esc_html( MRDW_VERSION ); ?></span>
+				<?php if ( $mrdw_forms_provider_available ) : ?>
+					<span class="mrdw-forms-status-pill active"><?php esc_html_e( 'Active', 'mrdw' ); ?></span>
+					<span class="mrdw-forms-provider-badge"><?php echo esc_html( $mrdw_forms_provider->get_label() ); ?></span>
 				<?php else : ?>
-					<span class="packrelay-status-pill inactive"><?php esc_html_e( 'Provider Missing', 'mrdemonwolf' ); ?></span>
+					<span class="mrdw-forms-status-pill inactive"><?php esc_html_e( 'Provider Missing', 'mrdw' ); ?></span>
 				<?php endif; ?>
-				<a href="https://github.com/mrdemonwolf/packrelay" target="_blank" rel="noopener noreferrer">
-					<?php esc_html_e( 'View on GitHub', 'mrdemonwolf' ); ?> &#8599;
+				<a href="https://github.com/MrDemonWolf/mrdemonwolf-wp-plugin" target="_blank" rel="noopener noreferrer">
+					<?php esc_html_e( 'View on GitHub', 'mrdw' ); ?> &#8599;
 				</a>
 			</div>
 		</div>
@@ -39,8 +39,8 @@ $packrelay_provider           = PackRelay_Provider_Factory::create();
 
 	<form action="options.php" method="post">
 		<?php
-		settings_fields( PackRelay_Settings::PAGE_SLUG );
-		do_settings_sections( PackRelay_Settings::PAGE_SLUG );
+		settings_fields( MRDW_Forms_Settings::PAGE_SLUG );
+		do_settings_sections( MRDW_Forms_Settings::PAGE_SLUG );
 		submit_button();
 		?>
 	</form>

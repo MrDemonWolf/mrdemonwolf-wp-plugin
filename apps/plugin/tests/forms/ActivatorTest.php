@@ -1,12 +1,12 @@
 <?php
 /**
- * Tests for PackRelay_Activator.
+ * Tests for MRDW_Forms_Activator.
  *
- * @package    PackRelay
+ * @package    MrDemonWolf
  * @copyright  2026 MrDemonWolf, Inc.
  */
 
-namespace PackRelay\Tests;
+namespace MRDW_Forms\Tests;
 
 use Brain\Monkey\Functions;
 
@@ -26,7 +26,7 @@ class ActivatorTest extends TestCase {
 	public function test_activate_sets_default_options_when_none_exist(): void {
 		Functions\when( 'get_option' )->alias(
 			function ( $key, $default = false ) {
-				if ( 'packrelay_settings' === $key ) {
+				if ( 'mrdw_forms_settings' === $key ) {
 					return false;
 				}
 				if ( 'admin_email' === $key ) {
@@ -39,7 +39,7 @@ class ActivatorTest extends TestCase {
 		$updated = false;
 		Functions\when( 'update_option' )->alias(
 			function ( $key, $value ) use ( &$updated ) {
-				if ( 'packrelay_settings' === $key && is_array( $value ) ) {
+				if ( 'mrdw_forms_settings' === $key && is_array( $value ) ) {
 					$updated = true;
 				}
 			}
@@ -50,9 +50,9 @@ class ActivatorTest extends TestCase {
 		// Stub dbDelta and require_once for create_table.
 		Functions\when( 'dbDelta' )->justReturn( array() );
 
-		\PackRelay_Activator::activate();
+		\MRDW_Forms_Activator::activate();
 
-		$this->assertTrue( $updated, 'update_option should be called with packrelay_settings' );
+		$this->assertTrue( $updated, 'update_option should be called with mrdw_forms_settings' );
 	}
 
 	public function test_activate_does_not_overwrite_existing_options(): void {
@@ -66,7 +66,7 @@ class ActivatorTest extends TestCase {
 
 		Functions\when( 'get_option' )->alias(
 			function ( $key, $default = false ) use ( $existing ) {
-				if ( 'packrelay_settings' === $key ) {
+				if ( 'mrdw_forms_settings' === $key ) {
 					return $existing;
 				}
 				return $default;
@@ -76,7 +76,7 @@ class ActivatorTest extends TestCase {
 		$updated = false;
 		Functions\when( 'update_option' )->alias(
 			function ( $key ) use ( &$updated ) {
-				if ( 'packrelay_settings' === $key ) {
+				if ( 'mrdw_forms_settings' === $key ) {
 					$updated = true;
 				}
 			}
@@ -85,15 +85,15 @@ class ActivatorTest extends TestCase {
 		Functions\when( 'set_transient' )->justReturn( true );
 		Functions\when( 'dbDelta' )->justReturn( array() );
 
-		\PackRelay_Activator::activate();
+		\MRDW_Forms_Activator::activate();
 
-		$this->assertFalse( $updated, 'update_option should not overwrite packrelay_settings when it exists' );
+		$this->assertFalse( $updated, 'update_option should not overwrite mrdw_forms_settings when it exists' );
 	}
 
 	public function test_activate_defaults_include_form_provider(): void {
 		Functions\when( 'get_option' )->alias(
 			function ( $key, $default = false ) {
-				if ( 'packrelay_settings' === $key ) {
+				if ( 'mrdw_forms_settings' === $key ) {
 					return false;
 				}
 				if ( 'admin_email' === $key ) {
@@ -106,7 +106,7 @@ class ActivatorTest extends TestCase {
 		$saved_defaults = null;
 		Functions\when( 'update_option' )->alias(
 			function ( $key, $value ) use ( &$saved_defaults ) {
-				if ( 'packrelay_settings' === $key ) {
+				if ( 'mrdw_forms_settings' === $key ) {
 					$saved_defaults = $value;
 				}
 			}
@@ -115,7 +115,7 @@ class ActivatorTest extends TestCase {
 		Functions\when( 'set_transient' )->justReturn( true );
 		Functions\when( 'dbDelta' )->justReturn( array() );
 
-		\PackRelay_Activator::activate();
+		\MRDW_Forms_Activator::activate();
 
 		$this->assertArrayHasKey( 'form_provider', $saved_defaults );
 		$this->assertSame( 'divi', $saved_defaults['form_provider'] );
@@ -124,13 +124,13 @@ class ActivatorTest extends TestCase {
 	public function test_is_provider_available_returns_false_when_not_installed(): void {
 		Functions\when( 'get_option' )->alias(
 			function ( $key, $default = false ) {
-				if ( 'packrelay_settings' === $key ) {
+				if ( 'mrdw_forms_settings' === $key ) {
 					return array( 'form_provider' => 'divi' );
 				}
 				return $default;
 			}
 		);
 
-		$this->assertFalse( \PackRelay_Activator::is_provider_available() );
+		$this->assertFalse( \MRDW_Forms_Activator::is_provider_available() );
 	}
 }

@@ -1,22 +1,22 @@
 <?php
 /**
- * Tests for PackRelay_Provider_GravityForms.
+ * Tests for MRDW_Forms_Provider_GravityForms.
  *
- * @package    PackRelay
+ * @package    MrDemonWolf
  * @copyright  2026 MrDemonWolf, Inc.
  */
 
-namespace PackRelay\Tests;
+namespace MRDW_Forms\Tests;
 
 use Brain\Monkey\Functions;
 
 class ProviderGravityFormsTest extends TestCase {
 
-	private \PackRelay_Provider_GravityForms $provider;
+	private \MRDW_Forms_Provider_GravityForms $provider;
 
 	protected function setUp(): void {
 		parent::setUp();
-		$this->provider = new \PackRelay_Provider_GravityForms();
+		$this->provider = new \MRDW_Forms_Provider_GravityForms();
 	}
 
 	public function test_get_slug(): void {
@@ -38,7 +38,7 @@ class ProviderGravityFormsTest extends TestCase {
 
 	public function test_create_entry_fails_without_gfapi(): void {
 		Functions\expect( 'apply_filters' )
-			->with( 'packrelay_pre_save_fields', \Mockery::any(), '1', \Mockery::any() )
+			->with( 'mrdw_forms_pre_save_fields', \Mockery::any(), '1', \Mockery::any() )
 			->andReturnUsing( function ( $_hook, $fields ) {
 				return $fields;
 			} );

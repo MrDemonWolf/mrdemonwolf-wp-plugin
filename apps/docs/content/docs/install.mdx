@@ -39,7 +39,7 @@ and this plugin refuses to load while either is active rather than risk a fatal 
 
 In wp-admin, go to **Plugins → Add New → Upload Plugin**, choose the zip, install it, then activate.
 
-Activation creates the tables each enabled module needs and grants the `tailsignal_manage`
+Activation creates the tables each enabled module needs and grants the `mrdw_manage`
 capability to administrators.
 
 </Step>
@@ -64,5 +64,5 @@ the [update channel](/docs/update-channels).
 ## Uninstalling
 
 Deleting the plugin from the Plugins screen removes everything it created: both modules' tables, all
-options, the `tailsignal_manage` capability, its post meta and its scheduled cron events. On
+options, the `mrdw_manage` capability, its post meta and its scheduled cron events. On
 multisite this runs for every site. Deactivating alone changes nothing on disk or in the database.

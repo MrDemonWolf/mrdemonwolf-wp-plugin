@@ -6,11 +6,11 @@ module.exports = {
 	corePlugins: {
 		preflight: false,
 	},
-	important: "#tailsignal-app",
+	important: "#mrdw-push-app",
 	content: [
 		"modules/push/admin/partials/**/*.php",
-		"modules/push/admin/class-tailsignal-admin-devices.php",
-		"modules/push/admin/class-tailsignal-admin-history.php",
+		"modules/push/admin/class-mrdw-push-admin-devices.php",
+		"modules/push/admin/class-mrdw-push-admin-history.php",
 		"modules/push/admin/js/**/*.js",
 	],
 	theme: {

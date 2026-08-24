@@ -1,12 +1,12 @@
 <?php
 /**
- * Tests for PackRelay_AppCheck.
+ * Tests for MRDW_Forms_AppCheck.
  *
- * @package    PackRelay
+ * @package    MrDemonWolf
  * @copyright  2026 MrDemonWolf, Inc.
  */
 
-namespace PackRelay\Tests;
+namespace MRDW_Forms\Tests;
 
 use Brain\Monkey\Functions;
 use Kreait\Firebase\Contract\AppCheck;
@@ -26,7 +26,7 @@ class AppCheckTest extends TestCase {
 		$settings = array_merge( $defaults, $overrides );
 
 		Functions\expect( 'get_option' )
-			->with( 'packrelay_settings', \Mockery::any() )
+			->with( 'mrdw_forms_settings', \Mockery::any() )
 			->andReturn( $settings );
 	}
 
@@ -55,7 +55,7 @@ class AppCheckTest extends TestCase {
 	}
 
 	public function test_empty_token_returns_failure(): void {
-		$appcheck = new \PackRelay_AppCheck();
+		$appcheck = new \MRDW_Forms_AppCheck();
 
 		$result = $appcheck->verify( '', 123 );
 
@@ -66,7 +66,7 @@ class AppCheckTest extends TestCase {
 	public function test_missing_project_id_returns_failure(): void {
 		$this->stub_settings( array( 'firebase_project_id' => '' ) );
 
-		$appcheck = new \PackRelay_AppCheck();
+		$appcheck = new \MRDW_Forms_AppCheck();
 		$result   = $appcheck->verify( 'some-token', 123 );
 
 		$this->assertFalse( $result['success'] );
@@ -99,10 +99,10 @@ class AppCheckTest extends TestCase {
 		$factory = $this->make_fake_factory( $appcheck_service );
 
 		Functions\expect( 'do_action' )
-			->with( 'packrelay_appcheck_verified', '1:1234567890:android:abcdef', 123, 'valid-token' )
+			->with( 'mrdw_forms_appcheck_verified', '1:1234567890:android:abcdef', 123, 'valid-token' )
 			->once();
 
-		$appcheck = new \PackRelay_AppCheck( $factory );
+		$appcheck = new \MRDW_Forms_AppCheck( $factory );
 		$result   = $appcheck->verify( 'valid-token', 123 );
 
 		$this->assertTrue( $result['success'] );
@@ -120,7 +120,7 @@ class AppCheckTest extends TestCase {
 
 		$factory = $this->make_fake_factory( $appcheck_service );
 
-		$appcheck = new \PackRelay_AppCheck( $factory );
+		$appcheck = new \MRDW_Forms_AppCheck( $factory );
 		$result   = $appcheck->verify( 'invalid-token', 123 );
 
 		$this->assertFalse( $result['success'] );

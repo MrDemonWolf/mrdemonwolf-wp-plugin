@@ -1,15 +1,15 @@
 <?php
 /**
- * Base test case for TailSignal tests.
+ * Base test case for MRDW_Push tests.
  *
- * @package TailSignal
+ * @package MrDemonWolf
  */
 
 use Brain\Monkey;
 use Brain\Monkey\Functions;
 use PHPUnit\Framework\TestCase as PHPUnitTestCase;
 
-abstract class TailSignal_TestCase extends PHPUnitTestCase {
+abstract class MRDW_Push_TestCase extends PHPUnitTestCase {
 
 	/**
 	 * Set up test environment.
@@ -33,7 +33,7 @@ abstract class TailSignal_TestCase extends PHPUnitTestCase {
 			'get_transient'    => false,
 			'set_transient'    => true,
 			'delete_transient' => true,
-			'plugin_basename'  => TAILSIGNAL_PLUGIN_BASENAME,
+			'plugin_basename'  => MRDW_PLUGIN_BASENAME,
 			'sanitize_text_field'     => function( $str ) { return trim( strip_tags( $str ) ); },
 			'sanitize_textarea_field' => function( $str ) { return trim( strip_tags( $str ) ); },
 			'esc_url_raw'             => function( $url ) { return $url; },

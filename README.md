@@ -40,7 +40,7 @@ Full documentation:
    [latest stable zip](https://github.com/MrDemonWolf/mrdemonwolf-wp-plugin/releases/latest/download/mrdemonwolf-wp-plugin.zip).
 3. In wp-admin, go to `Plugins -> Add New -> Upload Plugin`, choose the zip,
    and install it.
-4. Activate the plugin. Its tables and the `tailsignal_manage` capability are
+4. Activate the plugin. Its tables and the `mrdw_manage` capability are
    created on activation.
 5. Open `MrDemonWolf -> General` and confirm both modules are enabled.
 
@@ -62,16 +62,16 @@ Full documentation:
 
 ### REST endpoints
 
-| Endpoint                                       | Method       | Access              |
-| ---------------------------------------------- | ------------ | ------------------- |
-| `/wp-json/packrelay/v1/forms/{form_id}/fields` | GET          | App Check token     |
-| `/wp-json/packrelay/v1/submit/{form_id}`       | POST         | App Check token     |
-| `/wp-json/tailsignal/v1/register`              | POST, DELETE | Expo push token     |
-| `/wp-json/tailsignal/v1/register/status`       | GET          | Expo push token     |
-| `/wp-json/tailsignal/v1/send`                  | POST         | `tailsignal_manage` |
-| `/wp-json/tailsignal/v1/stats`                 | GET          | `tailsignal_manage` |
-| `/wp-json/tailsignal/v1/devices/export`        | GET          | `tailsignal_manage` |
-| `/wp-json/tailsignal/v1/devices/import`        | POST         | `tailsignal_manage` |
+| Endpoint                                  | Method       | Access          |
+| ----------------------------------------- | ------------ | --------------- |
+| `/wp-json/mrdw/v1/forms/{form_id}/fields` | GET          | App Check token |
+| `/wp-json/mrdw/v1/submit/{form_id}`       | POST         | App Check token |
+| `/wp-json/mrdw/v1/register`               | POST, DELETE | Expo push token |
+| `/wp-json/mrdw/v1/register/status`        | GET          | Expo push token |
+| `/wp-json/mrdw/v1/send`                   | POST         | `mrdw_manage`   |
+| `/wp-json/mrdw/v1/stats`                  | GET          | `mrdw_manage`   |
+| `/wp-json/mrdw/v1/devices/export`         | GET          | `mrdw_manage`   |
+| `/wp-json/mrdw/v1/devices/import`         | POST         | `mrdw_manage`   |
 
 ### Configuration constants
 
@@ -167,7 +167,7 @@ Inside `apps/plugin`:
 
 - WordPress Coding Standards enforced in full on first-party code, with the
   merged module trees held to the security and correctness sniffs while their
-  style debt is paid down file by file.
+  style debt is paid down file by file. Only the `mrdw` prefix is permitted.
 - 417 unit tests across the two modules, run against PHP 8.3 through 8.5 in CI.
 - Every GitHub Action pinned to a commit SHA, with `persist-credentials`
   disabled on checkout.

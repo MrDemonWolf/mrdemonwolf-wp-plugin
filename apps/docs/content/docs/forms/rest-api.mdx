@@ -1,11 +1,11 @@
 ---
 title: Forms REST API
-description: Endpoints, authentication and error codes for the packrelay/v1 namespace.
+description: Endpoints, authentication and error codes for the mrdw/v1 namespace.
 ---
 
 import { Callout } from "fumadocs-ui/components/callout";
 
-Namespace: `packrelay/v1`. Base URL: `https://your-site.example/wp-json/packrelay/v1`.
+Namespace: `mrdw/v1`. Base URL: `https://your-site.example/wp-json/mrdw/v1`.
 
 ## Authentication
 
@@ -60,11 +60,11 @@ listed in **Allowed origins**; with that setting blank, no cross-origin request 
 
 ## Hooks
 
-`packrelay_appcheck_verified` fires after a token verifies, with the app ID, form ID and token —
+`mrdw_forms_appcheck_verified` fires after a token verifies, with the app ID, form ID and token —
 useful for auditing.
 
 ```php
-add_action( 'packrelay_appcheck_verified', function ( $app_id, $form_id, $token ) {
+add_action( 'mrdw_forms_appcheck_verified', function ( $app_id, $form_id, $token ) {
 	error_log( "App Check OK for form {$form_id} from app {$app_id}" );
 }, 10, 3 );
 ```

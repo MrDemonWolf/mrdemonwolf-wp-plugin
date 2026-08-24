@@ -16,7 +16,7 @@ rejected with an error rather than sent.
 ## Scheduling
 
 Give a send a future date and time and it is stored as `scheduled` and dispatched by the
-`tailsignal_send_scheduled` cron event. Scheduled sends can be cancelled from **History** while they
+`mrdw_push_send_scheduled` cron event. Scheduled sends can be cancelled from **History** while they
 are still pending.
 
 <Callout type="info">
@@ -44,7 +44,7 @@ Usable in the default title and body:
 
 ## Delivery receipts
 
-Expo returns a ticket per message, not a final result. The `tailsignal_check_receipts` cron event
+Expo returns a ticket per message, not a final result. The `mrdw_push_check_receipts` cron event
 collects those tickets later and records the outcome, so **History** shows what actually arrived
 rather than just what was accepted for delivery.
 

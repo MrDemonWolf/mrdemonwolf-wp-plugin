@@ -1,12 +1,12 @@
 <?php
 /**
- * Tests for PackRelay core class.
+ * Tests for MRDW_Forms core class.
  *
- * @package    PackRelay
+ * @package    MrDemonWolf
  * @copyright  2026 MrDemonWolf, Inc.
  */
 
-namespace PackRelay\Tests;
+namespace MRDW_Forms\Tests;
 
 use Brain\Monkey\Functions;
 
@@ -16,7 +16,7 @@ class CoreTest extends TestCase {
 		parent::setUp();
 
 		// Reset the singleton.
-		$reflection = new \ReflectionClass( \PackRelay::class );
+		$reflection = new \ReflectionClass( \MRDW_Forms::class );
 		$instance   = $reflection->getProperty( 'instance' );
 		$instance->setValue( null, null );
 
@@ -24,7 +24,7 @@ class CoreTest extends TestCase {
 		Functions\stubs(
 			array(
 				'get_option' => function ( $key, $default = false ) {
-					if ( 'packrelay_settings' === $key ) {
+					if ( 'mrdw_forms_settings' === $key ) {
 						return array(
 							'form_provider'       => 'divi',
 							'firebase_project_id' => 'mrdemonwolf-official-app',
@@ -40,26 +40,26 @@ class CoreTest extends TestCase {
 	}
 
 	public function test_get_instance_returns_singleton(): void {
-		$instance1 = \PackRelay::get_instance();
-		$instance2 = \PackRelay::get_instance();
+		$instance1 = \MRDW_Forms::get_instance();
+		$instance2 = \MRDW_Forms::get_instance();
 
 		$this->assertSame( $instance1, $instance2 );
 	}
 
-	public function test_get_instance_returns_packrelay(): void {
-		$instance = \PackRelay::get_instance();
+	public function test_get_instance_returns_forms_module(): void {
+		$instance = \MRDW_Forms::get_instance();
 
-		$this->assertInstanceOf( \PackRelay::class, $instance );
+		$this->assertInstanceOf( \MRDW_Forms::class, $instance );
 	}
 
 	public function test_get_loader_returns_loader(): void {
-		$instance = \PackRelay::get_instance();
+		$instance = \MRDW_Forms::get_instance();
 
-		$this->assertInstanceOf( \PackRelay_Loader::class, $instance->get_loader() );
+		$this->assertInstanceOf( \MRDW_Forms_Loader::class, $instance->get_loader() );
 	}
 
 	public function test_hooks_are_registered(): void {
-		$instance = \PackRelay::get_instance();
+		$instance = \MRDW_Forms::get_instance();
 		$loader   = $instance->get_loader();
 		$actions  = $loader->get_actions();
 
@@ -71,7 +71,7 @@ class CoreTest extends TestCase {
 	}
 
 	public function test_cors_filter_registered(): void {
-		$instance = \PackRelay::get_instance();
+		$instance = \MRDW_Forms::get_instance();
 		$loader   = $instance->get_loader();
 		$filters  = $loader->get_filters();
 
@@ -80,7 +80,7 @@ class CoreTest extends TestCase {
 	}
 
 	public function test_provider_dependency_notice_method_exists(): void {
-		$instance = \PackRelay::get_instance();
+		$instance = \MRDW_Forms::get_instance();
 		$loader   = $instance->get_loader();
 		$actions  = $loader->get_actions();
 

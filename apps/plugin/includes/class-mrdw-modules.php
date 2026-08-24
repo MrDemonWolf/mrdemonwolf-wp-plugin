@@ -22,7 +22,7 @@ class MRDW_Modules {
 	/**
 	 * Option storing the per-module enabled flags.
 	 */
-	const OPTION_NAME = 'mrdemonwolf_modules';
+	const OPTION_NAME = 'mrdw_modules';
 
 	/**
 	 * Every module this plugin knows about.

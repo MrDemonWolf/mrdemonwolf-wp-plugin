@@ -10,15 +10,15 @@
  * @wordpress-plugin
  * Plugin Name:       MrDemonWolf
  * Plugin URI:        https://mrdemonwolf.github.io/mrdemonwolf-wp-plugin/
- * Description:       Connects the MrDemonWolf site to the MrDemonWolf app. Accepts form submissions over the REST API (Divi, WPForms, Gravity Forms) and sends Expo push notifications. Successor to PackRelay and TailSignal.
- * Version:           1.4.0
+ * Description:       Connects the MrDemonWolf site to the MrDemonWolf app. Accepts form submissions over the REST API (Divi, WPForms, Gravity Forms) and sends Expo push notifications. One plugin, two switchable modules.
+ * Version:           2.0.0
  * Requires at least: 6.0
  * Requires PHP:      8.3
  * Author:            MrDemonWolf, Inc.
  * Author URI:        https://mrdemonwolf.com
  * License:           GPL-2.0-or-later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
- * Text Domain:       mrdemonwolf
+ * Text Domain:       mrdw
  * Domain Path:       /languages
  * Update URI:        https://github.com/MrDemonWolf/mrdemonwolf-wp-plugin
  */
@@ -27,7 +27,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'MRDW_VERSION', '1.4.0' );
+define( 'MRDW_VERSION', '2.0.0' );
 define( 'MRDW_PLUGIN_FILE', __FILE__ );
 define( 'MRDW_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'MRDW_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
@@ -41,43 +41,32 @@ require_once MRDW_PLUGIN_DIR . 'includes/class-mrdw-conflict.php';
 require_once MRDW_PLUGIN_DIR . 'includes/class-mrdw-updater.php';
 require_once MRDW_PLUGIN_DIR . 'includes/class-mrdw-admin.php';
 
-/**
- * The Forms module was PackRelay; the Push module was TailSignal. Their code is
- * carried over unchanged, so the constants they expect are mapped onto the
- * module directories rather than the files being rewritten.
- */
-define( 'PACKRELAY_VERSION', MRDW_VERSION );
-define( 'PACKRELAY_PLUGIN_FILE', MRDW_PLUGIN_FILE );
-define( 'PACKRELAY_PLUGIN_DIR', MRDW_PLUGIN_DIR . 'modules/forms/' );
-define( 'PACKRELAY_PLUGIN_URL', MRDW_PLUGIN_URL . 'modules/forms/' );
-define( 'PACKRELAY_PLUGIN_BASENAME', MRDW_PLUGIN_BASENAME );
-
-define( 'TAILSIGNAL_VERSION', MRDW_VERSION );
-define( 'TAILSIGNAL_PLUGIN_FILE', MRDW_PLUGIN_FILE );
-define( 'TAILSIGNAL_PLUGIN_DIR', MRDW_PLUGIN_DIR . 'modules/push/' );
-define( 'TAILSIGNAL_PLUGIN_URL', MRDW_PLUGIN_URL . 'modules/push/' );
-define( 'TAILSIGNAL_PLUGIN_BASENAME', MRDW_PLUGIN_BASENAME );
+// Module roots.
+define( 'MRDW_FORMS_DIR', MRDW_PLUGIN_DIR . 'modules/forms/' );
+define( 'MRDW_FORMS_URL', MRDW_PLUGIN_URL . 'modules/forms/' );
+define( 'MRDW_PUSH_DIR', MRDW_PLUGIN_DIR . 'modules/push/' );
+define( 'MRDW_PUSH_URL', MRDW_PLUGIN_URL . 'modules/push/' );
 
 /**
  * Load the Forms module.
  */
 function mrdw_load_forms_module() {
-	require_once PACKRELAY_PLUGIN_DIR . 'includes/providers/class-packrelay-provider.php';
-	require_once PACKRELAY_PLUGIN_DIR . 'includes/providers/class-packrelay-provider-divi.php';
-	require_once PACKRELAY_PLUGIN_DIR . 'includes/providers/class-packrelay-provider-wpforms.php';
-	require_once PACKRELAY_PLUGIN_DIR . 'includes/providers/class-packrelay-provider-gravityforms.php';
-	require_once PACKRELAY_PLUGIN_DIR . 'includes/class-packrelay-provider-factory.php';
-	require_once PACKRELAY_PLUGIN_DIR . 'includes/class-packrelay-loader.php';
-	require_once PACKRELAY_PLUGIN_DIR . 'includes/class-packrelay-activator.php';
-	require_once PACKRELAY_PLUGIN_DIR . 'includes/class-packrelay-deactivator.php';
-	require_once PACKRELAY_PLUGIN_DIR . 'includes/class-packrelay-settings.php';
-	require_once PACKRELAY_PLUGIN_DIR . 'includes/class-packrelay-appcheck.php';
-	require_once PACKRELAY_PLUGIN_DIR . 'includes/class-packrelay-entry-store.php';
-	require_once PACKRELAY_PLUGIN_DIR . 'includes/class-packrelay-entries-list-table.php';
-	require_once PACKRELAY_PLUGIN_DIR . 'includes/class-packrelay-entries-page.php';
-	require_once PACKRELAY_PLUGIN_DIR . 'includes/class-packrelay-divi-submissions.php';
-	require_once PACKRELAY_PLUGIN_DIR . 'includes/class-packrelay-rest-api.php';
-	require_once PACKRELAY_PLUGIN_DIR . 'includes/class-packrelay.php';
+	require_once MRDW_FORMS_DIR . 'includes/providers/class-mrdw-forms-provider.php';
+	require_once MRDW_FORMS_DIR . 'includes/providers/class-mrdw-forms-provider-divi.php';
+	require_once MRDW_FORMS_DIR . 'includes/providers/class-mrdw-forms-provider-wpforms.php';
+	require_once MRDW_FORMS_DIR . 'includes/providers/class-mrdw-forms-provider-gravityforms.php';
+	require_once MRDW_FORMS_DIR . 'includes/class-mrdw-forms-provider-factory.php';
+	require_once MRDW_FORMS_DIR . 'includes/class-mrdw-forms-loader.php';
+	require_once MRDW_FORMS_DIR . 'includes/class-mrdw-forms-activator.php';
+	require_once MRDW_FORMS_DIR . 'includes/class-mrdw-forms-deactivator.php';
+	require_once MRDW_FORMS_DIR . 'includes/class-mrdw-forms-settings.php';
+	require_once MRDW_FORMS_DIR . 'includes/class-mrdw-forms-appcheck.php';
+	require_once MRDW_FORMS_DIR . 'includes/class-mrdw-forms-entry-store.php';
+	require_once MRDW_FORMS_DIR . 'includes/class-mrdw-forms-entries-list-table.php';
+	require_once MRDW_FORMS_DIR . 'includes/class-mrdw-forms-entries-page.php';
+	require_once MRDW_FORMS_DIR . 'includes/class-mrdw-forms-divi-submissions.php';
+	require_once MRDW_FORMS_DIR . 'includes/class-mrdw-forms-rest-api.php';
+	require_once MRDW_FORMS_DIR . 'includes/class-mrdw-forms.php';
 }
 
 /**
@@ -85,33 +74,33 @@ function mrdw_load_forms_module() {
  */
 function mrdw_run_forms_module() {
 	mrdw_load_forms_module();
-	PackRelay::get_instance()->run();
+	MRDW_Forms::get_instance()->run();
 }
 
 /**
  * Load the Push module.
  */
 function mrdw_load_push_module() {
-	require_once TAILSIGNAL_PLUGIN_DIR . 'includes/class-tailsignal-loader.php';
-	require_once TAILSIGNAL_PLUGIN_DIR . 'includes/class-tailsignal-i18n.php';
-	require_once TAILSIGNAL_PLUGIN_DIR . 'includes/class-tailsignal-db.php';
-	require_once TAILSIGNAL_PLUGIN_DIR . 'includes/class-tailsignal-activator.php';
-	require_once TAILSIGNAL_PLUGIN_DIR . 'includes/class-tailsignal-deactivator.php';
-	require_once TAILSIGNAL_PLUGIN_DIR . 'includes/class-tailsignal-expo.php';
-	require_once TAILSIGNAL_PLUGIN_DIR . 'includes/class-tailsignal-notification.php';
-	require_once TAILSIGNAL_PLUGIN_DIR . 'includes/class-tailsignal-cron.php';
-	require_once TAILSIGNAL_PLUGIN_DIR . 'includes/class-tailsignal.php';
-	require_once TAILSIGNAL_PLUGIN_DIR . 'rest-api/class-tailsignal-rest-controller.php';
+	require_once MRDW_PUSH_DIR . 'includes/class-mrdw-push-loader.php';
+	require_once MRDW_PUSH_DIR . 'includes/class-mrdw-push-i18n.php';
+	require_once MRDW_PUSH_DIR . 'includes/class-mrdw-push-db.php';
+	require_once MRDW_PUSH_DIR . 'includes/class-mrdw-push-activator.php';
+	require_once MRDW_PUSH_DIR . 'includes/class-mrdw-push-deactivator.php';
+	require_once MRDW_PUSH_DIR . 'includes/class-mrdw-push-expo.php';
+	require_once MRDW_PUSH_DIR . 'includes/class-mrdw-push-notification.php';
+	require_once MRDW_PUSH_DIR . 'includes/class-mrdw-push-cron.php';
+	require_once MRDW_PUSH_DIR . 'includes/class-mrdw-push.php';
+	require_once MRDW_PUSH_DIR . 'rest-api/class-mrdw-push-rest-controller.php';
 
 	if ( is_admin() ) {
-		require_once TAILSIGNAL_PLUGIN_DIR . 'admin/class-tailsignal-admin.php';
-		require_once TAILSIGNAL_PLUGIN_DIR . 'admin/class-tailsignal-admin-dashboard.php';
-		require_once TAILSIGNAL_PLUGIN_DIR . 'admin/class-tailsignal-admin-send.php';
-		require_once TAILSIGNAL_PLUGIN_DIR . 'admin/class-tailsignal-admin-devices.php';
-		require_once TAILSIGNAL_PLUGIN_DIR . 'admin/class-tailsignal-admin-groups.php';
-		require_once TAILSIGNAL_PLUGIN_DIR . 'admin/class-tailsignal-admin-history.php';
-		require_once TAILSIGNAL_PLUGIN_DIR . 'admin/class-tailsignal-admin-settings.php';
-		require_once TAILSIGNAL_PLUGIN_DIR . 'admin/class-tailsignal-meta-box.php';
+		require_once MRDW_PUSH_DIR . 'admin/class-mrdw-push-admin.php';
+		require_once MRDW_PUSH_DIR . 'admin/class-mrdw-push-admin-dashboard.php';
+		require_once MRDW_PUSH_DIR . 'admin/class-mrdw-push-admin-send.php';
+		require_once MRDW_PUSH_DIR . 'admin/class-mrdw-push-admin-devices.php';
+		require_once MRDW_PUSH_DIR . 'admin/class-mrdw-push-admin-groups.php';
+		require_once MRDW_PUSH_DIR . 'admin/class-mrdw-push-admin-history.php';
+		require_once MRDW_PUSH_DIR . 'admin/class-mrdw-push-admin-settings.php';
+		require_once MRDW_PUSH_DIR . 'admin/class-mrdw-push-meta-box.php';
 	}
 }
 
@@ -121,7 +110,7 @@ function mrdw_load_push_module() {
 function mrdw_run_push_module() {
 	mrdw_load_push_module();
 
-	$plugin = new TailSignal();
+	$plugin = new MRDW_Push();
 	$plugin->run();
 }
 
@@ -162,12 +151,12 @@ function mrdw_activate() {
 
 	if ( MRDW_Modules::is_enabled( 'forms' ) ) {
 		mrdw_load_forms_module();
-		PackRelay_Activator::activate();
+		MRDW_Forms_Activator::activate();
 	}
 
 	if ( MRDW_Modules::is_enabled( 'push' ) ) {
 		mrdw_load_push_module();
-		TailSignal_Activator::activate();
+		MRDW_Push_Activator::activate();
 	}
 }
 register_activation_hook( __FILE__, 'mrdw_activate' );
@@ -180,12 +169,12 @@ function mrdw_deactivate() {
 		return;
 	}
 
-	if ( MRDW_Modules::is_enabled( 'forms' ) && class_exists( 'PackRelay_Deactivator' ) ) {
-		PackRelay_Deactivator::deactivate();
+	if ( MRDW_Modules::is_enabled( 'forms' ) && class_exists( 'MRDW_Forms_Deactivator' ) ) {
+		MRDW_Forms_Deactivator::deactivate();
 	}
 
-	if ( MRDW_Modules::is_enabled( 'push' ) && class_exists( 'TailSignal_Deactivator' ) ) {
-		TailSignal_Deactivator::deactivate();
+	if ( MRDW_Modules::is_enabled( 'push' ) && class_exists( 'MRDW_Push_Deactivator' ) ) {
+		MRDW_Push_Deactivator::deactivate();
 	}
 }
 register_deactivation_hook( __FILE__, 'mrdw_deactivate' );
@@ -214,12 +203,12 @@ function mrdw_on_modules_changed( $old_value, $value ) {
 
 	if ( $newly_enabled( 'forms' ) ) {
 		mrdw_load_forms_module();
-		PackRelay_Activator::activate();
+		MRDW_Forms_Activator::activate();
 	}
 
 	if ( $newly_enabled( 'push' ) ) {
 		mrdw_load_push_module();
-		TailSignal_Activator::activate();
+		MRDW_Push_Activator::activate();
 	}
 }
 add_action( 'update_option_' . MRDW_Modules::OPTION_NAME, 'mrdw_on_modules_changed', 10, 2 );

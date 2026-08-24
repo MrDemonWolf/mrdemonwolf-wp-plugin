@@ -1,22 +1,22 @@
 <?php
 /**
- * Tests for PackRelay_Settings.
+ * Tests for MRDW_Forms_Settings.
  *
- * @package    PackRelay
+ * @package    MrDemonWolf
  * @copyright  2026 MrDemonWolf, Inc.
  */
 
-namespace PackRelay\Tests;
+namespace MRDW_Forms\Tests;
 
 use Brain\Monkey\Functions;
 
 class SettingsTest extends TestCase {
 
-	private \PackRelay_Settings $settings;
+	private \MRDW_Forms_Settings $settings;
 
 	protected function setUp(): void {
 		parent::setUp();
-		$this->settings = new \PackRelay_Settings();
+		$this->settings = new \MRDW_Forms_Settings();
 	}
 
 	public function test_add_settings_page(): void {
@@ -27,7 +27,7 @@ class SettingsTest extends TestCase {
 				\Mockery::type( 'string' ),
 				\Mockery::type( 'string' ),
 				'manage_options',
-				'packrelay',
+				'mrdw-forms',
 				\Mockery::type( 'array' )
 			);
 
@@ -75,7 +75,7 @@ class SettingsTest extends TestCase {
 	}
 
 	public function test_get_defaults(): void {
-		$defaults = \PackRelay_Settings::get_defaults();
+		$defaults = \MRDW_Forms_Settings::get_defaults();
 
 		$this->assertArrayHasKey( 'form_provider', $defaults );
 		$this->assertArrayHasKey( 'firebase_project_id', $defaults );
@@ -90,10 +90,10 @@ class SettingsTest extends TestCase {
 
 	public function test_get_settings_merges_with_defaults(): void {
 		Functions\expect( 'get_option' )
-			->with( 'packrelay_settings', \Mockery::any() )
+			->with( 'mrdw_forms_settings', \Mockery::any() )
 			->andReturn( array( 'firebase_project_id' => 'custom-project' ) );
 
-		$settings = \PackRelay_Settings::get_settings();
+		$settings = \MRDW_Forms_Settings::get_settings();
 
 		$this->assertSame( 'custom-project', $settings['firebase_project_id'] );
 		$this->assertSame( '', $settings['notification_email'] );
@@ -102,7 +102,7 @@ class SettingsTest extends TestCase {
 	}
 
 	public function test_get_template_variables(): void {
-		$vars = \PackRelay_Settings::get_template_variables();
+		$vars = \MRDW_Forms_Settings::get_template_variables();
 
 		$this->assertArrayHasKey( '{site_name}', $vars );
 		$this->assertArrayHasKey( '{form_name}', $vars );
@@ -129,7 +129,7 @@ class SettingsTest extends TestCase {
 			),
 		);
 
-		$result = \PackRelay_Settings::parse_template( $template, $data );
+		$result = \MRDW_Forms_Settings::parse_template( $template, $data );
 
 		$this->assertStringContainsString( 'Contact', $result );
 		$this->assertStringContainsString( 'My Site', $result );
@@ -151,7 +151,7 @@ class SettingsTest extends TestCase {
 			),
 		);
 
-		$result = \PackRelay_Settings::parse_template( $template, $data );
+		$result = \MRDW_Forms_Settings::parse_template( $template, $data );
 
 		$this->assertStringContainsString( 'Hello Jane', $result );
 		$this->assertStringContainsString( 'jane@example.com', $result );

@@ -2,11 +2,11 @@
 /**
  * Base test case with Brain Monkey setup.
  *
- * @package    PackRelay
+ * @package    MrDemonWolf
  * @copyright  2026 MrDemonWolf, Inc.
  */
 
-namespace PackRelay\Tests;
+namespace MRDW_Forms\Tests;
 
 use Brain\Monkey;
 use Brain\Monkey\Functions;
@@ -28,8 +28,8 @@ abstract class TestCase extends PHPUnitTestCase {
 		Monkey\setUp();
 
 		// Clear static caches to avoid stale data across tests.
-		\PackRelay_Settings::clear_cache();
-		\PackRelay_Provider_Factory::clear_cache();
+		\MRDW_Forms_Settings::clear_cache();
+		\MRDW_Forms_Provider_Factory::clear_cache();
 
 		// Common WordPress function stubs.
 		Functions\stubs(
@@ -71,10 +71,10 @@ abstract class TestCase extends PHPUnitTestCase {
 					return dirname( $file ) . '/';
 				},
 				'plugin_dir_url'      => function () {
-					return 'https://example.com/wp-content/plugins/packrelay/';
+					return 'https://example.com/wp-content/plugins/mrdemonwolf-wp-plugin/';
 				},
 				'plugin_basename'     => function ( $file ) {
-					return 'packrelay/' . basename( $file );
+					return 'mrdemonwolf-wp-plugin/' . basename( $file );
 				},
 				'shortcode_parse_atts' => function ( $text ) {
 					$atts    = array();
@@ -119,7 +119,7 @@ abstract class TestCase extends PHPUnitTestCase {
 					return true;
 				},
 				'get_admin_page_title' => function () {
-					return 'PackRelay Settings';
+					return 'MRDW_Forms Settings';
 				},
 				'current_user_can'    => function () {
 					return true;
@@ -174,8 +174,8 @@ abstract class TestCase extends PHPUnitTestCase {
 	 * Tear down Brain Monkey.
 	 */
 	protected function tearDown(): void {
-		\PackRelay_Settings::clear_cache();
-		\PackRelay_Provider_Factory::clear_cache();
+		\MRDW_Forms_Settings::clear_cache();
+		\MRDW_Forms_Provider_Factory::clear_cache();
 		Monkey\tearDown();
 		parent::tearDown();
 	}

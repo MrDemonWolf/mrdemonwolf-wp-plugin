@@ -11,20 +11,33 @@ apps/docs     Fumadocs site, static-exported to GitHub Pages.
 ## The merge, and the rules that come from it
 
 This plugin is PackRelay and TailSignal merged into one. Both upstream repos are **archived**.
-Their code lives under `apps/plugin/modules/forms/` and `apps/plugin/modules/push/` and was copied
-in **verbatim**.
+Their code lives under `apps/plugin/modules/forms/` and `apps/plugin/modules/push/`.
 
-**Hard rules. Breaking any of these breaks the MrDemonWolf app or existing installs:**
+**As of 2.0.0 everything is renamed onto a single `mrdw` namespace.** 1.4.0 deliberately preserved
+the predecessors' identifiers so the merge was a drop-in replacement; that constraint is gone.
 
-- Do not rename PHP classes. `PackRelay_*` and `TailSignal_*` stay as they are.
-- Do not change REST namespaces or route paths: `packrelay/v1`, `tailsignal/v1`.
-- Do not rename options (`packrelay_settings`, `tailsignal_*`), database tables
-  (`{prefix}packrelay_entries`, `{prefix}tailsignal_*`), or the `tailsignal_manage` capability.
-- Do not change admin page slugs (`packrelay-entries`, `tailsignal-devices`, …).
-- New first-party code is prefixed `MRDW_` / `mrdw_` and lives in `apps/plugin/includes/`.
+Current naming, which new code must follow:
 
-The bootstrap maps the old constants (`PACKRELAY_PLUGIN_DIR`, `TAILSIGNAL_PLUGIN_DIR`, …) onto the
-module directories, which is why the module code runs untouched. Do not remove those defines.
+| Thing       | Forms                             | Push                  | Shared         |
+| ----------- | --------------------------------- | --------------------- | -------------- |
+| Classes     | `MRDW_Forms_*`                    | `MRDW_Push_*`         | `MRDW_*`       |
+| Options     | `mrdw_forms_*`                    | `mrdw_push_*`         | `mrdw_modules` |
+| Tables      | `{prefix}mrdw_forms_*`            | `{prefix}mrdw_push_*` | —              |
+| Page slugs  | `mrdw-form-entries`, `mrdw-forms` | `mrdw-push-*`         | parent `mrdw`  |
+| REST        | `mrdw/v1`                         | `mrdw/v1`             | —              |
+| Capability  | —                                 | —                     | `mrdw_manage`  |
+| Text domain | —                                 | —                     | `mrdw`         |
+
+**The two modules share one REST namespace.** Before adding a route, check it does not collide with
+the other module's. Current routes: `/submit/{form_id}`, `/forms/{form_id}/fields` (Forms);
+`/register`, `/register/status`, `/send`, `/stats`, `/devices/export`, `/devices/import` (Push).
+
+`MRDW_FORMS_DIR` / `MRDW_PUSH_DIR` point at the module roots. There is no longer any legacy-constant
+mapping; do not reintroduce one.
+
+The only places PackRelay and TailSignal are still named are where they refer to the _historical
+plugins_: the conflict guard's display names, its tests, and the migration docs. Those are correct
+and must not be renamed.
 
 ## Layout
 
@@ -33,13 +46,13 @@ apps/plugin/
   mrdemonwolf.php            Bootstrap: constants, conflict guard, module load/run split
   uninstall.php              Removes both modules' data
   includes/
-    class-mrdw-modules.php   mrdemonwolf_modules option, is_enabled(), sanitize()
+    class-mrdw-modules.php   mrdw_modules option, is_enabled(), sanitize()
     class-mrdw-secrets.php   Constant-first secret resolution
     class-mrdw-conflict.php  Predecessor-still-active guard
     class-mrdw-updater.php   plugin-update-checker, stable/nightly channel
     class-mrdw-admin.php     Top-level menu + module settings screen
-  modules/forms/             Was PackRelay
-  modules/push/              Was TailSignal
+  modules/forms/             Was PackRelay; classes MRDW_Forms_*
+  modules/push/              Was TailSignal; classes MRDW_Push_*
   tests/forms/ tests/push/   Two separate suites, two separate bootstraps
 ```
 
@@ -58,8 +71,8 @@ composer test:forms                       # Forms only
 composer test:push                        # Push only
 ```
 
-PHPUnit 10 requires **filename == class name**. The Push suite's files were renamed from
-`test-foo.php` to `Test_TailSignal_Foo.php` for this reason; keep that convention.
+PHPUnit 10 requires **filename == class name**. The Push suite's files are named
+`Test_MRDW_Push_Foo.php` for this reason; keep that convention.
 
 `tests/forms/bootstrap.php` sets `ABSPATH` to a scratch dir under the system temp. Do not point it
 at the plugin directory — the WordPress stubs it writes then ship inside the release zip.
@@ -110,7 +123,7 @@ That API is real in plugin-update-checker v5.7 but is **not** in the published d
 
 Prefer core WordPress admin markup and classes; the General screen uses the Settings API and ships
 no CSS at all. The Push module's Tailwind is scoped on purpose — `tw-` prefix, `preflight: false`,
-`important: '#tailsignal-app'` — so it cannot leak into wp-admin. Rebuild with `bun run plugin:css`
+`important: '#mrdw-push-app'` — so it cannot leak into wp-admin. Rebuild with `bun run plugin:css`
 after editing any file listed in `apps/plugin/tailwind.config.js`.
 
 Note the two Tailwind majors: v3 for the plugin, v4 for the docs. `bunfig.toml` sets

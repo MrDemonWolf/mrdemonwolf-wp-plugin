@@ -13,7 +13,7 @@ This module was the **TailSignal** plugin.
 
 ## What it stores
 
-Six tables under the `{prefix}tailsignal_` prefix: devices, device metadata, groups, the
+Six tables under the `{prefix}mrdw_push_` prefix: devices, device metadata, groups, the
 device-to-group mapping, notifications, and per-send history.
 
 ## Settings
@@ -37,9 +37,9 @@ The portfolio post type has its own copy of the auto-notify, title, body and ima
 
 ## Permissions
 
-Everything in wp-admin and every write endpoint is gated on the `tailsignal_manage` capability,
+Everything in wp-admin and every write endpoint is gated on the `mrdw_manage` capability,
 which activation grants to administrators. Grant it to another role with:
 
 ```php
-get_role( 'editor' )->add_cap( 'tailsignal_manage' );
+get_role( 'editor' )->add_cap( 'mrdw_manage' );
 ```

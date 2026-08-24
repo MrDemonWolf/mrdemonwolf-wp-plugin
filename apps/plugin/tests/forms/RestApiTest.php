@@ -1,18 +1,18 @@
 <?php
 /**
- * Tests for PackRelay_REST_API.
+ * Tests for MRDW_Forms_REST_API.
  *
- * @package    PackRelay
+ * @package    MrDemonWolf
  * @copyright  2026 MrDemonWolf, Inc.
  */
 
-namespace PackRelay\Tests;
+namespace MRDW_Forms\Tests;
 
 use Brain\Monkey\Functions;
 
 class RestApiTest extends TestCase {
 
-	private \PackRelay_REST_API $rest_api;
+	private \MRDW_Forms_REST_API $rest_api;
 	private $mock_appcheck;
 	private $mock_provider;
 	private $mock_entry_store;
@@ -22,13 +22,13 @@ class RestApiTest extends TestCase {
 
 		$this->stub_settings();
 
-		$this->mock_appcheck   = \Mockery::mock( \PackRelay_AppCheck::class );
-		$this->mock_provider   = \Mockery::mock( \PackRelay_Provider::class );
-		$this->mock_entry_store = \Mockery::mock( \PackRelay_Entry_Store::class );
+		$this->mock_appcheck   = \Mockery::mock( \MRDW_Forms_AppCheck::class );
+		$this->mock_provider   = \Mockery::mock( \MRDW_Forms_Provider::class );
+		$this->mock_entry_store = \Mockery::mock( \MRDW_Forms_Entry_Store::class );
 
 		$this->mock_provider->shouldReceive( 'get_slug' )->andReturn( 'divi' )->byDefault();
 
-		$this->rest_api = new \PackRelay_REST_API(
+		$this->rest_api = new \MRDW_Forms_REST_API(
 			$this->mock_appcheck,
 			$this->mock_provider,
 			$this->mock_entry_store
@@ -48,7 +48,7 @@ class RestApiTest extends TestCase {
 
 		Functions\when( 'get_option' )->alias(
 			function ( $key, $default = false ) use ( $settings ) {
-				if ( 'packrelay_settings' === $key ) {
+				if ( 'mrdw_forms_settings' === $key ) {
 					return $settings;
 				}
 				if ( 'admin_email' === $key ) {
@@ -68,12 +68,12 @@ class RestApiTest extends TestCase {
 
 	public function test_submit_rejects_unallowed_form(): void {
 		Functions\expect( 'apply_filters' )
-			->with( 'packrelay_allowed_form_ids', \Mockery::any() )
+			->with( 'mrdw_forms_allowed_form_ids', \Mockery::any() )
 			->andReturnUsing( function ( $hook, $ids ) {
 				return $ids;
 			} );
 
-		$request = new \WP_REST_Request( 'POST', '/packrelay/v1/submit/999' );
+		$request = new \WP_REST_Request( 'POST', '/mrdw/v1/submit/999' );
 		$request->set_param( 'form_id', '999' );
 
 		$response = $this->rest_api->handle_submit( $request );
@@ -84,7 +84,7 @@ class RestApiTest extends TestCase {
 
 	public function test_submit_rejects_missing_appcheck_token(): void {
 		Functions\expect( 'apply_filters' )
-			->with( 'packrelay_allowed_form_ids', \Mockery::any() )
+			->with( 'mrdw_forms_allowed_form_ids', \Mockery::any() )
 			->andReturnUsing( function ( $hook, $ids ) {
 				return $ids;
 			} );
@@ -102,7 +102,7 @@ class RestApiTest extends TestCase {
 				'message' => 'App Check token is missing.',
 			) );
 
-		$request = new \WP_REST_Request( 'POST', '/packrelay/v1/submit/123' );
+		$request = new \WP_REST_Request( 'POST', '/mrdw/v1/submit/123' );
 		$request->set_param( 'form_id', '123' );
 		$request->set_param( 'fields', array( '1' => 'John' ) );
 
@@ -114,7 +114,7 @@ class RestApiTest extends TestCase {
 
 	public function test_submit_rejects_missing_fields(): void {
 		Functions\expect( 'apply_filters' )
-			->with( 'packrelay_allowed_form_ids', \Mockery::any() )
+			->with( 'mrdw_forms_allowed_form_ids', \Mockery::any() )
 			->andReturnUsing( function ( $hook, $ids ) {
 				return $ids;
 			} );
@@ -132,7 +132,7 @@ class RestApiTest extends TestCase {
 			->with( '123' )
 			->andReturn( array() );
 
-		$request = new \WP_REST_Request( 'POST', '/packrelay/v1/submit/123' );
+		$request = new \WP_REST_Request( 'POST', '/mrdw/v1/submit/123' );
 		$request->set_param( 'form_id', '123' );
 		$request->set_param( 'app_check_token', 'valid-token' );
 		// No fields set.
@@ -145,7 +145,7 @@ class RestApiTest extends TestCase {
 
 	public function test_submit_rejects_non_scalar_field_values(): void {
 		Functions\expect( 'apply_filters' )
-			->with( 'packrelay_allowed_form_ids', \Mockery::any() )
+			->with( 'mrdw_forms_allowed_form_ids', \Mockery::any() )
 			->andReturnUsing( function ( $hook, $ids ) {
 				return $ids;
 			} );
@@ -159,7 +159,7 @@ class RestApiTest extends TestCase {
 			->once()
 			->andReturn( array( 'success' => true, 'app_id' => 'test-app' ) );
 
-		$request = new \WP_REST_Request( 'POST', '/packrelay/v1/submit/123' );
+		$request = new \WP_REST_Request( 'POST', '/mrdw/v1/submit/123' );
 		$request->set_param( 'form_id', '123' );
 		$request->set_param( 'app_check_token', 'valid-token' );
 		$request->set_param( 'fields', array( '1' => array( 'nested' => 'array' ) ) );
@@ -179,12 +179,12 @@ class RestApiTest extends TestCase {
 
 	public function test_get_fields_rejects_unallowed_form(): void {
 		Functions\expect( 'apply_filters' )
-			->with( 'packrelay_allowed_form_ids', \Mockery::any() )
+			->with( 'mrdw_forms_allowed_form_ids', \Mockery::any() )
 			->andReturnUsing( function ( $hook, $ids ) {
 				return $ids;
 			} );
 
-		$request = new \WP_REST_Request( 'GET', '/packrelay/v1/forms/999/fields' );
+		$request = new \WP_REST_Request( 'GET', '/mrdw/v1/forms/999/fields' );
 		$request->set_param( 'form_id', '999' );
 
 		$response = $this->rest_api->handle_get_fields( $request );
@@ -194,7 +194,7 @@ class RestApiTest extends TestCase {
 
 	public function test_get_fields_returns_field_structure(): void {
 		Functions\expect( 'apply_filters' )
-			->with( 'packrelay_allowed_form_ids', \Mockery::any() )
+			->with( 'mrdw_forms_allowed_form_ids', \Mockery::any() )
 			->andReturnUsing( function ( $hook, $ids ) {
 				return $ids;
 			} );
@@ -221,7 +221,7 @@ class RestApiTest extends TestCase {
 				)
 			);
 
-		$request = new \WP_REST_Request( 'GET', '/packrelay/v1/forms/123/fields' );
+		$request = new \WP_REST_Request( 'GET', '/mrdw/v1/forms/123/fields' );
 		$request->set_param( 'form_id', '123' );
 
 		$response = $this->rest_api->handle_get_fields( $request );
@@ -234,7 +234,7 @@ class RestApiTest extends TestCase {
 		$this->assertSame( 'name', $data['fields'][0]['type'] );
 	}
 
-	public function test_cors_headers_only_for_packrelay_routes(): void {
+	public function test_cors_headers_only_for_mrdw_forms_routes(): void {
 		$request = new \WP_REST_Request( 'GET', '/wp/v2/posts' );
 		$result  = new \WP_HTTP_Response();
 		$server  = new \WP_REST_Server();
@@ -248,7 +248,7 @@ class RestApiTest extends TestCase {
 		$this->stub_settings( array( 'allowed_form_ids' => '42:0' ) );
 
 		Functions\expect( 'apply_filters' )
-			->with( 'packrelay_allowed_form_ids', \Mockery::any() )
+			->with( 'mrdw_forms_allowed_form_ids', \Mockery::any() )
 			->andReturnUsing( function ( $hook, $ids ) {
 				return $ids;
 			} );
@@ -270,15 +270,15 @@ class RestApiTest extends TestCase {
 		$this->mock_provider->shouldReceive( 'send_notifications' );
 
 		Functions\expect( 'do_action' )
-			->with( 'packrelay_entry_created', \Mockery::any(), \Mockery::any(), \Mockery::any(), \Mockery::any() );
+			->with( 'mrdw_forms_entry_created', \Mockery::any(), \Mockery::any(), \Mockery::any(), \Mockery::any() );
 
 		Functions\expect( 'apply_filters' )
-			->with( 'packrelay_rest_response', \Mockery::any(), \Mockery::any(), \Mockery::any() )
+			->with( 'mrdw_forms_rest_response', \Mockery::any(), \Mockery::any(), \Mockery::any() )
 			->andReturnUsing( function ( $hook, $response ) {
 				return $response;
 			} );
 
-		$request = new \WP_REST_Request( 'POST', '/packrelay/v1/submit/42:0' );
+		$request = new \WP_REST_Request( 'POST', '/mrdw/v1/submit/42:0' );
 		$request->set_param( 'form_id', '42:0' );
 		$request->set_param( 'app_check_token', 'valid-token' );
 		$request->set_param( 'fields', array( '0' => 'John' ) );

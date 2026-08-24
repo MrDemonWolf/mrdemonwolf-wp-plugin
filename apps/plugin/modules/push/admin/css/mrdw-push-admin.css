@@ -1,0 +1,1475 @@
+/**
+ * MRDW_Push Admin Styles
+ *
+ * Branded design system for MRDW_Push WordPress admin.
+ * Works alongside Tailwind CSS (tw- prefix).
+ */
+
+/* ── Design Tokens ──────────────────────────────────── */
+:root {
+	--ts-brand: #0FACED;
+	--ts-brand-light: #edf9ff;
+	--ts-brand-border: #a3ddfb;
+	--ts-brand-hover: #0991d4;
+	--ts-brand-text: #064a6e;
+	--ts-brand-dark: #091533;
+	--ts-card-bg: #ffffff;
+	--ts-card-border: #e2e8f0;
+	--ts-card-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.03);
+	--ts-card-shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.07);
+	--ts-radius: 10px;
+	--ts-radius-sm: 6px;
+	--ts-bg: #f8fafc;
+	--ts-text: #091533;
+	--ts-text-secondary: #475569;
+	--ts-text-muted: #94a3b8;
+	--ts-border: #e2e8f0;
+	--ts-success: #2d8a4e;
+	--ts-success-bg: #ecfdf3;
+	--ts-danger: #c4320a;
+	--ts-danger-bg: #fef2ee;
+	--ts-warning: #b54708;
+	--ts-warning-bg: #fffaeb;
+	--ts-info: #0FACED;
+	--ts-info-bg: #edf9ff;
+}
+
+/* ── Page Wrapper ───────────────────────────────────── */
+#mrdw-push-app.wrap {
+	max-width: 1200px;
+	padding-top: 10px;
+}
+
+/* ── Base Transitions ───────────────────────────────── */
+#mrdw-push-app .button,
+#mrdw-push-app a {
+	transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+}
+
+/* ── Page Header ────────────────────────────────────── */
+.mrdw-push-page-header {
+	margin-bottom: 24px;
+}
+
+.mrdw-push-page-header h1 {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	font-size: 22px;
+	font-weight: 700;
+	color: var(--ts-text);
+	margin: 0 0 4px;
+	line-height: 1.3;
+}
+
+.mrdw-push-page-header-icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 32px;
+	height: 32px;
+	border-radius: 8px;
+	background: linear-gradient(135deg, #0FACED 0%, #0991d4 100%);
+	color: #fff;
+	font-size: 16px;
+	flex-shrink: 0;
+}
+
+.mrdw-push-page-header-icon .dashicons {
+	font-size: 18px;
+	width: 18px;
+	height: 18px;
+	line-height: 1;
+}
+
+.mrdw-push-page-desc {
+	font-size: 13px;
+	color: var(--ts-text-secondary);
+	margin: 0;
+	line-height: 1.5;
+}
+
+/* ── Cards & Containers ─────────────────────────────── */
+.mrdw-push-card {
+	background: var(--ts-card-bg);
+	border: 1px solid var(--ts-card-border);
+	border-radius: var(--ts-radius);
+	box-shadow: var(--ts-card-shadow);
+	transition: box-shadow 0.2s ease;
+}
+
+.mrdw-push-card:hover {
+	box-shadow: var(--ts-card-shadow-hover);
+}
+
+.mrdw-push-card-header {
+	padding: 16px 20px;
+	border-bottom: 1px solid var(--ts-border);
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.mrdw-push-card-header h2,
+.mrdw-push-card-header h3 {
+	font-size: 12px;
+	font-weight: 700;
+	color: var(--ts-text-muted);
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+	margin: 0;
+}
+
+.mrdw-push-card-body {
+	padding: 20px;
+}
+
+/* Section cards — legacy compat */
+.mrdw-push-section {
+	background: var(--ts-card-bg);
+	border: 1px solid var(--ts-card-border);
+	border-radius: var(--ts-radius);
+	box-shadow: var(--ts-card-shadow);
+	transition: box-shadow 0.2s ease;
+}
+
+.mrdw-push-section:hover {
+	box-shadow: var(--ts-card-shadow-hover);
+}
+
+.mrdw-push-section-header {
+	font-size: 12px;
+	font-weight: 700;
+	color: var(--ts-text-muted);
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+}
+
+/* ── Stat Cards ─────────────────────────────────────── */
+.mrdw-push-stat-card {
+	background: var(--ts-card-bg);
+	border: 1px solid var(--ts-card-border);
+	border-radius: var(--ts-radius);
+	box-shadow: var(--ts-card-shadow);
+	padding: 20px;
+	position: relative;
+	overflow: hidden;
+	transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.mrdw-push-stat-card:hover {
+	box-shadow: var(--ts-card-shadow-hover);
+	transform: translateY(-1px);
+}
+
+.mrdw-push-stat-card::before {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	height: 3px;
+}
+
+.mrdw-push-stat-card--brand::before { background: linear-gradient(90deg, #0FACED, #5cc8f5); }
+.mrdw-push-stat-card--blue::before { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+.mrdw-push-stat-card--green::before { background: linear-gradient(90deg, #22c55e, #4ade80); }
+.mrdw-push-stat-card--purple::before { background: linear-gradient(90deg, #8b5cf6, #a78bfa); }
+.mrdw-push-stat-card--yellow::before { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+.mrdw-push-stat-card--gray::before { background: linear-gradient(90deg, #9ca3af, #d1d5db); }
+
+.mrdw-push-stat-icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 36px;
+	height: 36px;
+	border-radius: 8px;
+	margin-bottom: 12px;
+	font-size: 18px;
+}
+
+.mrdw-push-stat-icon--brand { background: var(--ts-brand-light); color: var(--ts-brand); }
+.mrdw-push-stat-icon--blue { background: #edf9ff; color: #0FACED; }
+.mrdw-push-stat-icon--green { background: #ecfdf5; color: #22c55e; }
+.mrdw-push-stat-icon--purple { background: #faf5ff; color: #8b5cf6; }
+.mrdw-push-stat-icon--yellow { background: #fffbeb; color: #f59e0b; }
+.mrdw-push-stat-icon--gray { background: #f3f4f6; color: #9ca3af; }
+
+.mrdw-push-stat-label {
+	font-size: 11px;
+	font-weight: 600;
+	color: var(--ts-text-muted);
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	margin-bottom: 4px;
+}
+
+.mrdw-push-stat-value {
+	font-size: 28px;
+	font-weight: 800;
+	color: var(--ts-text);
+	line-height: 1.1;
+	font-variant-numeric: tabular-nums;
+}
+
+.mrdw-push-stat-detail {
+	font-size: 12px;
+	color: var(--ts-text-secondary);
+	margin-top: 6px;
+}
+
+/* ── Toggle Switch ──────────────────────────────────── */
+.mrdw-push-toggle {
+	position: relative;
+	display: inline-block;
+	width: 44px;
+	height: 24px;
+}
+
+.mrdw-push-toggle input {
+	opacity: 0;
+	width: 0;
+	height: 0;
+	position: absolute;
+}
+
+.mrdw-push-toggle-slider {
+	position: absolute;
+	cursor: pointer;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: #d1d5db;
+	transition: background-color 0.2s ease;
+	border-radius: 24px;
+}
+
+.mrdw-push-toggle-slider::before {
+	position: absolute;
+	content: "";
+	height: 18px;
+	width: 18px;
+	left: 3px;
+	bottom: 3px;
+	background-color: white;
+	transition: transform 0.2s ease;
+	border-radius: 50%;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+#mrdw-push-app .mrdw-push-toggle input:checked + .mrdw-push-toggle-slider,
+.mrdw-push-toggle input:checked + .mrdw-push-toggle-slider {
+	background-color: var(--ts-brand) !important;
+}
+
+.mrdw-push-toggle input:checked + .mrdw-push-toggle-slider::before {
+	transform: translateX(20px);
+}
+
+/* ── Meta Box ────────────────────────────────────────── */
+.mrdw-push-meta-box .widefat {
+	margin-top: 4px;
+}
+
+.mrdw-push-meta-box hr {
+	margin: 12px 0;
+	border-top: 1px solid var(--ts-border);
+}
+
+.mrdw-push-meta-box h4 {
+	margin-top: 0;
+	font-size: 13px;
+	color: var(--ts-text);
+}
+
+/* ── Admin Notice Overrides ─────────────────────────── */
+#mrdw-push-app .notice {
+	margin-left: 0;
+	margin-right: 0;
+	border-radius: var(--ts-radius-sm);
+}
+
+/* ── Badges ──────────────────────────────────────────── */
+.mrdw-push-badge {
+	display: inline-flex;
+	align-items: center;
+	padding: 2px 8px;
+	border-radius: 9999px;
+	font-size: 11px;
+	font-weight: 600;
+	line-height: 1.6;
+	letter-spacing: 0.01em;
+	white-space: nowrap;
+}
+
+.mrdw-push-badge-brand {
+	background-color: var(--ts-brand-light);
+	color: var(--ts-brand-text);
+}
+
+.mrdw-push-badge-yellow {
+	background-color: var(--ts-warning-bg);
+	color: var(--ts-warning);
+}
+
+.mrdw-push-badge-red {
+	background-color: var(--ts-danger-bg);
+	color: var(--ts-danger);
+}
+
+.mrdw-push-badge-blue {
+	background-color: var(--ts-info-bg);
+	color: var(--ts-info);
+}
+
+.mrdw-push-badge-green {
+	background-color: var(--ts-success-bg);
+	color: var(--ts-success);
+}
+
+.mrdw-push-badge-purple {
+	background-color: #faf5ff;
+	color: #7c3aed;
+}
+
+.mrdw-push-badge-gray {
+	background-color: #f3f4f6;
+	color: #374151;
+}
+
+.mrdw-push-badge-gray-muted {
+	background-color: #f3f4f6;
+	color: var(--ts-text-muted);
+}
+
+.mrdw-push-text-muted {
+	color: var(--ts-text-muted);
+	font-size: 12px;
+}
+
+.mrdw-push-code {
+	font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+	font-size: 11px;
+	background: #f1f5f9;
+	padding: 2px 6px;
+	border-radius: 4px;
+	border: 1px solid var(--ts-border);
+	color: var(--ts-text-secondary);
+}
+
+/* ── Form Inputs ─────────────────────────────────────── */
+#mrdw-push-app input[type="text"],
+#mrdw-push-app input[type="url"],
+#mrdw-push-app input[type="password"],
+#mrdw-push-app input[type="datetime-local"],
+#mrdw-push-app textarea,
+#mrdw-push-app select {
+	border-color: var(--ts-card-border);
+	border-radius: var(--ts-radius-sm);
+	transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+#mrdw-push-app input[type="text"]:focus,
+#mrdw-push-app input[type="url"]:focus,
+#mrdw-push-app input[type="password"]:focus,
+#mrdw-push-app input[type="datetime-local"]:focus,
+#mrdw-push-app textarea:focus,
+#mrdw-push-app select:focus {
+	border-color: var(--ts-brand);
+	box-shadow: 0 0 0 3px rgba(15, 172, 237, 0.15);
+	outline: none;
+}
+
+/* ── Primary Brand Button ───────────────────────────── */
+#mrdw-push-app .mrdw-push-btn-brand {
+	background: linear-gradient(135deg, #0FACED 0%, #0991d4 100%) !important;
+	border-color: #0880bc !important;
+	color: #fff !important;
+	text-shadow: 0 1px 1px rgba(0, 0, 0, 0.12);
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+	font-weight: 600;
+}
+
+#mrdw-push-app .mrdw-push-btn-brand:hover {
+	background: linear-gradient(135deg, #0991d4 0%, #0776a8 100%) !important;
+	border-color: #064a6e !important;
+	color: #fff !important;
+}
+
+#mrdw-push-app .mrdw-push-btn-brand:active {
+	transform: translateY(1px);
+	box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.15);
+}
+
+/* ── Placeholder Quick-fill Buttons ──────────────────── */
+.mrdw-push-placeholder-btns {
+	display: flex;
+	gap: 4px;
+	flex-wrap: wrap;
+}
+
+.mrdw-push-placeholder-btn {
+	display: inline-block;
+	padding: 2px 8px;
+	font-size: 11px;
+	font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+	background: #f1f5f9;
+	border: 1px solid var(--ts-border);
+	border-radius: 4px;
+	color: var(--ts-text-secondary);
+	cursor: pointer;
+	line-height: 1.6;
+	transition: background-color 0.12s ease, color 0.12s ease, border-color 0.12s ease;
+}
+
+.mrdw-push-placeholder-btn:hover {
+	background: var(--ts-brand-light);
+	color: var(--ts-brand-text);
+	border-color: var(--ts-brand-border);
+}
+
+.mrdw-push-placeholder-btn:active {
+	background: var(--ts-brand-border);
+	transform: scale(0.97);
+}
+
+/* ── Character Counter ──────────────────────────────── */
+.mrdw-push-char-count {
+	color: var(--ts-text-muted);
+	font-variant-numeric: tabular-nums;
+}
+
+.mrdw-push-char-over {
+	color: var(--ts-danger) !important;
+	font-weight: 600;
+}
+
+/* ── Notification Preview Card (iOS-style) ──────────── */
+.mrdw-push-preview-card {
+	background: linear-gradient(135deg, #f9f8f6 0%, #f3f1ee 100%);
+	border: 1px solid var(--ts-border);
+	border-radius: 14px;
+	padding: 14px;
+	font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+	transition: box-shadow 0.2s ease;
+}
+
+.mrdw-push-preview-card:hover {
+	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+.mrdw-push-preview-header {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	margin-bottom: 8px;
+}
+
+.mrdw-push-preview-icon {
+	font-size: 14px;
+	line-height: 1;
+}
+
+.mrdw-push-preview-app {
+	font-size: 11px;
+	color: var(--ts-text-secondary);
+	font-weight: 600;
+	flex: 1;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+}
+
+.mrdw-push-preview-time {
+	font-size: 11px;
+	color: var(--ts-text-muted);
+}
+
+.mrdw-push-preview-body {
+	display: flex;
+	gap: 10px;
+}
+
+.mrdw-push-preview-text {
+	flex: 1;
+	min-width: 0;
+}
+
+.mrdw-push-preview-title {
+	font-size: 13px;
+	font-weight: 600;
+	color: var(--ts-text);
+	line-height: 1.3;
+	margin-bottom: 2px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.mrdw-push-preview-body-text {
+	font-size: 13px;
+	color: var(--ts-text-secondary);
+	line-height: 1.4;
+	display: -webkit-box;
+	-webkit-line-clamp: 3;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+}
+
+.mrdw-push-preview-image {
+	width: 40px;
+	height: 40px;
+	border-radius: 8px;
+	background-size: cover;
+	background-position: center;
+	background-color: #e8e5e1;
+	flex-shrink: 0;
+}
+
+/* ── Preview Toggle Buttons ─────────────────────────── */
+.mrdw-push-preview-toggle {
+	display: inline-flex;
+	border: 1px solid var(--ts-border);
+	border-radius: var(--ts-radius-sm);
+	overflow: hidden;
+}
+
+.mrdw-push-preview-toggle-btn {
+	padding: 4px 12px;
+	font-size: 11px;
+	font-weight: 600;
+	background: transparent;
+	border: none;
+	cursor: pointer;
+	color: var(--ts-text-muted);
+	transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.mrdw-push-preview-toggle-btn + .mrdw-push-preview-toggle-btn {
+	border-left: 1px solid var(--ts-border);
+}
+
+.mrdw-push-preview-toggle-btn.active {
+	background: var(--ts-brand);
+	color: #fff;
+}
+
+.mrdw-push-preview-toggle-btn:hover:not(.active) {
+	background: var(--ts-brand-light);
+	color: var(--ts-brand-text);
+}
+
+/* ── Android Notification Preview ───────────────────── */
+.mrdw-push-preview-card-android {
+	background: #ffffff;
+	border: 1px solid var(--ts-border);
+	border-radius: 8px;
+	overflow: hidden;
+	font-family: "Roboto", "Segoe UI", -apple-system, sans-serif;
+	box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+.mrdw-push-preview-android-accent {
+	height: 3px;
+	background: var(--ts-brand);
+}
+
+.mrdw-push-preview-android-content {
+	padding: 12px 14px;
+}
+
+.mrdw-push-preview-android-header {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	margin-bottom: 6px;
+}
+
+.mrdw-push-preview-android-icon {
+	font-size: 12px;
+	line-height: 1;
+}
+
+.mrdw-push-preview-android-app {
+	font-size: 11px;
+	color: var(--ts-text-muted);
+	font-weight: 500;
+}
+
+.mrdw-push-preview-android-dot {
+	color: var(--ts-text-muted);
+	font-size: 10px;
+}
+
+.mrdw-push-preview-android-time {
+	font-size: 11px;
+	color: var(--ts-text-muted);
+}
+
+.mrdw-push-preview-android-title {
+	font-size: 13px;
+	font-weight: 600;
+	color: var(--ts-text);
+	line-height: 1.3;
+	margin-bottom: 2px;
+}
+
+.mrdw-push-preview-android-body {
+	font-size: 13px;
+	color: var(--ts-text-secondary);
+	line-height: 1.4;
+	display: -webkit-box;
+	-webkit-line-clamp: 4;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+}
+
+.mrdw-push-preview-android-image {
+	width: 100%;
+	height: 160px;
+	margin-top: 8px;
+	border-radius: 4px;
+	background-size: cover;
+	background-position: center;
+	background-color: #e8e5e1;
+}
+
+/* ── Empty State ─────────────────────────────────────── */
+.mrdw-push-empty-state {
+	text-align: center;
+	padding: 48px 24px;
+	color: var(--ts-text-muted);
+}
+
+.mrdw-push-empty-state-icon {
+	font-size: 40px;
+	margin-bottom: 14px;
+	opacity: 0.5;
+}
+
+.mrdw-push-empty-state p {
+	margin: 0;
+	font-size: 13px;
+	max-width: 320px;
+	margin-left: auto;
+	margin-right: auto;
+	line-height: 1.5;
+}
+
+/* ── Table Styling ──────────────────────────────────── */
+#mrdw-push-app table {
+	border-collapse: collapse;
+}
+
+#mrdw-push-app table thead tr {
+	background: #f8fafc;
+}
+
+#mrdw-push-app table thead th {
+	color: var(--ts-text-muted);
+	font-size: 11px;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+}
+
+#mrdw-push-app table tbody tr {
+	transition: background-color 0.1s ease;
+}
+
+#mrdw-push-app table tbody tr:hover {
+	background-color: #f8fafc;
+}
+
+#mrdw-push-app table tbody td {
+	border-bottom-color: var(--ts-border);
+}
+
+/* ── WP_List_Table Overrides ────────────────────────── */
+.mrdw-push-table-wrap {
+	background: var(--ts-card-bg);
+	border: 1px solid var(--ts-card-border);
+	border-radius: var(--ts-radius);
+	box-shadow: var(--ts-card-shadow);
+	overflow: hidden;
+	padding: 0;
+}
+
+.mrdw-push-table-wrap .wp-list-table {
+	border: 0;
+	margin: 0;
+}
+
+.mrdw-push-table-wrap .wp-list-table thead th,
+.mrdw-push-table-wrap .wp-list-table thead td {
+	border-bottom: 1px solid var(--ts-border);
+	background: #f8fafc;
+}
+
+.mrdw-push-table-wrap .wp-list-table tfoot th,
+.mrdw-push-table-wrap .wp-list-table tfoot td {
+	border-top: 1px solid var(--ts-border);
+	background: #f8fafc;
+}
+
+.mrdw-push-table-wrap .tablenav {
+	margin: 0;
+	padding: 10px 16px;
+	background: #f8fafc;
+	border-top: 1px solid var(--ts-border);
+}
+
+.mrdw-push-table-wrap .tablenav.top {
+	border-top: 0;
+	border-bottom: 1px solid var(--ts-border);
+}
+
+.mrdw-push-table-wrap .search-box {
+	padding: 12px 16px;
+	background: #f8fafc;
+	border-bottom: 1px solid var(--ts-border);
+}
+
+/* ── Delete / Danger Button ─────────────────────────── */
+.mrdw-push-btn-danger {
+	color: var(--ts-danger) !important;
+	border-color: #fca5a5 !important;
+	transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.mrdw-push-btn-danger:hover {
+	background: var(--ts-danger-bg) !important;
+	border-color: #f87171 !important;
+	color: #991b1b !important;
+}
+
+/* ── Dev Mode Banner ────────────────────────────────── */
+.mrdw-push-dev-banner {
+	background: var(--ts-warning-bg);
+	border: 1px solid #fde68a;
+	border-radius: var(--ts-radius-sm);
+	padding: 12px 16px;
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+.mrdw-push-dev-banner-icon {
+	flex-shrink: 0;
+	font-size: 16px;
+}
+
+.mrdw-push-dev-banner p {
+	margin: 0;
+	font-size: 13px;
+	color: var(--ts-warning);
+	line-height: 1.4;
+}
+
+/* ── Dev Mode Pill (header) ─────────────────────────── */
+.mrdw-push-dev-pill {
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
+	padding: 4px 12px;
+	border-radius: 9999px;
+	font-size: 12px;
+	font-weight: 600;
+	background: var(--ts-warning-bg);
+	color: var(--ts-warning);
+	border: 1px solid #fde68a;
+}
+
+/* ── Settings Page ──────────────────────────────────── */
+#mrdw-push-app .form-table {
+	border-collapse: collapse;
+}
+
+#mrdw-push-app .form-table th {
+	padding: 16px 10px 16px 0;
+	color: var(--ts-text);
+	font-weight: 600;
+	font-size: 13px;
+	vertical-align: top;
+}
+
+#mrdw-push-app .form-table td {
+	padding: 12px 10px;
+}
+
+#mrdw-push-app .form-table td .description {
+	color: var(--ts-text-muted);
+	font-size: 12px;
+	margin-top: 6px;
+}
+
+#mrdw-push-app .form-table td code {
+	background: #f1f5f9;
+	padding: 2px 6px;
+	border-radius: 3px;
+	font-size: 12px;
+	border: 1px solid var(--ts-border);
+	color: var(--ts-brand-text);
+}
+
+.mrdw-push-settings-section {
+	background: var(--ts-card-bg);
+	border: 1px solid var(--ts-card-border);
+	border-radius: var(--ts-radius);
+	box-shadow: var(--ts-card-shadow);
+	padding: 4px 24px 20px;
+	margin-bottom: 20px;
+}
+
+.mrdw-push-settings-section h2 {
+	font-size: 14px;
+	font-weight: 700;
+	color: var(--ts-text);
+	padding-bottom: 12px;
+	border-bottom: 1px solid var(--ts-border);
+	margin-bottom: 0;
+}
+
+.mrdw-push-settings-section p {
+	color: var(--ts-text-secondary);
+	font-size: 13px;
+}
+
+/* ── Modal / Dialog ─────────────────────────────────── */
+.mrdw-push-modal-overlay {
+	background: rgba(26, 23, 20, 0.5);
+	backdrop-filter: blur(2px);
+}
+
+.mrdw-push-modal-panel {
+	background: var(--ts-card-bg);
+	border-radius: var(--ts-radius);
+	box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(0, 0, 0, 0.05);
+	overflow: hidden;
+}
+
+.mrdw-push-modal-header {
+	padding: 16px 20px;
+	border-bottom: 1px solid var(--ts-border);
+	background: #f8fafc;
+}
+
+.mrdw-push-modal-header h3 {
+	margin: 0;
+	font-size: 15px;
+	font-weight: 700;
+	color: var(--ts-text);
+}
+
+.mrdw-push-modal-body {
+	padding: 20px;
+}
+
+/* ── Test Data Banner ───────────────────────────────── */
+.mrdw-push-test-banner {
+	background: #f1f5f9;
+	border: 1px dashed var(--ts-card-border);
+	border-radius: var(--ts-radius-sm);
+	padding: 12px 16px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.mrdw-push-test-banner p {
+	margin: 0;
+	font-size: 13px;
+	color: var(--ts-text-secondary);
+}
+
+/* ── Status Classes (replaces inline JS color manipulation) ── */
+.mrdw-push-status-success {
+	color: var(--ts-success);
+}
+
+.mrdw-push-status-error {
+	color: var(--ts-danger);
+}
+
+/* ── Misc Utility ───────────────────────────────────── */
+.mrdw-push-divider {
+	border: 0;
+	border-top: 1px solid var(--ts-border);
+	margin: 16px 0;
+}
+
+/* ── Dark Mode: OS preference ──────────────────────── */
+@media (prefers-color-scheme: dark) {
+	:root {
+		--ts-brand-light: #0c2a3d;
+		--ts-brand-border: #0d6ea1;
+		--ts-brand-text: #7ecfef;
+		--ts-card-bg: #1e293b;
+		--ts-card-border: #334155;
+		--ts-card-shadow: 0 1px 3px rgba(0, 0, 0, 0.2), 0 1px 2px rgba(0, 0, 0, 0.15);
+		--ts-card-shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.3);
+		--ts-bg: #0f172a;
+		--ts-text: #e2e8f0;
+		--ts-text-secondary: #94a3b8;
+		--ts-text-muted: #64748b;
+		--ts-border: #334155;
+		--ts-success: #4ade80;
+		--ts-success-bg: #052e16;
+		--ts-danger: #f87171;
+		--ts-danger-bg: #450a0a;
+		--ts-warning: #fbbf24;
+		--ts-warning-bg: #451a03;
+		--ts-info: #38bdf8;
+		--ts-info-bg: #0c2a3d;
+	}
+
+	#mrdw-push-app.wrap {
+		color: var(--ts-text);
+	}
+
+	/* Table overrides */
+	#mrdw-push-app table thead tr,
+	.mrdw-push-table-wrap .wp-list-table thead th,
+	.mrdw-push-table-wrap .wp-list-table thead td,
+	.mrdw-push-table-wrap .wp-list-table tfoot th,
+	.mrdw-push-table-wrap .wp-list-table tfoot td,
+	.mrdw-push-table-wrap .tablenav,
+	.mrdw-push-table-wrap .search-box {
+		background: #1a2332;
+	}
+
+	#mrdw-push-app table tbody tr:hover {
+		background-color: #1a2332;
+	}
+
+	/* Modal overlay */
+	.mrdw-push-modal-overlay {
+		background: rgba(0, 0, 0, 0.7);
+	}
+
+	.mrdw-push-modal-header {
+		background: #1a2332;
+	}
+
+	/* Badge dark overrides */
+	.mrdw-push-badge-gray {
+		background-color: #334155;
+		color: #cbd5e1;
+	}
+
+	.mrdw-push-badge-gray-muted {
+		background-color: #334155;
+		color: var(--ts-text-muted);
+	}
+
+	.mrdw-push-badge-purple {
+		background-color: #2e1065;
+		color: #c4b5fd;
+	}
+
+	/* Code block */
+	.mrdw-push-code {
+		background: #1e293b;
+		border-color: var(--ts-border);
+		color: var(--ts-text-secondary);
+	}
+
+	/* Stat icon dark backgrounds */
+	.mrdw-push-stat-icon--brand { background: #0c2a3d; }
+	.mrdw-push-stat-icon--blue { background: #0c2a3d; }
+	.mrdw-push-stat-icon--green { background: #052e16; }
+	.mrdw-push-stat-icon--purple { background: #2e1065; }
+	.mrdw-push-stat-icon--yellow { background: #451a03; }
+	.mrdw-push-stat-icon--gray { background: #1e293b; }
+
+	/* Form inputs */
+	#mrdw-push-app input[type="text"],
+	#mrdw-push-app input[type="url"],
+	#mrdw-push-app input[type="password"],
+	#mrdw-push-app input[type="datetime-local"],
+	#mrdw-push-app textarea,
+	#mrdw-push-app select {
+		background-color: #0f172a;
+		color: var(--ts-text);
+		border-color: var(--ts-border);
+	}
+
+	/* Settings code */
+	#mrdw-push-app .form-table td code {
+		background: #1e293b;
+		color: var(--ts-brand-text);
+		border-color: var(--ts-border);
+	}
+
+	/* Placeholder buttons */
+	.mrdw-push-placeholder-btn {
+		background: #1e293b;
+		color: var(--ts-text-secondary);
+		border-color: var(--ts-border);
+	}
+
+	/* Preview cards */
+	.mrdw-push-preview-card {
+		background: linear-gradient(135deg, #1e293b 0%, #1a2332 100%);
+	}
+
+	.mrdw-push-preview-card-android {
+		background: #1e293b;
+	}
+
+	.mrdw-push-preview-image,
+	.mrdw-push-preview-android-image {
+		background-color: #334155;
+	}
+
+	/* Test banner */
+	.mrdw-push-test-banner {
+		background: #1e293b;
+		border-color: var(--ts-border);
+	}
+
+	.mrdw-push-test-banner p {
+		color: var(--ts-text-secondary);
+	}
+
+	/* Dev mode banner */
+	.mrdw-push-dev-banner {
+		border-color: #92400e;
+	}
+
+	.mrdw-push-dev-pill {
+		border-color: #92400e;
+	}
+
+	/* Toggle slider */
+	.mrdw-push-toggle-slider {
+		background-color: #475569;
+	}
+
+	/* Empty state */
+	.mrdw-push-empty-state {
+		color: var(--ts-text-muted);
+	}
+
+	/* Danger button */
+	.mrdw-push-btn-danger {
+		border-color: #991b1b !important;
+	}
+
+	.mrdw-push-btn-danger:hover {
+		background: #450a0a !important;
+		border-color: #b91c1c !important;
+		color: #fca5a5 !important;
+	}
+
+	/* Tailwind dark overrides inside #mrdw-push-app */
+	#mrdw-push-app .tw-text-gray-900,
+	#mrdw-push-app .tw-text-gray-800 {
+		color: var(--ts-text) !important;
+	}
+
+	#mrdw-push-app .tw-text-gray-700 {
+		color: var(--ts-text-secondary) !important;
+	}
+
+	#mrdw-push-app .tw-text-gray-500,
+	#mrdw-push-app .tw-text-gray-400 {
+		color: var(--ts-text-muted) !important;
+	}
+
+	#mrdw-push-app .tw-border-gray-300,
+	#mrdw-push-app .tw-border-gray-200,
+	#mrdw-push-app .tw-border-gray-100 {
+		border-color: var(--ts-border) !important;
+	}
+
+	#mrdw-push-app .tw-bg-white {
+		background-color: var(--ts-card-bg) !important;
+	}
+
+	#mrdw-push-app .tw-bg-gray-50,
+	#mrdw-push-app .hover\:tw-bg-gray-50:hover {
+		background-color: #1a2332 !important;
+	}
+
+	/* WP List Table inside the plugin admin */
+	#mrdw-push-app .wp-list-table,
+	#mrdw-push-app .wp-list-table td,
+	#mrdw-push-app .wp-list-table th {
+		color: var(--ts-text);
+	}
+
+	#mrdw-push-app .wp-list-table tbody tr:hover td {
+		background-color: #1a2332;
+	}
+
+	#mrdw-push-app .wp-list-table .row-actions a {
+		color: var(--ts-brand);
+	}
+
+	/* WP notices in dark mode */
+	#mrdw-push-app .notice {
+		background: var(--ts-card-bg);
+		color: var(--ts-text);
+		border-color: var(--ts-border);
+	}
+}
+
+/* ── Dark Mode: WP admin color scheme forced ───────── */
+#mrdw-push-app[data-theme="dark"] {
+	--ts-brand-light: #0c2a3d;
+	--ts-brand-border: #0d6ea1;
+	--ts-brand-text: #7ecfef;
+	--ts-card-bg: #1e293b;
+	--ts-card-border: #334155;
+	--ts-card-shadow: 0 1px 3px rgba(0, 0, 0, 0.2), 0 1px 2px rgba(0, 0, 0, 0.15);
+	--ts-card-shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.3);
+	--ts-bg: #0f172a;
+	--ts-text: #e2e8f0;
+	--ts-text-secondary: #94a3b8;
+	--ts-text-muted: #64748b;
+	--ts-border: #334155;
+	--ts-success: #4ade80;
+	--ts-success-bg: #052e16;
+	--ts-danger: #f87171;
+	--ts-danger-bg: #450a0a;
+	--ts-warning: #fbbf24;
+	--ts-warning-bg: #451a03;
+	--ts-info: #38bdf8;
+	--ts-info-bg: #0c2a3d;
+	color: var(--ts-text);
+}
+
+#mrdw-push-app[data-theme="dark"] table thead tr,
+#mrdw-push-app[data-theme="dark"] .mrdw-push-table-wrap .wp-list-table thead th,
+#mrdw-push-app[data-theme="dark"] .mrdw-push-table-wrap .wp-list-table thead td,
+#mrdw-push-app[data-theme="dark"] .mrdw-push-table-wrap .wp-list-table tfoot th,
+#mrdw-push-app[data-theme="dark"] .mrdw-push-table-wrap .wp-list-table tfoot td,
+#mrdw-push-app[data-theme="dark"] .mrdw-push-table-wrap .tablenav,
+#mrdw-push-app[data-theme="dark"] .mrdw-push-table-wrap .search-box,
+#mrdw-push-app[data-theme="dark"] .mrdw-push-modal-header {
+	background: #1a2332;
+}
+
+#mrdw-push-app[data-theme="dark"] table tbody tr:hover {
+	background-color: #1a2332;
+}
+
+#mrdw-push-app[data-theme="dark"] .mrdw-push-modal-overlay {
+	background: rgba(0, 0, 0, 0.7);
+}
+
+#mrdw-push-app[data-theme="dark"] .mrdw-push-badge-gray {
+	background-color: #334155;
+	color: #cbd5e1;
+}
+
+#mrdw-push-app[data-theme="dark"] .mrdw-push-badge-gray-muted {
+	background-color: #334155;
+	color: var(--ts-text-muted);
+}
+
+#mrdw-push-app[data-theme="dark"] .mrdw-push-badge-purple {
+	background-color: #2e1065;
+	color: #c4b5fd;
+}
+
+#mrdw-push-app[data-theme="dark"] .mrdw-push-code {
+	background: #1e293b;
+	border-color: var(--ts-border);
+	color: var(--ts-text-secondary);
+}
+
+#mrdw-push-app[data-theme="dark"] .mrdw-push-stat-icon--brand { background: #0c2a3d; }
+#mrdw-push-app[data-theme="dark"] .mrdw-push-stat-icon--blue { background: #0c2a3d; }
+#mrdw-push-app[data-theme="dark"] .mrdw-push-stat-icon--green { background: #052e16; }
+#mrdw-push-app[data-theme="dark"] .mrdw-push-stat-icon--purple { background: #2e1065; }
+#mrdw-push-app[data-theme="dark"] .mrdw-push-stat-icon--yellow { background: #451a03; }
+#mrdw-push-app[data-theme="dark"] .mrdw-push-stat-icon--gray { background: #1e293b; }
+
+#mrdw-push-app[data-theme="dark"] input[type="text"],
+#mrdw-push-app[data-theme="dark"] input[type="url"],
+#mrdw-push-app[data-theme="dark"] input[type="password"],
+#mrdw-push-app[data-theme="dark"] input[type="datetime-local"],
+#mrdw-push-app[data-theme="dark"] textarea,
+#mrdw-push-app[data-theme="dark"] select {
+	background-color: #0f172a;
+	color: var(--ts-text);
+	border-color: var(--ts-border);
+}
+
+#mrdw-push-app[data-theme="dark"] .form-table td code {
+	background: #1e293b;
+	color: var(--ts-brand-text);
+	border-color: var(--ts-border);
+}
+
+#mrdw-push-app[data-theme="dark"] .mrdw-push-placeholder-btn {
+	background: #1e293b;
+	color: var(--ts-text-secondary);
+	border-color: var(--ts-border);
+}
+
+#mrdw-push-app[data-theme="dark"] .mrdw-push-preview-card {
+	background: linear-gradient(135deg, #1e293b 0%, #1a2332 100%);
+}
+
+#mrdw-push-app[data-theme="dark"] .mrdw-push-preview-card-android {
+	background: #1e293b;
+}
+
+#mrdw-push-app[data-theme="dark"] .mrdw-push-preview-image,
+#mrdw-push-app[data-theme="dark"] .mrdw-push-preview-android-image {
+	background-color: #334155;
+}
+
+#mrdw-push-app[data-theme="dark"] .mrdw-push-test-banner {
+	background: #1e293b;
+	border-color: var(--ts-border);
+}
+
+#mrdw-push-app[data-theme="dark"] .mrdw-push-toggle-slider {
+	background-color: #475569;
+}
+
+#mrdw-push-app[data-theme="dark"] .mrdw-push-btn-danger {
+	border-color: #991b1b !important;
+}
+
+#mrdw-push-app[data-theme="dark"] .mrdw-push-btn-danger:hover {
+	background: #450a0a !important;
+	border-color: #b91c1c !important;
+	color: #fca5a5 !important;
+}
+
+#mrdw-push-app[data-theme="dark"] .tw-text-gray-900,
+#mrdw-push-app[data-theme="dark"] .tw-text-gray-800 {
+	color: var(--ts-text) !important;
+}
+
+#mrdw-push-app[data-theme="dark"] .tw-text-gray-700 {
+	color: var(--ts-text-secondary) !important;
+}
+
+#mrdw-push-app[data-theme="dark"] .tw-text-gray-500,
+#mrdw-push-app[data-theme="dark"] .tw-text-gray-400 {
+	color: var(--ts-text-muted) !important;
+}
+
+#mrdw-push-app[data-theme="dark"] .tw-border-gray-300,
+#mrdw-push-app[data-theme="dark"] .tw-border-gray-200,
+#mrdw-push-app[data-theme="dark"] .tw-border-gray-100 {
+	border-color: var(--ts-border) !important;
+}
+
+#mrdw-push-app[data-theme="dark"] .tw-bg-white {
+	background-color: var(--ts-card-bg) !important;
+}
+
+#mrdw-push-app[data-theme="dark"] .tw-bg-gray-50,
+#mrdw-push-app[data-theme="dark"] .hover\:tw-bg-gray-50:hover {
+	background-color: #1a2332 !important;
+}
+
+#mrdw-push-app[data-theme="dark"] .wp-list-table,
+#mrdw-push-app[data-theme="dark"] .wp-list-table td,
+#mrdw-push-app[data-theme="dark"] .wp-list-table th {
+	color: var(--ts-text);
+}
+
+#mrdw-push-app[data-theme="dark"] .wp-list-table tbody tr:hover td {
+	background-color: #1a2332;
+}
+
+#mrdw-push-app[data-theme="dark"] .notice {
+	background: var(--ts-card-bg);
+	color: var(--ts-text);
+	border-color: var(--ts-border);
+}
+
+/* ── Settings Submit Row ────────────────────────────── */
+.mrdw-push-settings-submit {
+	padding: 16px 0 8px;
+}
+
+.mrdw-push-settings-submit .button-primary {
+	height: 38px;
+	line-height: 36px;
+	padding: 0 20px;
+	font-size: 13px;
+}
+
+.mrdw-push-settings-helper {
+	font-size: 13px;
+	color: var(--ts-text-secondary);
+	margin: 0 0 14px;
+}
+
+/* ── Settings Section: improved header ──────────────── */
+.mrdw-push-settings-section {
+	position: relative;
+}
+
+.mrdw-push-settings-section h2 {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.mrdw-push-settings-section h2::before {
+	content: '';
+	display: inline-block;
+	width: 3px;
+	height: 16px;
+	background: linear-gradient(180deg, var(--ts-brand) 0%, #0991d4 100%);
+	border-radius: 2px;
+	flex-shrink: 0;
+}
+
+/* ── About Card ─────────────────────────────────────── */
+.mrdw-push-about-card {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 12px 16px;
+	background: var(--ts-card-bg);
+	border: 1px solid var(--ts-card-border);
+	border-radius: var(--ts-radius);
+	box-shadow: var(--ts-card-shadow);
+}
+
+.mrdw-push-about-card-logo {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 32px;
+	height: 32px;
+	border-radius: 8px;
+	background: linear-gradient(135deg, #0FACED 0%, #0991d4 100%);
+	color: #fff;
+	flex-shrink: 0;
+}
+
+.mrdw-push-about-card-logo .dashicons {
+	font-size: 18px;
+	width: 18px;
+	height: 18px;
+	line-height: 1;
+}
+
+.mrdw-push-about-card-info {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	flex-wrap: wrap;
+	font-size: 13px;
+	color: var(--ts-text-secondary);
+}
+
+.mrdw-push-about-card-info strong {
+	color: var(--ts-text);
+	font-weight: 600;
+}
+
+.mrdw-push-about-card-version {
+	display: inline-flex;
+	align-items: center;
+	padding: 1px 7px;
+	border-radius: 9999px;
+	font-size: 11px;
+	font-weight: 600;
+	background: var(--ts-brand-light);
+	color: var(--ts-brand-text);
+	border: 1px solid var(--ts-brand-border);
+	font-variant-numeric: tabular-nums;
+}
+
+.mrdw-push-about-card-sep {
+	color: var(--ts-text-muted);
+	font-size: 11px;
+}
+
+.mrdw-push-about-card-info a {
+	color: var(--ts-brand);
+	text-decoration: none;
+	font-size: 12px;
+}
+
+.mrdw-push-about-card-info a:hover {
+	text-decoration: underline;
+}
+
+/* ── Plugins-page: "View on GitHub" row meta ────────── */
+.mrdw-push-plugin-row-github a {
+	color: var(--ts-brand);
+}
+
+/* ── Update available notice on Plugins page ────────── */
+.mrdw-push-update-details {
+	font-size: 13px;
+}
+
+/* ── Dashboard stat card: refined accent bar ────────── */
+.mrdw-push-stat-card::before {
+	transition: opacity 0.2s ease;
+}
+
+.mrdw-push-stat-card:hover::before {
+	opacity: 0.8;
+}
+
+/* ── Improved card-header spacing ──────────────────── */
+.mrdw-push-card-header h2 {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+}
+
+/* ── Table: zebra stripe polish ─────────────────────── */
+.mrdw-push-table-wrap .wp-list-table tbody tr:nth-child(even) td {
+	background-color: #fafbfc;
+}
+
+/* ── Focus ring consistency across WP buttons ───────── */
+#mrdw-push-app .button:focus-visible {
+	outline: 2px solid var(--ts-brand);
+	outline-offset: 2px;
+	box-shadow: none;
+}
+
+/* ── Responsive: collapse grid on narrow screens ────── */
+@media screen and (max-width: 782px) {
+	#mrdw-push-app.wrap {
+		padding-top: 8px;
+	}
+
+	.mrdw-push-about-card {
+		flex-wrap: wrap;
+		gap: 10px;
+	}
+
+	.mrdw-push-settings-submit {
+		padding-bottom: 16px;
+	}
+}
+
+/* ── Dark mode: about card ──────────────────────────── */
+@media (prefers-color-scheme: dark) {
+	.mrdw-push-table-wrap .wp-list-table tbody tr:nth-child(even) td {
+		background-color: #19253a;
+	}
+}
+
+#mrdw-push-app[data-theme="dark"] .mrdw-push-table-wrap .wp-list-table tbody tr:nth-child(even) td {
+	background-color: #19253a;
+}
+
+#mrdw-push-app[data-theme="dark"] .mrdw-push-about-card-sep {
+	color: var(--ts-text-muted);
+}
+
+#mrdw-push-app[data-theme="dark"] .mrdw-push-settings-helper {
+	color: var(--ts-text-secondary);
+}
