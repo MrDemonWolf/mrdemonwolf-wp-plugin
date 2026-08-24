@@ -1,0 +1,107 @@
+---
+title: 4. Test the contact form
+description: Submit from the app and watch the entry land in WordPress.
+---
+
+The last step, and the shortest. About 5 minutes.
+
+<Steps>
+
+<Step>
+
+### Submit the form from your app
+
+Open the MrDemonWolf app, go to the contact screen, fill it in and send.
+
+</Step>
+
+<Step>
+
+### Look for it in WordPress
+
+Go to **MrDemonWolf → Form Entries**.
+
+You should see: your submission at the top of the list, with a **Mobile App** source.
+
+</Step>
+
+<Step>
+
+### Open it
+
+Click the entry to see every field, plus when it arrived and which app sent it.
+
+</Step>
+
+<Step>
+
+### Check it reached your form plugin too
+
+The submission is also handed to Divi, WPForms or Gravity Forms — whichever you selected — so it
+appears in that plugin's own entries screen and triggers its notification emails as usual.
+
+</Step>
+
+</Steps>
+
+## If the entry never arrives
+
+The app will show an error. What it means:
+
+| What you see           | What it means                        | Fix                                                                                                                  |
+| ---------------------- | ------------------------------------ | -------------------------------------------------------------------------------------------------------------------- |
+| 403, App Check failed  | Firebase could not vouch for the app | Check App Check is registered in the Firebase console, and that the project ID in **Forms Settings** matches exactly |
+| 404, form not found    | The form ID is not allow-listed      | Add it to **Allowed form IDs** in **Forms Settings**                                                                 |
+| Nothing happens at all | The app is pointing somewhere else   | Check the site address configured in the app                                                                         |
+
+<Callout type="info">
+	App Check tokens are short-lived on purpose. If the app caches one for too long it will start
+	failing — it should fetch a fresh token for each submission.
+</Callout>
+
+<ClaudePrompt
+  label="Let Claude help you debug a failing form"
+  prompt={`My mobile app's contact form isn't reaching my WordPress site. I'm using a plugin called "MrDemonWolf" which verifies submissions with Firebase App Check. I am not a developer — please help me diagnose this one step at a time.
+
+How it's supposed to work: the app POSTs to /wp-json/mrdw/v1/submit/{form_id} with a Firebase App Check token in the request body, and the plugin verifies that token before writing the entry.
+
+Please help me work out which of these is wrong:
+
+1. 403 / "App Check verification failed" — Firebase App Check may not be registered for my app, or the Firebase project ID in WordPress (MrDemonWolf > Forms Settings) doesn't match my actual Firebase project ID
+2. 404 / "form not found" — my form's ID isn't in the "Allowed form IDs" list in Forms Settings
+3. Nothing happens at all — the app is probably configured with the wrong site address
+
+Also worth checking: App Check tokens expire quickly, so the app needs to request a fresh one per submission rather than reusing a cached one.
+
+Start by asking me what error the app shows, and whether anything appears under MrDemonWolf > Form Entries.`}
+/>
+
+## That is everything
+
+Both directions now work: your app can send you form submissions, and your site can push
+notifications back with images attached.
+
+From here:
+
+<Cards>
+	<Card
+		title="Push reference"
+		href="/docs/push"
+		description="Groups, scheduling, templates and delivery receipts."
+	/>
+	<Card
+		title="Forms reference"
+		href="/docs/forms"
+		description="Providers, the REST API, and how entries are stored."
+	/>
+	<Card
+		title="Configuration"
+		href="/docs/configuration"
+		description="Constants, filters, and keeping secrets out of the database."
+	/>
+	<Card
+		title="Update channels"
+		href="/docs/update-channels"
+		description="Stable and nightly, and how updates reach your site."
+	/>
+</Cards>

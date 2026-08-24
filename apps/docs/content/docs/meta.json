@@ -2,8 +2,9 @@
 	"title": "MrDemonWolf for WordPress",
 	"pages": [
 		"index",
+		"---Get started---",
+		"setup",
 		"install",
-		"migrating",
 		"configuration",
 		"update-channels",
 		"---Modules---",

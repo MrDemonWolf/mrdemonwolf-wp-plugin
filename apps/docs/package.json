@@ -5,9 +5,9 @@
 	"scripts": {
 		"dev": "next dev --turbopack --port 3001",
 		"build": "next build",
-		"start": "bunx serve out",
+		"start": "rm -rf .preview && mkdir -p .preview && ln -s ../out .preview/mrdemonwolf-wp-plugin && echo 'Preview: http://localhost:3001/mrdemonwolf-wp-plugin/' && bunx serve .preview -l 3001",
 		"typecheck": "fumadocs-mdx && tsc --noEmit",
-		"clean": "rm -rf .next .turbo .source out",
+		"clean": "rm -rf .next .turbo .source out .preview",
 		"postinstall": "fumadocs-mdx"
 	},
 	"dependencies": {

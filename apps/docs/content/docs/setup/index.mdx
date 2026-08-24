@@ -1,0 +1,81 @@
+---
+title: Start here
+description: What you are about to set up, in plain words, and roughly how long it takes.
+---
+
+<Callout type="info">
+	You do not need to know how to code. Every step has a button that copies a prompt you can hand to
+	Claude, and it will do that step with you.
+</Callout>
+
+## What this actually does
+
+You have a WordPress site, and you have the MrDemonWolf app. Right now they do not know about each
+other. This plugin introduces them, in two directions:
+
+- **Your app can send you things.** Someone fills in the contact form in the app, and it lands in
+  WordPress like any other form submission.
+- **Your site can tell your app things.** You publish a post, and the app buzzes — with the post's
+  featured image right there in the notification.
+
+That is the whole idea. Everything else is detail.
+
+## How long it takes
+
+| Step                                                           | Roughly    |
+| -------------------------------------------------------------- | ---------- |
+| [Install the plugin](/docs/setup/install-plugin)               | 5 minutes  |
+| [Connect it to your app](/docs/setup/connect-app)              | 10 minutes |
+| [Send your first notification](/docs/setup/first-notification) | 5 minutes  |
+| [Test the contact form](/docs/setup/first-form)                | 5 minutes  |
+
+The middle step is the fiddly one, because it involves Firebase. The rest is clicking around in
+wp-admin.
+
+## What you need before you start
+
+<Steps>
+
+<Step>
+
+### A WordPress site you can log into as an administrator
+
+If you can see the **Plugins** menu in wp-admin, you are an administrator.
+
+</Step>
+
+<Step>
+
+### WordPress 6.0 or newer, and PHP 8.3 or newer
+
+Not sure? Go to **Tools → Site Health → Info** in wp-admin and open the **Server** section. It tells
+you the PHP version. If PHP is older than 8.3, your host can usually change it in their control
+panel, or you can ask their support to.
+
+</Step>
+
+<Step>
+
+### A form plugin, if you want the Forms half
+
+Divi, WPForms or Gravity Forms. If you only want push notifications, skip this — you can turn the
+Forms module off entirely.
+
+</Step>
+
+</Steps>
+
+<Callout type="warn">
+	If you previously ran **PackRelay** or **TailSignal**, deactivate them before installing this one.
+	Do not delete them yet — deleting runs their cleanup routines and drops their database tables.
+</Callout>
+
+## If something goes wrong
+
+Nothing here can break your site permanently. The plugin can be deactivated from the Plugins screen
+at any point, and deactivating changes nothing on disk or in your database.
+
+If you get stuck, [ask in Discord](https://mrdwolf.net/discord) — include what step you were on and
+what you saw.
+
+Ready? [Install the plugin →](/docs/setup/install-plugin)

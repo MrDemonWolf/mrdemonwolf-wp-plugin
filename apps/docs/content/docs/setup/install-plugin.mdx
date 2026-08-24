@@ -1,0 +1,106 @@
+---
+title: 1. Install the plugin
+description: Download the zip, upload it to WordPress, and switch it on.
+---
+
+About 5 minutes. Nothing here is risky — you can undo all of it by deactivating the plugin.
+
+<Steps>
+
+<Step>
+
+### Download the plugin
+
+Click this, and your browser downloads a `.zip` file:
+
+<a
+	className="mrdw-btn mrdw-btn-primary my-3"
+	href="https://github.com/MrDemonWolf/mrdemonwolf-wp-plugin/releases/latest/download/mrdemonwolf-wp-plugin.zip"
+>
+	Download mrdemonwolf-wp-plugin.zip
+</a>
+
+**Do not unzip it.** WordPress wants the zip exactly as it is.
+
+You should see: a file called `mrdemonwolf-wp-plugin.zip` in your Downloads folder.
+
+</Step>
+
+<Step>
+
+### Open the plugin upload screen
+
+In wp-admin, go to **Plugins → Add New**, then click the **Upload Plugin** button at the top of the
+page.
+
+You should see: a box with a **Choose File** button and an **Install Now** button.
+
+</Step>
+
+<Step>
+
+### Upload and install
+
+Click **Choose File**, pick the zip you just downloaded, then click **Install Now**.
+
+You should see: "Plugin installed successfully."
+
+<Callout type="warn">
+	If you instead see *"The package could not be installed. No valid plugins were found"*, the zip
+	was unzipped somewhere along the way. Download it again and upload it without opening it.
+</Callout>
+
+</Step>
+
+<Step>
+
+### Activate it
+
+Click **Activate Plugin**.
+
+You should see: a new **MrDemonWolf** item in the left-hand menu of wp-admin, with a wolf icon.
+
+</Step>
+
+<Step>
+
+### Check both modules are on
+
+Click **MrDemonWolf → General**. There are two checkboxes, **Forms** and **Push**, and both should
+already be ticked.
+
+If you only want notifications and have no form plugin, untick **Forms** and click **Save Changes**.
+Nothing breaks either way.
+
+</Step>
+
+</Steps>
+
+<ClaudePrompt
+  label="Stuck? Let Claude walk you through it"
+  prompt={`I'm installing a WordPress plugin called "MrDemonWolf" on my site. I am not a developer, so please explain each step simply and wait for me to confirm before moving on.
+
+The plugin zip is here:
+https://github.com/MrDemonWolf/mrdemonwolf-wp-plugin/releases/latest/download/mrdemonwolf-wp-plugin.zip
+
+What I need to do:
+
+1. Download that zip (without unzipping it)
+2. In wp-admin, go to Plugins > Add New > Upload Plugin
+3. Upload the zip and click Install Now
+4. Click Activate Plugin
+5. Go to MrDemonWolf > General and confirm the "Forms" and "Push" checkboxes are both ticked
+
+Requirements I should check first: WordPress 6.0+ and PHP 8.3+ (found under Tools > Site Health > Info > Server).
+
+Important: if I previously had plugins called "PackRelay" or "TailSignal" installed, I must DEACTIVATE them first but NOT delete them, because deleting them drops their database tables.
+
+Please start by asking me what I can currently see on screen, then guide me one step at a time.`}
+/>
+
+## Did it work?
+
+Go to **MrDemonWolf → General**. If you can see the two module checkboxes and an **Updates** section
+showing version and channel, the plugin is installed correctly.
+
+Next: [connect it to your app →](/docs/setup/connect-app)
