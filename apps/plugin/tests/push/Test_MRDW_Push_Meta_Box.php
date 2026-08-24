@@ -70,6 +70,7 @@ class Test_MRDW_Push_Meta_Box extends MRDW_Push_TestCase {
 
 		$_POST = array(
 			'mrdw_push_meta_box_nonce' => 'good_nonce',
+			'mrdw_push_image_field_present' => '1',
 			'mrdw_push_notify'         => '1',
 			'mrdw_push_include_image'  => '1',
 			'mrdw_push_custom_title'   => 'Custom Title',
@@ -137,6 +138,7 @@ class Test_MRDW_Push_Meta_Box extends MRDW_Push_TestCase {
 
 		$_POST = array(
 			'mrdw_push_meta_box_nonce' => 'good_nonce',
+			'mrdw_push_image_field_present' => '1',
 			'mrdw_push_notify'         => '1',
 		);
 
@@ -165,8 +167,10 @@ class Test_MRDW_Push_Meta_Box extends MRDW_Push_TestCase {
 		$post->post_type = 'post';
 
 		$_POST = array(
-			'mrdw_push_meta_box_nonce' => 'good_nonce',
-			// No mrdw_push_notify or mrdw_push_include_image keys.
+			'mrdw_push_meta_box_nonce'      => 'good_nonce',
+			// The box was rendered, so the marker is present; the checkboxes
+			// themselves are absent, which is what an unchecked box looks like.
+			'mrdw_push_image_field_present' => '1',
 		);
 
 		Functions\expect( 'wp_verify_nonce' )->andReturn( true );
@@ -194,6 +198,7 @@ class Test_MRDW_Push_Meta_Box extends MRDW_Push_TestCase {
 
 		$_POST = array(
 			'mrdw_push_meta_box_nonce' => 'good_nonce',
+			'mrdw_push_image_field_present' => '1',
 			'mrdw_push_notify'         => '1',
 			'mrdw_push_include_image'  => '1',
 			// No custom_title or custom_body.
@@ -295,5 +300,33 @@ class Test_MRDW_Push_Meta_Box extends MRDW_Push_TestCase {
 
 		$this->meta_box->render_meta_box( $post );
 		$this->assertTrue( true );
+	}
+
+	/**
+	 * A save from a screen that never rendered this meta box must not write an
+	 * opt-out. Previously any such save stored '0', permanently excluding the
+	 * post from featured images even if the site-wide setting was on.
+	 */
+	public function test_save_meta_box_leaves_image_meta_untouched_when_field_absent() {
+		$post = Mockery::mock( 'WP_Post' );
+		$post->post_type = 'post';
+
+		$_POST = array(
+			'mrdw_push_meta_box_nonce' => 'good_nonce',
+			// No marker: this screen did not render the image checkbox at all.
+		);
+
+		Functions\expect( 'wp_verify_nonce' )->andReturn( true );
+		Functions\expect( 'current_user_can' )->andReturn( true );
+		Functions\when( 'get_option' )->alias( function( $key, $default = false ) { return $default; } );
+
+		$saved_meta = array();
+		Functions\expect( 'update_post_meta' )->andReturnUsing( function( $post_id, $key, $value ) use ( &$saved_meta ) {
+			$saved_meta[ $key ] = $value;
+		} );
+
+		$this->meta_box->save_meta_box( 1, $post );
+
+		$this->assertArrayNotHasKey( '_mrdw_push_include_image', $saved_meta );
 	}
 }

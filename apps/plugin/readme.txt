@@ -4,7 +4,7 @@ Tags: rest-api, push-notifications, expo, gravity-forms, divi
 Requires at least: 6.0
 Tested up to: 7.1
 Requires PHP: 8.3
-Stable tag: 2.0.0
+Stable tag: 2.1.0
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -69,6 +69,20 @@ option cannot be written.
 
 == Changelog ==
 
+= 2.1.0 =
+* Changed: the Expo PHP SDK is replaced by direct calls to Expo's API over the WordPress HTTP API.
+  The SDK never exposed richContent (the field Expo documents for notification images) and carried
+  11 deprecations that are fatal on PHP 9. All of them are gone.
+* Added: server-side image URL validation. HTTPS and a publicly reachable host are now required,
+  because iOS refuses plain HTTP attachments and a phone cannot reach a private host -- previously
+  such a notification arrived with its image silently missing.
+* Added: mrdw_push_featured_image_size and mrdw_push_message filters.
+* Fixed: saving a post from a screen without the MrDemonWolf meta box permanently opted that post
+  out of featured images.
+* Fixed: REST /send ignored featured images even when the site setting was on.
+* Fixed: uninstalling left pre-2.0.0 tables and options behind.
+* Docs: new setup guide written for non-technical readers, with copy-a-prompt buttons for Claude.
+
 = 2.0.0 =
 * Breaking: every identifier renamed onto a single `mrdw` namespace.
 * Breaking: REST namespaces `packrelay/v1` and `tailsignal/v1` collapse into `mrdw/v1`. Route paths
@@ -93,6 +107,11 @@ option cannot be written.
 * Fixed: missing wp_unslash() on several admin request reads; unsanitised bulk-action input.
 
 == Upgrade Notice ==
+
+= 2.1.0 =
+No action needed. If you send notification images, note that image URLs must now be HTTPS and on a
+publicly reachable host -- an unusable URL is refused rather than producing a notification with a
+silently missing image.
 
 = 2.0.0 =
 Breaking release. Every option, table, capability and REST namespace is renamed, and existing data

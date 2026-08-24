@@ -3,12 +3,36 @@ title: Overview
 description: What the MrDemonWolf WordPress plugin does and how it is put together.
 ---
 
-import { Callout } from "fumadocs-ui/components/callout";
+<div className="docs-hero">
+	<span className="docs-eyebrow">Documentation</span>
+	<h1 className="docs-hero-title">
+		One plugin.
+		<br />
+		<span className="accent">Both directions.</span>
+	</h1>
+	<p className="docs-hero-sub">
+		Your app submits forms to your WordPress site, and your site pushes notifications back — with
+		the post's featured image attached.
+	</p>
+	<div className="docs-hero-pills">
+		<span className="mrdw-pill">Free · GPL-2.0-or-later</span>
+		<span className="mrdw-pill">WordPress 6.0+</span>
+		<span className="mrdw-pill">PHP 8.3+</span>
+	</div>
+</div>
 
-<Callout type="info">
-	One plugin, two modules. **Forms** accepts submissions from the MrDemonWolf app; **Push** sends
-	Expo notifications to it. Either can be switched off without uninstalling.
-</Callout>
+<Cards>
+	<Card
+		title="Set it up"
+		href="/docs/setup"
+		description="Step by step, written for a non-technical reader. About 15 minutes."
+	/>
+	<Card
+		title="Jump to reference"
+		href="/docs/configuration"
+		description="Constants, filters, REST endpoints and settings."
+	/>
+</Cards>
 
 ## What it does
 
@@ -29,9 +53,15 @@ Both halves shipped as separate plugins before:
 | PackRelay  | The **Forms** module |
 | TailSignal | The **Push** module  |
 
-The module code was carried over, but 2.0.0 renames every identifier onto a single `mrdw`
-namespace so this reads as one plugin rather than two bolted together. Anything integrating with
-the old plugins must be updated. See [Migrating](/docs/migrating).
+The module code was carried over, but 2.0.0 renamed every identifier onto a single `mrdw`
+namespace so this reads as one plugin rather than two bolted together.
+
+<Callout type="warn">
+	If you are coming from PackRelay or TailSignal, deactivate them before activating this plugin —
+	but do not delete them, because deleting runs their cleanup routines and drops their tables.
+	Anything calling the old `packrelay/v1` or `tailsignal/v1` REST namespaces must be repointed at
+	`mrdw/v1`, and existing data is not migrated automatically.
+</Callout>
 
 ## Requirements
 

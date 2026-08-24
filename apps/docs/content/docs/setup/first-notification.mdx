@@ -1,0 +1,142 @@
+---
+title: 3. Send your first notification
+description: Register your phone, send a test, then publish a post and watch it arrive.
+---
+
+About 5 minutes, and this is the fun one.
+
+<Callout type="warn">
+	Turn on **Dev mode** first. With it on, nothing you send can reach real users — only devices you
+	have flagged as development devices. Leave it on until you are done experimenting.
+</Callout>
+
+<Steps>
+
+<Step>
+
+### Turn on Dev mode
+
+**MrDemonWolf → Push Settings → Dev mode**, tick it, save.
+
+</Step>
+
+<Step>
+
+### Register your phone
+
+Open the MrDemonWolf app on your phone and make sure notifications are allowed. The app registers
+itself with your site the moment you enable them.
+
+Now go to **MrDemonWolf → Devices** in wp-admin.
+
+You should see: one device listed, with its platform and model.
+
+<Callout type="warn">
+	Nothing listed? The app has not reached your site. Check that the app is pointing at the right
+	site address, and that notification permission was actually granted rather than dismissed.
+</Callout>
+
+</Step>
+
+<Step>
+
+### Flag it as a dev device
+
+In the device's row, turn on the **Dev** toggle. With Dev mode on, this is now the only device that
+will receive anything.
+
+</Step>
+
+<Step>
+
+### Send a test
+
+Go to **MrDemonWolf → Send**. Fill in a title and a body — anything at all. Leave the target as
+**All devices** (Dev mode narrows it to your phone anyway).
+
+Click **Send Now**.
+
+You should see: the notification arrive on your phone within a few seconds.
+
+</Step>
+
+<Step>
+
+### Now try it with an image
+
+Back on the **Send** screen, put an image URL in the **Image URL** field, or click **Choose Image**
+and pick something from your media library. Send again.
+
+You should see: the notification arrive with the picture attached.
+
+<Callout type="info">
+	Nothing appeared on iPhone but the text came through? That is expected unless your app build
+	includes a Notification Service Extension. Apple requires one before an image can be attached to a
+	push. Android shows it with no app changes at all.
+</Callout>
+
+</Step>
+
+<Step>
+
+### Make it automatic
+
+**MrDemonWolf → Push Settings**, turn on **Auto-notify on publish** and **Use featured image**, then
+save.
+
+Now publish a post with a featured image. The notification goes out by itself, with the featured
+image attached.
+
+Every post also gets a **MrDemonWolf** box in the editor sidebar, where you can change the wording
+just for that post, or stop it notifying at all.
+
+</Step>
+
+<Step>
+
+### Turn Dev mode off when you are ready
+
+Once you are happy, go back to **Push Settings** and untick **Dev mode**. Real devices start
+receiving from the next send onward.
+
+</Step>
+
+</Steps>
+
+## Why the image sometimes does not appear
+
+The image is downloaded by the phone itself, so it has to be reachable from anywhere:
+
+- It must be **HTTPS**. Plain `http://` is refused by iOS and the plugin rejects it before sending.
+- It must be on a **public address**. A staging site behind a login, `localhost`, or a `.local`
+  address cannot be reached from a phone on mobile data.
+- Keep it under about **1 MB**. iOS allows up to 10 MB, but Android quietly drops large images.
+
+The plugin checks the first two before sending, so an unusable URL is refused rather than producing
+a notification with a silently missing picture.
+
+<ClaudePrompt
+  label="Let Claude help you test notifications"
+  prompt={`I'm testing push notifications from a WordPress plugin called "MrDemonWolf" to my phone. I am not a developer — please guide me one step at a time and wait for me to confirm each one.
+
+Please walk me through:
+
+1. Turning on "Dev mode" at MrDemonWolf > Push Settings, so my test sends cannot reach real users
+2. Registering my phone by opening my app and allowing notifications, then confirming it appears under MrDemonWolf > Devices
+3. Flagging that device as a "Dev" device
+4. Sending a test from MrDemonWolf > Send with just a title and body
+5. Sending a second test with an image URL to check rich notifications
+6. Turning on "Auto-notify on publish" and "Use featured image" in Push Settings
+7. Publishing a post with a featured image to confirm it fires automatically
+8. Turning Dev mode back off when I'm done
+
+Things to help me troubleshoot:
+
+- If no device appears, the app may be pointing at the wrong site, or notification permission was dismissed rather than granted
+- If the image doesn't show on iPhone, that's expected unless the app has a Notification Service Extension — Android works without one
+- Image URLs must be HTTPS and publicly reachable; the plugin rejects http:// and private hosts
+
+Start by asking what I currently see under MrDemonWolf > Devices.`}
+/>
+
+Next: [test the contact form →](/docs/setup/first-form)

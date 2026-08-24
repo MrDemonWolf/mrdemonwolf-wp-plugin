@@ -143,7 +143,7 @@ class MRDW_Push_REST_Controller {
 				'type'              => 'string',
 				'sanitize_callback' => 'sanitize_text_field',
 				'validate_callback' => function ( $value ) {
-					if ( ! \ExpoSDK\Utils::isExpoPushToken( $value ) ) {
+					if ( ! MRDW_Push_Expo::is_valid_token( $value ) ) {
 						return new WP_Error(
 							'mrdw_push_invalid_token',
 							__( 'Invalid Expo push token format.', 'mrdw' ),
@@ -443,16 +443,27 @@ class MRDW_Push_REST_Controller {
 	 * @return WP_REST_Response|WP_Error
 	 */
 	public function send_notification( $request ) {
+		$target_type  = $request->get_param( 'target_type' );
+		$target_ids   = $request->get_param( 'target_ids' );
+		$post_id      = $request->get_param( 'post_id' );
+
+		// Normalise an omitted or unusable image to null rather than storing an
+		// empty string, matching what the admin Send screen does.
+		$image_url = MRDW_Push_Expo::validate_image_url( $request->get_param( 'image_url' ) );
+
+		// When the caller names a post but no explicit image, fall back to that
+		// post's featured image, so REST behaves like the publish hook and the
+		// editor meta box rather than silently sending an image-less push.
+		if ( '' === $image_url && $post_id ) {
+			$image_url = MRDW_Push_Notification::get_featured_image_url( (int) $post_id );
+		}
+
 		$params = array(
 			'title'     => $request->get_param( 'title' ),
 			'body'      => $request->get_param( 'body' ),
 			'data'      => $request->get_param( 'data' ),
-			'image_url' => $request->get_param( 'image_url' ),
+			'image_url' => '' !== $image_url ? $image_url : null,
 		);
-
-		$target_type  = $request->get_param( 'target_type' );
-		$target_ids   = $request->get_param( 'target_ids' );
-		$post_id      = $request->get_param( 'post_id' );
 		$scheduled_at = $request->get_param( 'scheduled_at' );
 
 		// Handle scheduled notifications.

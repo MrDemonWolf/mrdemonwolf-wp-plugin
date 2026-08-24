@@ -133,11 +133,39 @@ Note the two Tailwind majors: v3 for the plugin, v4 for the docs. `bunfig.toml` 
 
 - `modules/push/admin/partials/dashboard.php` reads row properties without null coalescing, which
   surfaces as PHPUnit warnings when the partial is rendered with an incomplete fixture.
-- `ctwillie/expo-server-sdk-php` (2.1) has **11 implicitly-nullable parameters** — `Expo::__construct()`
-  plus ten `ExpoMessage` setters. Deprecation notices on PHP 8.4/8.5, fatal on PHP 9. Upgrading 1.4
-  to 2.1 did **not** fix them, and upstream last released in 2023, so assume it will not. This is the
-  plugin's blocker for PHP 9: either upstream fixes it, a fork is vendored, or the thin
-  `MRDW_Push_Expo` wrapper is repointed at Expo's HTTP API directly (it is two endpoints:
-  `POST /push/send` and `POST /push/getReceipts` on `https://exp.host/--/api/v2`).
-- 88 cosmetic phpcs violations remain in `modules/`, mostly missing docblocks and non-snake_case
-  variables.
+- ~88 cosmetic phpcs violations remain in `modules/`, mostly missing docblocks and non-snake_case
+  variables. Nothing security-related is silenced; see `phpcs.xml.dist` for the reasoning.
+
+## Push transport
+
+`MRDW_Push_Expo` talks to Expo directly over `wp_remote_post()`. There is no SDK. Expo's push
+service is two unauthenticated JSON endpoints, and the PHP SDK that used to be here never exposed
+`richContent` — the field Expo documents for notification images.
+
+Hard limits, enforced in the class:
+
+- **100 messages per request** (`PUSH_CHUNK_SIZE`) and **1000 ticket IDs per receipts request**
+  (`RECEIPT_CHUNK_SIZE`). Expo rejects anything larger.
+- Rich images need **both** `richContent: { image }` **and** `mutableContent: true`. Without
+  `mutableContent`, APNs never invokes the app's Notification Service Extension and iOS silently
+  shows a plain notification.
+- Image URLs must be HTTPS and publicly reachable. `validate_image_url()` enforces this on all
+  three send paths, because Expo reports nothing when it cannot fetch an image — the notification
+  just arrives without one.
+
+iOS rich images additionally require a Notification Service Extension in the app. The app has one
+(`official-app/targets/notification-service/`); Android needs no app changes at all.
+
+## Docs site
+
+Themed from `~/Developer/mrdemonwolf/wolfwave/apps/docs`, same Fumadocs stack.
+
+**`bun run start` must serve the export under `/mrdemonwolf-wp-plugin/`.** The production build
+sets that base path, so serving `out/` at the root 404s every asset and renders as unstyled HTML.
+The script symlinks it into `.preview/` to get the prefix right — do not "simplify" it back.
+
+The landing page visuals in `apps/docs/app/(home)/_mocks/` are CSS/SVG, deliberately not
+screenshots, so they cannot drift out of date with the plugin's actual UI.
+
+`ClaudePrompt` prompts must stand alone: whoever pastes one into Claude will not have the docs page
+in front of them, so each prompt restates the goal, the screens involved, and the failure modes.

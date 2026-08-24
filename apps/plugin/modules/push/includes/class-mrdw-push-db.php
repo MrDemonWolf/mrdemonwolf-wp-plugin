@@ -1503,7 +1503,7 @@ class MRDW_Push_DB {
 
 				$token = sanitize_text_field( $row['expo_token'] );
 
-				if ( ! \ExpoSDK\Utils::isExpoPushToken( $token ) ) {
+				if ( ! MRDW_Push_Expo::is_valid_token( $token ) ) {
 					++$results['skipped'];
 					continue;
 				}
