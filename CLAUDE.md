@@ -133,7 +133,11 @@ Note the two Tailwind majors: v3 for the plugin, v4 for the docs. `bunfig.toml` 
 
 - `modules/push/admin/partials/dashboard.php` reads row properties without null coalescing, which
   surfaces as PHPUnit warnings when the partial is rendered with an incomplete fixture.
-- `ctwillie/expo-server-sdk-php` has an implicit-nullable parameter that is deprecated in PHP 8.4+
-  and becomes an error in PHP 9. Upstream fix needed.
+- `ctwillie/expo-server-sdk-php` (2.1) has **11 implicitly-nullable parameters** — `Expo::__construct()`
+  plus ten `ExpoMessage` setters. Deprecation notices on PHP 8.4/8.5, fatal on PHP 9. Upgrading 1.4
+  to 2.1 did **not** fix them, and upstream last released in 2023, so assume it will not. This is the
+  plugin's blocker for PHP 9: either upstream fixes it, a fork is vendored, or the thin
+  `MRDW_Push_Expo` wrapper is repointed at Expo's HTTP API directly (it is two endpoints:
+  `POST /push/send` and `POST /push/getReceipts` on `https://exp.host/--/api/v2`).
 - 88 cosmetic phpcs violations remain in `modules/`, mostly missing docblocks and non-snake_case
   variables.
