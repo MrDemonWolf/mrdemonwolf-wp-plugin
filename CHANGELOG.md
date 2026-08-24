@@ -3,6 +3,55 @@
 All notable changes to this project are documented here. This project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.0] - 2026-08-24
+
+### Changed
+
+- **The Expo SDK is gone.** `ctwillie/expo-server-sdk-php` is replaced by direct calls to Expo's
+  push API over `wp_remote_post()`. The SDK never exposed `richContent`, the field Expo documents
+  for notification images — the plugin was reaching it by subclassing `ExpoMessage` and relying on
+  the vendor constructor's `'set' . ucfirst($key)` dispatch, which any upstream refactor would have
+  broken silently. The SDK also carried 11 implicitly-nullable parameters, fatal on PHP 9, and has
+  not been released since 2023. **All 11 deprecations are gone; PHP 9 is no longer blocked by this
+  dependency.**
+- Minimum PHP stays 8.3, set by the Firebase SDK.
+
+### Added
+
+- `MRDW_Push_Expo::validate_image_url()`, applied to all three send paths. Requires HTTPS and a
+  publicly reachable host, and caps length at the `varchar(500)` column. Plain HTTP is refused by
+  iOS App Transport Security and private hosts are unreachable from a phone; in both cases Expo
+  reports nothing and the notification simply arrives without its image.
+- `mrdw_push_featured_image_size` filter, replacing the hard-coded `large`, with a fallback when
+  the requested size was never generated for an upload.
+- `mrdw_push_message` filter, exposing the whole Expo payload before it is sent. Every documented
+  Expo field is now reachable, including ones the SDK never supported.
+- Documentation site relaunch: a real landing page, brand assets, a 404 page, and a four-part
+  setup guide written for a non-technical reader, each step carrying a button that copies a
+  self-contained prompt for Claude.
+
+### Fixed
+
+- The editor meta box wrote `'0'` on every nonce-bearing save, and the publish hook only consults
+  the site-wide default when the meta is `''`. Saving a post once from a screen that did not render
+  the box therefore opted it out of featured images permanently. A hidden companion field now
+  distinguishes "unchecked" from "not rendered".
+- REST `/send` ignored featured images entirely — the publish hook and meta box both derive
+  `image_url` from the post, but REST only read an explicit parameter. It now falls back to the
+  post's featured image, and normalises an empty value to `NULL` as the admin screen already did.
+- Uninstalling left pre-2.0.0 tables and options behind. Seven legacy tables, fourteen options, the
+  old capability, post meta and cron events are now removed too.
+- The docs preview script served the static export at the root while the build sets a base path, so
+  every asset 404'd and the site rendered as unstyled HTML.
+- `metadataBase` was unset, so Open Graph image URLs could never resolve.
+- `MRDW_UPDATE_CHANNEL` and `mrdw_update_channel` slugified to the same heading anchor.
+
+### Removed
+
+- The PackRelay/TailSignal migration page. What still matters is folded into the docs index.
+
+[2.1.0]: https://github.com/MrDemonWolf/mrdemonwolf-wp-plugin/releases/tag/v2.1.0
+
 ## [2.0.0] - 2026-08-24
 
 Renames every identifier onto a single `mrdw` namespace. 1.4.0 kept the predecessors' names so the

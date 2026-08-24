@@ -41,7 +41,9 @@ class MRDW_Push_Admin_Send {
 
 		$title     = sanitize_text_field( wp_unslash( $_POST['title'] ?? '' ) );
 		$body      = sanitize_textarea_field( wp_unslash( $_POST['body'] ?? '' ) );
-		$image_url = esc_url_raw( wp_unslash( $_POST['image_url'] ?? '' ) );
+		// Rejects plain HTTP and unreachable hosts, which would otherwise be
+		// accepted here and then silently dropped on the handset.
+		$image_url = MRDW_Push_Expo::validate_image_url( esc_url_raw( wp_unslash( $_POST['image_url'] ?? '' ) ) );
 		$data      = null;
 		if ( isset( $_POST['data'] ) && '' !== $_POST['data'] ) {
 			// Kept raw on purpose: this is a JSON document, validated by the

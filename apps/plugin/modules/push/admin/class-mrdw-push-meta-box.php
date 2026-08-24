@@ -118,8 +118,16 @@ class MRDW_Push_Meta_Box {
 		update_post_meta( $post_id, '_mrdw_push_notify', $notify );
 
 		// Save include image toggle.
-		$include_img = isset( $_POST['mrdw_push_include_image'] ) ? '1' : '0';
-		update_post_meta( $post_id, '_mrdw_push_include_image', $include_img );
+		//
+		// An unchecked checkbox and an absent field look identical in $_POST, so
+		// a hidden companion field marks that the box was actually on screen.
+		// Without it, any save from a screen that does not render this meta box
+		// would write '0' and permanently opt the post out of featured images,
+		// even if the site-wide setting is later switched on.
+		if ( isset( $_POST['mrdw_push_image_field_present'] ) ) {
+			$include_img = isset( $_POST['mrdw_push_include_image'] ) ? '1' : '0';
+			update_post_meta( $post_id, '_mrdw_push_include_image', $include_img );
+		}
 
 		// Save custom title/body — only persist genuine overrides. The Quick
 		// Send fields are pre-filled with the default templates, so a value

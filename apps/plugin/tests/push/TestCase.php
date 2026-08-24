@@ -31,6 +31,13 @@ abstract class MRDW_Push_TestCase extends PHPUnitTestCase {
 		// Mock common WordPress functions.
 		Functions\stubs( array(
 			'get_transient'    => false,
+			// Expo transport. Tests that care about the response override these.
+			'wp_remote_post'                 => array(
+				'response' => array( 'code' => 200 ),
+				'body'     => '{"data":[]}',
+			),
+			'wp_remote_retrieve_response_code' => function( $r ) { return $r['response']['code'] ?? 200; },
+			'wp_remote_retrieve_body'          => function( $r ) { return $r['body'] ?? ''; },
 			'set_transient'    => true,
 			'delete_transient' => true,
 			'plugin_basename'  => MRDW_PLUGIN_BASENAME,

@@ -1,0 +1,130 @@
+---
+title: 2. Connect it to your app
+description: Point the plugin at your Firebase project so only your app can submit forms.
+---
+
+This is the fiddliest step, so take it slowly. About 10 minutes.
+
+## Why this exists
+
+Your app has no WordPress login. So how does your site know a form submission genuinely came from
+your app, and not from someone poking at the URL?
+
+**Firebase App Check.** Your app asks Apple or Google to vouch that it is a real, unmodified build,
+and gets a short-lived token. It sends that token with every submission. Your site checks the token
+with Firebase before writing anything.
+
+<Callout type="info">
+	There is no API key to copy anywhere, and nothing secret gets stored in your database. That is the
+	point of doing it this way.
+</Callout>
+
+<Steps>
+
+<Step>
+
+### Find your Firebase project ID
+
+Go to the [Firebase console](https://console.firebase.google.com/), open your app's project, then
+click the gear icon → **Project settings**.
+
+**Project ID** is on the **General** tab. It looks like `mrdemonwolf-official-app` — lowercase, with
+hyphens. It is _not_ the friendly display name.
+
+You should see: a project ID you can copy.
+
+</Step>
+
+<Step>
+
+### Make sure App Check is turned on
+
+Still in Firebase, click **App Check** in the left menu (under Build).
+
+Your app should be listed with a provider registered — **App Attest** or **DeviceCheck** for iOS,
+**Play Integrity** for Android. If it says "Not registered", the app side is not set up yet, and
+form submissions will be rejected until it is.
+
+</Step>
+
+<Step>
+
+### Tell the plugin the project ID
+
+In wp-admin, go to **MrDemonWolf → Forms Settings** and paste your project ID into **Firebase
+project ID**.
+
+Click **Save Changes**.
+
+</Step>
+
+<Step>
+
+### Allow the form your app submits to
+
+On the same screen, find **Allowed form IDs** and enter the ID of the form your app uses.
+
+- **Gravity Forms / WPForms** — the number in the forms list, for example `1`
+- **Divi** — the page ID, then a colon, then which form on that page, counting from zero. The first
+  form on page 42 is `42:0`
+
+Separate several with commas. A form that is not listed here is refused, which is deliberate — it
+stops someone walking through your form IDs.
+
+</Step>
+
+<Step>
+
+### Set the allowed origins
+
+Still on the same screen, **Allowed origins** controls which websites may call your REST API from a
+browser.
+
+If only the phone app talks to your site, leave this **blank** — blank blocks all cross-origin
+browser requests, which is the safest setting. If you also call it from a web app, put that site's
+address here, like `https://app.example.com`.
+
+Click **Save Changes**.
+
+</Step>
+
+</Steps>
+
+## Optional: keep the Expo token out of your database
+
+If you use an Expo access token for push, you can keep it out of WordPress entirely by putting it in
+`wp-config.php` instead:
+
+```php
+define( 'MRDW_EXPO_ACCESS_TOKEN', 'your-expo-access-token' );
+```
+
+Add that above the line that says `/* That's all, stop editing! */`. The settings field then shows
+as locked, and the plugin refuses to overwrite it.
+
+The token is optional — Expo accepts pushes without one.
+
+<ClaudePrompt
+  label="Let Claude set up Firebase App Check with you"
+  prompt={`I'm connecting a WordPress plugin called "MrDemonWolf" to my mobile app using Firebase App Check. I am not a developer — please explain each step simply, one at a time, and wait for me to confirm before continuing.
+
+Goal: my WordPress site should only accept contact form submissions that genuinely come from my app.
+
+Steps I need help with:
+
+1. Find my Firebase project ID at console.firebase.google.com > gear icon > Project settings > General. It's lowercase with hyphens, NOT the display name.
+2. Check that App Check is enabled: Firebase console > Build > App Check. My app should be listed with a provider registered (App Attest or DeviceCheck for iOS, Play Integrity for Android). Help me confirm this, because form submissions get rejected with a 403 if it isn't set up.
+3. In WordPress: MrDemonWolf > Forms Settings, paste the project ID into "Firebase project ID" and save.
+4. In "Allowed form IDs", enter the ID of the form my app submits to. For Gravity Forms or WPForms it's the number from the forms list. For Divi it's "pageID:formIndex" like "42:0".
+5. Leave "Allowed origins" blank if only my phone app calls the site — blank blocks all cross-origin browser requests.
+
+Please start by asking which form plugin I use and whether I can get into my Firebase console.`}
+/>
+
+## Did it work?
+
+You cannot fully test this until the app sends something, which is
+[the last step](/docs/setup/first-form). For now, check that **Forms Settings** shows your project
+ID and at least one allowed form ID after saving.
+
+Next: [send your first notification →](/docs/setup/first-notification)
