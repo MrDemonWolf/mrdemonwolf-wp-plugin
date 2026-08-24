@@ -1,0 +1,94 @@
+name: Nightly
+
+on:
+  schedule:
+    # 05:00 UTC daily.
+    - cron: "0 5 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: nightly
+  cancel-in-progress: true
+
+jobs:
+  nightly:
+    name: Build & publish nightly
+    runs-on: ubuntu-latest
+    # This environment must exist with NO required reviewers, or the scheduled
+    # run will sit waiting for an approval that nobody is awake to give.
+    environment: nightly
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+        with:
+          ref: main
+          persist-credentials: false
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # 2.37.2
+        with:
+          php-version: "8.1"
+          coverage: none
+          tools: composer:v2
+
+      - name: Install dependencies
+        run: composer install --no-interaction --no-progress
+        working-directory: apps/plugin
+
+      - name: Tests
+        run: composer test
+        working-directory: apps/plugin
+
+      - name: Build nightly zip
+        id: build
+        run: apps/plugin/bin/build-zip.sh --nightly
+
+      - name: Publish nightly pre-release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ steps.build.outputs.version }}
+        run: |
+          set -euo pipefail
+          TAG="v${VERSION}"
+
+          # A dated tag (rather than a rolling "nightly" tag) is required so the
+          # update checker can parse a real version number from the release.
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "Release ${TAG} already exists; replacing its asset."
+            gh release upload "$TAG" \
+              apps/plugin/build/mrdemonwolf-wp-plugin-nightly.zip \
+              --repo "$GITHUB_REPOSITORY" --clobber
+          else
+            gh release create "$TAG" \
+              apps/plugin/build/mrdemonwolf-wp-plugin-nightly.zip \
+              --repo "$GITHUB_REPOSITORY" \
+              --title "Nightly ${VERSION}" \
+              --notes "Automated nightly build from \`main\` (${GITHUB_SHA}). Not tested — staging only. See https://mrdemonwolf.github.io/mrdemonwolf-wp-plugin/docs/update-channels" \
+              --prerelease \
+              --target main
+          fi
+
+      - name: Prune nightlies older than 14 days
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          CUTOFF="$(date -u -d '14 days ago' +%Y%m%d)"
+          gh release list --repo "$GITHUB_REPOSITORY" --limit 100 --json tagName,isPrerelease \
+            --jq '.[] | select(.isPrerelease) | .tagName' \
+          | while read -r tag; do
+              stamp="${tag##*nightly.}"
+              case "$stamp" in
+                [0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]) ;;
+                *) continue ;;
+              esac
+              if [ "$stamp" -lt "$CUTOFF" ]; then
+                echo "Deleting old nightly ${tag}"
+                gh release delete "$tag" --repo "$GITHUB_REPOSITORY" --cleanup-tag --yes
+              fi
+            done

@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Documentation
+    url: https://mrdemonwolf.github.io/mrdemonwolf-wp-plugin/
+    about: Installation, configuration and REST API reference.
+  - name: Discord
+    url: https://mrdwolf.net/discord
+    about: Questions and general help.
+  - name: Report a security issue
+    url: https://github.com/MrDemonWolf/mrdemonwolf-wp-plugin/security/advisories/new
+    about: Please report vulnerabilities privately, not as a public issue.

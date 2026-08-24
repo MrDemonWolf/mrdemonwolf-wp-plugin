@@ -1,0 +1,43 @@
+---
+title: Changelog
+description: Release history.
+---
+
+## 1.4.0
+
+The first release of the merged plugin. It supersedes PackRelay 1.3.0 and TailSignal 1.2.0; see
+[migrating](/docs/migrating).
+
+### Added
+
+- Single **MrDemonWolf** admin menu covering both modules.
+- Module switches under **MrDemonWolf → General**, so either half can be disabled without
+  uninstalling or losing data.
+- Stable and nightly [update channels](/docs/update-channels), selected with `MRDW_UPDATE_CHANNEL`
+  and filterable through `mrdw_update_channel`.
+- `MRDW_EXPO_ACCESS_TOKEN` constant, so the Expo token can be kept out of the database. When set,
+  the settings field is locked and the option refuses to be written.
+- Conflict guard: the plugin declines to load, with an explanatory notice, while PackRelay or
+  TailSignal is still active.
+
+### Changed
+
+- Text domain unified to `mrdemonwolf` across both modules.
+- PHP floor raised to 8.1, from TailSignal's 7.4.
+- Admin page hook suffixes are now `mrdemonwolf_page_*` rather than `toplevel_page_tailsignal` and
+  `tailsignal_page_*`.
+- Both hand-rolled GitHub updaters replaced by a single update checker.
+- Codebase brought up to WordPress Coding Standards; new code passes the full ruleset.
+
+### Fixed
+
+- A settings partial assigned to `$page`, a WordPress global, from inside an included template.
+- `current_time( 'timestamp' )` replaced with a direct format string.
+- Missing `wp_unslash()` on a number of admin request reads, and unsanitised bulk-action input on the
+  Devices screen.
+- Test bootstrap no longer writes stub files into the distributed plugin directory.
+
+### Unchanged on purpose
+
+REST namespaces, routes and authentication; database tables; option names; the `tailsignal_manage`
+capability; admin page slugs.

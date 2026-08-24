@@ -1,0 +1,44 @@
+---
+title: Form providers
+description: Divi, WPForms and Gravity Forms support.
+---
+
+import { Callout } from "fumadocs-ui/components/callout";
+
+One provider is active at a time, chosen under **Forms Settings**. If the selected provider's plugin
+is not active, an admin notice says so and the option is shown as unavailable rather than silently
+failing.
+
+## Divi
+
+Form IDs use `post_id:form_index` — the ID of the page holding the form, then the form's zero-based
+position on that page. A contact form that is the first on page 42 is `42:0`.
+
+Divi has no entry storage of its own, so this module also hooks `et_pb_contact_form_submit` to
+capture ordinary front-end submissions into the entries table alongside the REST ones.
+
+## WPForms
+
+Form IDs are the numeric WPForms ID shown in the WPForms admin list.
+
+<Callout type="info">
+	Notification emails are dispatched in-process rather than queued, so a REST submission gets the
+	same emails a browser submission would, without waiting for WPForms' async task runner.
+</Callout>
+
+## Gravity Forms
+
+Form IDs are the numeric Gravity Forms ID. Gravity Forms' own field validation runs against REST
+submissions through the `gform_field_validation` filter, so required fields and field-level rules
+behave exactly as they do on the front end.
+
+## Field discovery
+
+Rather than hard-coding a form's shape in the app, fetch it:
+
+```
+GET /wp-json/packrelay/v1/forms/{form_id}/fields
+```
+
+The response describes each field's ID and type. Fields typed `email` are validated with
+`is_email()` on submission, and a bad address is rejected with `invalid_email`.

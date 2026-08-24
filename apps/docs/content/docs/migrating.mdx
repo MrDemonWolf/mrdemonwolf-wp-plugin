@@ -1,0 +1,59 @@
+---
+title: Migrating from PackRelay & TailSignal
+description: What changes, what stays the same, and what you need to do.
+---
+
+import { Callout } from "fumadocs-ui/components/callout";
+
+Both predecessor plugins are archived and superseded by this one. The migration is deliberately
+boring: the module code was merged in unchanged so that nothing app-facing moves.
+
+## What stays exactly the same
+
+<Callout type="info">
+	If you only integrate over the REST API, there is nothing to change on the app side.
+</Callout>
+
+- **REST namespaces and routes** — `packrelay/v1` and `tailsignal/v1`, same paths, same
+  authentication, same permission callbacks.
+- **Database tables** — `{prefix}packrelay_entries` and the six `{prefix}tailsignal_*` tables.
+- **Option names** — `packrelay_settings`, `tailsignal_auto_notify`, `tailsignal_expo_access_token`
+  and the rest.
+- **Capability** — `tailsignal_manage`.
+- **Admin page slugs** — `packrelay-entries`, `tailsignal-devices` and friends, so existing
+  bookmarks keep working.
+
+## What changes
+
+| Change      | Detail                                                                                                                                                |
+| ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Admin menu  | The two top-level menus are gone. Everything is under one **MrDemonWolf** menu.                                                                       |
+| Text domain | All three domains collapse into `mrdemonwolf`. Custom translation files need renaming.                                                                |
+| PHP floor   | 8.1, up from TailSignal's 7.4, matching PackRelay.                                                                                                    |
+| Updates     | Both hand-rolled updaters are replaced by one checker with stable and nightly channels.                                                               |
+| Expo token  | Can now be supplied by a `wp-config.php` constant instead of the database.                                                                            |
+| Page hooks  | Admin page hook suffixes change from `toplevel_page_tailsignal` to `mrdemonwolf_page_tailsignal`. Only matters if you wrote custom code against them. |
+
+## Steps
+
+1. Deactivate PackRelay and TailSignal. **Do not delete them** — deleting runs their uninstall
+   routines and drops their tables.
+2. Install and activate this plugin.
+3. Confirm your data is there: **MrDemonWolf → Form Entries** and **MrDemonWolf → Devices**.
+4. Once you are satisfied, delete the old plugin _directories_. Deleting through the WordPress admin
+   would trigger their uninstall scripts, so remove the folders over SFTP or WP-CLI instead:
+
+```bash
+wp plugin delete packrelay --skip-plugins --skip-themes
+```
+
+<Callout type="warn">
+	Even with `--skip-plugins`, verify your entries and devices are intact before removing anything.
+	Take a database backup first.
+</Callout>
+
+## Conflict guard
+
+While either predecessor is still active, this plugin registers no hooks at all and shows an admin
+notice naming the conflicting plugin. That is deliberate: both define the same PHP classes, so
+loading them together would be a fatal error rather than a warning.

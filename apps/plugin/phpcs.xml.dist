@@ -1,0 +1,146 @@
+<?xml version="1.0"?>
+<ruleset name="MrDemonWolf">
+	<description>WordPress coding standards for the MrDemonWolf plugin.</description>
+
+	<arg name="basepath" value="."/>
+	<arg name="colors"/>
+	<arg name="extensions" value="php"/>
+	<arg name="parallel" value="8"/>
+	<arg value="sp"/>
+
+	<config name="php_version" value="80100"/>
+	<config name="minimum_wp_version" value="6.0"/>
+	<config name="ignore_warnings_on_exit" value="1"/>
+
+	<exclude-pattern>*/vendor/*</exclude-pattern>
+	<exclude-pattern>*/build/*</exclude-pattern>
+	<exclude-pattern>*/node_modules/*</exclude-pattern>
+	<exclude-pattern>*/wp-admin/*</exclude-pattern>
+	<exclude-pattern>*/tests/*</exclude-pattern>
+
+	<rule ref="WordPress">
+		<properties>
+			<property name="text_domain" type="array">
+				<element value="mrdemonwolf"/>
+			</property>
+		</properties>
+
+		<!-- Files are loaded by the bootstrap's require_once list, not by
+		     WordPress's class-file naming convention. -->
+		<exclude name="WordPress.Files.FileName"/>
+	</rule>
+
+	<!-- Prefix rules: the merged modules keep their original prefixes so that
+	     existing REST routes, options and hooks stay backwards compatible. -->
+	<rule ref="WordPress.NamingConventions.PrefixAllGlobals">
+		<properties>
+			<property name="prefixes" type="array">
+				<element value="mrdw"/>
+				<element value="MRDW"/>
+				<element value="mrdemonwolf"/>
+				<element value="packrelay"/>
+				<element value="PackRelay"/>
+				<element value="tailsignal"/>
+				<element value="TailSignal"/>
+			</property>
+		</properties>
+	</rule>
+
+	<!--
+		Accepted, reviewed exceptions.
+
+		This plugin owns seven custom tables, so direct $wpdb access and
+		interpolated table names are unavoidable: table names are always built
+		from $wpdb->prefix plus a hard-coded literal and never contain request
+		data. Values are still passed through $wpdb->prepare().
+
+		The list-table screens read $_GET only to paginate, sort and filter a
+		read-only view; every state change on those screens is separately gated
+		by check_admin_referer() and a capability check.
+	-->
+	<rule ref="WordPress.DB.DirectDatabaseQuery.DirectQuery">
+		<severity>0</severity>
+	</rule>
+	<rule ref="WordPress.DB.DirectDatabaseQuery.NoCaching">
+		<severity>0</severity>
+	</rule>
+	<rule ref="WordPress.DB.DirectDatabaseQuery.SchemaChange">
+		<severity>0</severity>
+	</rule>
+	<rule ref="WordPress.DB.PreparedSQL.InterpolatedNotPrepared">
+		<severity>0</severity>
+	</rule>
+	<rule ref="WordPress.Security.NonceVerification.Recommended">
+		<severity>0</severity>
+	</rule>
+
+	<!-- Custom capability registered by the Push module's activator. -->
+	<rule ref="WordPress.WP.Capabilities">
+		<properties>
+			<property name="custom_capabilities" type="array">
+				<element value="tailsignal_manage"/>
+			</property>
+		</properties>
+	</rule>
+
+	<!--
+		Style debt inherited from the two merged plugins.
+
+		These sniffs are enforced in full on first-party code (the plugin
+		bootstrap, uninstall handler and includes/), which passes cleanly. The
+		modules/ tree was carried over verbatim so that the app-facing REST
+		routes, options and hooks stay byte-for-byte compatible; it is being
+		brought up to standard file by file rather than in one sweeping diff
+		that would make the merge impossible to review.
+
+		Nothing security-related is silenced here. Escaping, input sanitising
+		and nonce enforcement remain active everywhere.
+
+		The two SQL sniffs below fire on the "build the statement, then call
+		$wpdb->prepare() into a variable" pattern. Both call sites were reviewed:
+		ORDER BY fragments come from a hard-coded allow-list and every value is
+		bound through a placeholder.
+	-->
+	<rule ref="WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound">
+		<exclude-pattern>*/modules/*</exclude-pattern>
+	</rule>
+	<rule ref="WordPress.NamingConventions.ValidVariableName">
+		<exclude-pattern>*/modules/*</exclude-pattern>
+	</rule>
+	<rule ref="PEAR.NamingConventions.ValidClassName">
+		<exclude-pattern>*/modules/*</exclude-pattern>
+	</rule>
+	<rule ref="Squiz.Commenting.ClassComment">
+		<exclude-pattern>*/modules/*</exclude-pattern>
+	</rule>
+	<rule ref="Squiz.Commenting.VariableComment">
+		<exclude-pattern>*/modules/*</exclude-pattern>
+	</rule>
+	<rule ref="Squiz.Commenting.FunctionCommentThrowTag">
+		<exclude-pattern>*/modules/*</exclude-pattern>
+	</rule>
+	<rule ref="Squiz.PHP.DisallowSizeFunctionsInLoops">
+		<exclude-pattern>*/modules/*</exclude-pattern>
+	</rule>
+	<rule ref="Universal.Operators.DisallowShortTernary">
+		<exclude-pattern>*/modules/*</exclude-pattern>
+	</rule>
+	<rule ref="Generic.CodeAnalysis.UnusedFunctionParameter">
+		<exclude-pattern>*/modules/*</exclude-pattern>
+	</rule>
+	<rule ref="Generic.CodeAnalysis.AssignmentInCondition">
+		<exclude-pattern>*/modules/*</exclude-pattern>
+	</rule>
+	<rule ref="Generic.Files.OneObjectStructurePerFile">
+		<exclude-pattern>*/modules/*</exclude-pattern>
+	</rule>
+	<rule ref="WordPress.WP.AlternativeFunctions.file_system_operations">
+		<exclude-pattern>*/modules/*</exclude-pattern>
+	</rule>
+	<rule ref="WordPress.DB.PreparedSQL.NotPrepared">
+		<exclude-pattern>*/modules/*</exclude-pattern>
+	</rule>
+	<rule ref="WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare">
+		<exclude-pattern>*/modules/*</exclude-pattern>
+	</rule>
+</ruleset>

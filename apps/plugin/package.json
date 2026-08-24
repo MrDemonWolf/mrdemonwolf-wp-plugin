@@ -1,0 +1,13 @@
+{
+	"name": "@mrdemonwolf/plugin",
+	"private": true,
+	"scripts": {
+		"build": "bunx tailwindcss@^3.4.19 -i modules/push/admin/css/tailwind-input.css -o modules/push/admin/css/tailsignal-tailwind.css --minify",
+		"test": "composer test",
+		"lint": "composer lint",
+		"clean": "rm -rf build vendor .phpunit.cache"
+	},
+	"devDependencies": {
+		"tailwindcss": "^3.4.19"
+	}
+}

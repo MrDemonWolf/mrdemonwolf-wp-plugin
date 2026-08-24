@@ -1,0 +1,16 @@
+{
+	"title": "MrDemonWolf for WordPress",
+	"pages": [
+		"index",
+		"install",
+		"migrating",
+		"configuration",
+		"update-channels",
+		"---Modules---",
+		"forms",
+		"push",
+		"---Reference---",
+		"changelog",
+		"legal"
+	]
+}

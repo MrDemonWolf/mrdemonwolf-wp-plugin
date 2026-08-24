@@ -1,0 +1,30 @@
+---
+title: Groups
+description: Target a subset of devices.
+---
+
+Groups let you send to a slice of the device list instead of everyone.
+
+## Creating a group
+
+**MrDemonWolf → Groups → Add group**. Give it a name and an optional description, then tick the
+devices that belong to it. The device picker has a search box and a running selected/total count.
+
+A device can belong to any number of groups. Deleting a group removes the memberships, never the
+devices.
+
+## Sending to a group
+
+On the **Send** screen, choose **Group** as the target and pick one. The resolved recipient list is
+every active device in that group; a device in two selected groups is still only sent to once.
+
+## Targets available
+
+| Target           | Who receives it                              |
+| ---------------- | -------------------------------------------- |
+| All devices      | Every active device.                         |
+| Dev devices      | Only devices flagged as development devices. |
+| Group            | Active devices in the chosen group.          |
+| Specific devices | The device IDs you select.                   |
+
+With Dev mode on, every one of these is further filtered down to dev devices only.

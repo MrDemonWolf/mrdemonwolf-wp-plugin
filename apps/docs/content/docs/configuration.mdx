@@ -1,0 +1,69 @@
+---
+title: Configuration
+description: Module switches, secrets and wp-config.php constants.
+---
+
+import { Callout } from "fumadocs-ui/components/callout";
+
+## Turning modules on and off
+
+**MrDemonWolf → General** has a checkbox per module. Both ship enabled.
+
+Disabling a module stops it registering any hooks, admin pages or REST routes — its endpoints start
+returning 404. Nothing is deleted. Re-enabling restores it, and if the module had never been
+activated on this site before, its tables and capabilities are created at that point.
+
+## Constants
+
+Set these in `wp-config.php`, above the `/* That's all, stop editing! */` line.
+
+### `MRDW_EXPO_ACCESS_TOKEN`
+
+Supplies the Expo access token without storing it in the database.
+
+```php
+define( 'MRDW_EXPO_ACCESS_TOKEN', 'your-expo-access-token' );
+```
+
+When defined, the field on **Push Settings** is shown disabled and labelled as constant-managed, and
+the setting refuses to be written even if the request is forged. Remove the constant to go back to
+managing it from the admin screen.
+
+<Callout type="info">
+	The token is optional. Expo accepts unauthenticated pushes; a token raises rate limits and is
+	required for some project configurations.
+</Callout>
+
+### `MRDW_UPDATE_CHANNEL`
+
+Selects which releases the site is offered. Defaults to `stable`.
+
+```php
+define( 'MRDW_UPDATE_CHANNEL', 'nightly' );
+```
+
+See [update channels](/docs/update-channels).
+
+## Filters
+
+### `mrdw_update_channel`
+
+Resolve the channel programmatically — useful when staging and production share a codebase.
+
+```php
+add_filter( 'mrdw_update_channel', function ( $channel ) {
+	return wp_get_environment_type() === 'staging' ? 'nightly' : $channel;
+} );
+```
+
+Anything other than `nightly` is treated as `stable`, so a typo can never silently enrol a
+production site in pre-releases.
+
+## Secrets policy
+
+Nothing secret is committed to the plugin, and the only credential either module stores is the
+optional Expo token. In particular:
+
+- The Forms module stores **no** credential. Firebase App Check tokens are verified per request and
+  never persisted; `firebase_project_id` is configuration, not a secret.
+- The Push module treats an Expo push token as the device's own identifier, not as a site secret.
