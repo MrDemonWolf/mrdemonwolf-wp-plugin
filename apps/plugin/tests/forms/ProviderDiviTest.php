@@ -1,22 +1,22 @@
 <?php
 /**
- * Tests for PackRelay_Provider_Divi.
+ * Tests for MRDW_Forms_Provider_Divi.
  *
- * @package    PackRelay
+ * @package    MrDemonWolf
  * @copyright  2026 MrDemonWolf, Inc.
  */
 
-namespace PackRelay\Tests;
+namespace MRDW_Forms\Tests;
 
 use Brain\Monkey\Functions;
 
 class ProviderDiviTest extends TestCase {
 
-	private \PackRelay_Provider_Divi $provider;
+	private \MRDW_Forms_Provider_Divi $provider;
 
 	protected function setUp(): void {
 		parent::setUp();
-		$this->provider = new \PackRelay_Provider_Divi();
+		$this->provider = new \MRDW_Forms_Provider_Divi();
 	}
 
 	public function test_get_slug(): void {
@@ -129,7 +129,7 @@ class ProviderDiviTest extends TestCase {
 		Functions\when( 'get_post' )->justReturn( null );
 
 		Functions\expect( 'apply_filters' )
-			->with( 'packrelay_pre_save_fields', \Mockery::any(), '42:0', \Mockery::any() )
+			->with( 'mrdw_forms_pre_save_fields', \Mockery::any(), '42:0', \Mockery::any() )
 			->andReturnUsing( function ( $hook, $fields ) {
 				return $fields;
 			} );
@@ -150,7 +150,7 @@ class ProviderDiviTest extends TestCase {
 	public function test_send_notifications_calls_wp_mail(): void {
 		Functions\when( 'get_option' )->alias(
 			function ( $key, $default = false ) {
-				if ( 'packrelay_settings' === $key ) {
+				if ( 'mrdw_forms_settings' === $key ) {
 					return array( 'notification_email' => '' );
 				}
 				if ( 'admin_email' === $key ) {
@@ -161,7 +161,7 @@ class ProviderDiviTest extends TestCase {
 		);
 
 		Functions\expect( 'apply_filters' )
-			->with( 'packrelay_notification_args', \Mockery::any(), 5, '42:0' )
+			->with( 'mrdw_forms_notification_args', \Mockery::any(), 5, '42:0' )
 			->andReturnUsing( function ( $hook, $args ) {
 				return $args;
 			} );
@@ -194,7 +194,7 @@ class ProviderDiviTest extends TestCase {
 	public function test_send_notifications_falls_back_to_admin_email(): void {
 		Functions\when( 'get_option' )->alias(
 			function ( $key, $default = false ) {
-				if ( 'packrelay_settings' === $key ) {
+				if ( 'mrdw_forms_settings' === $key ) {
 					return array( 'notification_email' => 'settings@example.com' );
 				}
 				return $default;

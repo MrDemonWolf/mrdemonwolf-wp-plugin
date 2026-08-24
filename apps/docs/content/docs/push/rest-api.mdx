@@ -1,18 +1,18 @@
 ---
 title: Push REST API
-description: Endpoints, authentication and permissions for the tailsignal/v1 namespace.
+description: Endpoints, authentication and permissions for the mrdw/v1 namespace.
 ---
 
 import { Callout } from "fumadocs-ui/components/callout";
 
-Namespace: `tailsignal/v1`. Base URL: `https://your-site.example/wp-json/tailsignal/v1`.
+Namespace: `mrdw/v1`. Base URL: `https://your-site.example/wp-json/mrdw/v1`.
 
 ## Two tiers of access
 
-| Tier   | Routes                                                  | How it is authorised           |
-| ------ | ------------------------------------------------------- | ------------------------------ |
-| Public | `/register`, `/register/status`                         | The Expo push token itself     |
-| Admin  | `/send`, `/stats`, `/devices/export`, `/devices/import` | `tailsignal_manage` capability |
+| Tier   | Routes                                                  | How it is authorised       |
+| ------ | ------------------------------------------------------- | -------------------------- |
+| Public | `/register`, `/register/status`                         | The Expo push token itself |
+| Admin  | `/send`, `/stats`, `/devices/export`, `/devices/import` | `mrdw_manage` capability   |
 
 <Callout type="warn">
 	The device routes register `permission_callback` as `__return_true` deliberately. The app has no
@@ -23,7 +23,7 @@ Namespace: `tailsignal/v1`. Base URL: `https://your-site.example/wp-json/tailsig
 </Callout>
 
 Admin routes accept any standard WordPress authentication: a logged-in cookie plus nonce, or an
-application password over HTTP Basic. Failing the capability check returns `403 tailsignal_forbidden`.
+application password over HTTP Basic. Failing the capability check returns `403 mrdw_push_forbidden`.
 
 ## `POST /register`
 

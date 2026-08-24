@@ -1,22 +1,22 @@
 <?php
 /**
- * Tests for PackRelay_Provider_WPForms.
+ * Tests for MRDW_Forms_Provider_WPForms.
  *
- * @package    PackRelay
+ * @package    MrDemonWolf
  * @copyright  2026 MrDemonWolf, Inc.
  */
 
-namespace PackRelay\Tests;
+namespace MRDW_Forms\Tests;
 
 use Brain\Monkey\Functions;
 
 class ProviderWPFormsTest extends TestCase {
 
-	private \PackRelay_Provider_WPForms $provider;
+	private \MRDW_Forms_Provider_WPForms $provider;
 
 	protected function setUp(): void {
 		parent::setUp();
-		$this->provider = new \PackRelay_Provider_WPForms();
+		$this->provider = new \MRDW_Forms_Provider_WPForms();
 	}
 
 	public function test_get_slug(): void {
@@ -75,7 +75,7 @@ class ProviderWPFormsTest extends TestCase {
 			->andReturn( $wpforms_mock );
 
 		Functions\expect( 'apply_filters' )
-			->with( 'packrelay_pre_save_fields', \Mockery::any(), '123', \Mockery::any() )
+			->with( 'mrdw_forms_pre_save_fields', \Mockery::any(), '123', \Mockery::any() )
 			->andReturnUsing( function ( $_hook, $fields ) {
 				return $fields;
 			} );
@@ -121,7 +121,7 @@ class ProviderWPFormsTest extends TestCase {
 			->andReturn( $wpforms_mock );
 
 		Functions\expect( 'apply_filters' )
-			->with( 'packrelay_pre_save_fields', \Mockery::any(), '123', \Mockery::any() )
+			->with( 'mrdw_forms_pre_save_fields', \Mockery::any(), '123', \Mockery::any() )
 			->andReturnUsing( function ( $_hook, $fields ) {
 				return $fields;
 			} );
@@ -155,7 +155,7 @@ class ProviderWPFormsTest extends TestCase {
 			->andReturn( $wpforms_mock );
 
 		Functions\expect( 'apply_filters' )
-			->with( 'packrelay_pre_save_fields', \Mockery::any(), '123', \Mockery::any() )
+			->with( 'mrdw_forms_pre_save_fields', \Mockery::any(), '123', \Mockery::any() )
 			->andReturnUsing( function ( $_hook, $fields ) {
 				return $fields;
 			} );
@@ -179,7 +179,7 @@ class ProviderWPFormsTest extends TestCase {
 			->andReturn( $wpforms_mock );
 
 		Functions\expect( 'apply_filters' )
-			->with( 'packrelay_pre_save_fields', \Mockery::any(), '123', \Mockery::any() )
+			->with( 'mrdw_forms_pre_save_fields', \Mockery::any(), '123', \Mockery::any() )
 			->andReturn( array( '1' => 'Modified' ) );
 
 		$request = new \WP_REST_Request();
