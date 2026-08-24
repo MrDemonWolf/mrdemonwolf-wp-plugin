@@ -6,6 +6,10 @@ on:
     paths:
       - "apps/docs/**"
       - ".github/workflows/deploy-docs.yml"
+      # The docs build resolves through the workspace lockfile, so a dependency
+      # change alone can break or fix the published site.
+      - "bun.lock"
+      - "package.json"
   workflow_dispatch:
 
 permissions:
