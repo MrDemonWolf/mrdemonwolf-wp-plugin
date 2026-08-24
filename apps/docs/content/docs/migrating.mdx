@@ -29,7 +29,7 @@ boring: the module code was merged in unchanged so that nothing app-facing moves
 | ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Admin menu  | The two top-level menus are gone. Everything is under one **MrDemonWolf** menu.                                                                       |
 | Text domain | All three domains collapse into `mrdemonwolf`. Custom translation files need renaming.                                                                |
-| PHP floor   | 8.1, up from TailSignal's 7.4, matching PackRelay.                                                                                                    |
+| PHP floor   | 8.3. Required by the Firebase SDK the Forms module depends on; PackRelay's declared 8.1 was never actually installable.                               |
 | Updates     | Both hand-rolled updaters are replaced by one checker with stable and nightly channels.                                                               |
 | Expo token  | Can now be supplied by a `wp-config.php` constant instead of the database.                                                                            |
 | Page hooks  | Admin page hook suffixes change from `toplevel_page_tailsignal` to `mrdemonwolf_page_tailsignal`. Only matters if you wrote custom code against them. |

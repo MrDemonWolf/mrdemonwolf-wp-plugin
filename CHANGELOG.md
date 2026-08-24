@@ -24,12 +24,13 @@ upgrades forward cleanly.
 - Merged uninstall handler that removes both modules' tables, options, capability, post meta and cron
   events, multisite included.
 - Documentation site with installation, configuration, migration and REST API reference.
-- CI across PHP 8.1–8.4, plus release and nightly build pipelines.
+- CI across PHP 8.3–8.5, plus release and nightly build pipelines.
 
 ### Changed
 
 - Text domain unified to `mrdemonwolf` across both modules. Custom translation files need renaming.
-- Minimum PHP raised to 8.1, from TailSignal's 7.4.
+- Minimum PHP raised to 8.3. PackRelay declared 8.1 and TailSignal 7.4, but the Firebase SDK
+  the Forms module depends on now requires 8.3, so 8.1 was never actually installable.
 - Admin page hook suffixes are now `mrdemonwolf_page_*` instead of `toplevel_page_tailsignal` and
   `tailsignal_page_*`.
 - Both hand-rolled GitHub updaters replaced by a single `plugin-update-checker` instance.

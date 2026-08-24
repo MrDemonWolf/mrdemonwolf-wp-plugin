@@ -8,7 +8,7 @@
 	<arg name="parallel" value="8"/>
 	<arg value="sp"/>
 
-	<config name="php_version" value="80100"/>
+	<config name="php_version" value="80300"/>
 	<config name="minimum_wp_version" value="6.0"/>
 	<config name="ignore_warnings_on_exit" value="1"/>
 
