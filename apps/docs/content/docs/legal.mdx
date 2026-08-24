@@ -1,0 +1,42 @@
+---
+title: Licence
+description: Licensing and attribution.
+---
+
+## Licence
+
+This plugin is free software, released under the
+[GNU General Public License v2.0 or later](https://www.gnu.org/licenses/gpl-2.0.html) — the same
+licence as WordPress itself. You may use it on any number of sites, commercial or otherwise, and you
+may modify and redistribute it under the same terms.
+
+There is no licence key, no activation, and no usage tracking.
+
+## Warranty
+
+None. The licence text puts it plainly: the software is provided "as is", without warranty of any
+kind.
+
+## Third-party components
+
+| Component                                                                                  | Licence | Used by                   |
+| ------------------------------------------------------------------------------------------ | ------- | ------------------------- |
+| [kreait/firebase-php](https://github.com/kreait/firebase-php)                              | MIT     | App Check verification    |
+| [ctwillie/expo-server-sdk-php](https://github.com/ctwillie/expo-server-sdk-php)            | MIT     | Expo delivery             |
+| [yahnis-elsts/plugin-update-checker](https://github.com/YahnisElsts/plugin-update-checker) | MIT     | Updates                   |
+| [Chart.js](https://www.chartjs.org/)                                                       | MIT     | Dashboard charts          |
+| [Tailwind CSS](https://tailwindcss.com/)                                                   | MIT     | Push module admin styling |
+
+## Data handling
+
+The plugin sends data off-site in exactly two cases:
+
+- **Expo** (`https://exp.host`) receives push tokens and message content, because that is how
+  delivery works.
+- **GitHub** (`https://api.github.com`) is contacted to check for plugin updates.
+
+Form submissions and device records stay in your own database. Nothing is sent to MrDemonWolf, Inc.
+
+## Trademark
+
+"MrDemonWolf" is a trademark of MrDemonWolf, Inc. The GPL covers the code, not the name or branding.

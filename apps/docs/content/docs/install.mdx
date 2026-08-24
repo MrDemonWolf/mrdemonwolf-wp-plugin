@@ -1,0 +1,68 @@
+---
+title: Installation
+description: Download the plugin, upload it to WordPress and activate it.
+---
+
+import { Step, Steps } from "fumadocs-ui/components/steps";
+import { Callout } from "fumadocs-ui/components/callout";
+
+<Steps>
+
+<Step>
+
+### Download
+
+Grab [the latest stable zip](https://github.com/MrDemonWolf/mrdemonwolf-wp-plugin/releases/latest/download/mrdemonwolf-wp-plugin.zip).
+
+The zip already contains its Composer dependencies, so there is nothing to build or install on the
+server.
+
+</Step>
+
+<Step>
+
+### Deactivate the predecessors
+
+If **PackRelay** or **TailSignal** is still installed, deactivate it first. Both are now built in,
+and this plugin refuses to load while either is active rather than risk a fatal error.
+
+<Callout type="warn">
+	Deactivate, do not delete. Deleting runs their uninstall routines, which drop their database
+	tables. Deactivating leaves your entries, devices and groups intact for this plugin to pick up.
+</Callout>
+
+</Step>
+
+<Step>
+
+### Upload and activate
+
+In wp-admin, go to **Plugins → Add New → Upload Plugin**, choose the zip, install it, then activate.
+
+Activation creates the tables each enabled module needs and grants the `tailsignal_manage`
+capability to administrators.
+
+</Step>
+
+<Step>
+
+### Confirm
+
+A **MrDemonWolf** entry appears in the admin sidebar. Open **MrDemonWolf → General** and check that
+both modules show as enabled.
+
+</Step>
+
+</Steps>
+
+## Updating
+
+Updates come through the normal WordPress **Dashboard → Updates** screen — the plugin checks its
+GitHub releases directly, so there is nothing else to configure. Which releases it offers depends on
+the [update channel](/docs/update-channels).
+
+## Uninstalling
+
+Deleting the plugin from the Plugins screen removes everything it created: both modules' tables, all
+options, the `tailsignal_manage` capability, its post meta and its scheduled cron events. On
+multisite this runs for every site. Deactivating alone changes nothing on disk or in the database.

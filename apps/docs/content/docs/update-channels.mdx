@@ -1,0 +1,50 @@
+---
+title: Update channels
+description: How stable and nightly releases are built and delivered.
+---
+
+import { Callout } from "fumadocs-ui/components/callout";
+
+Updates are delivered from GitHub releases through the normal WordPress updates screen. There is no
+update server and no licence key.
+
+## Stable
+
+The default. The site is offered the newest published, non-pre-release GitHub release. Every stable
+release is cut from a `v*` tag, and CI runs the full test suite before the zip is attached.
+
+## Nightly
+
+Built from `main` once a day and published as a GitHub **pre-release**. Nightlies are not manually
+tested. Use them on staging, not on a production site.
+
+Opt in with:
+
+```php
+define( 'MRDW_UPDATE_CHANNEL', 'nightly' );
+```
+
+### How nightly versions are numbered
+
+A nightly is stamped with the next minor version plus the build date:
+
+```
+installed stable   1.4.0
+nightly build      1.5.0-nightly.20260824
+next stable        1.5.0
+```
+
+That ordering means a nightly always looks newer than the stable it was built from, and older than
+the stable that eventually supersedes it — so a nightly site rejoins the stable line by itself once
+`1.5.0` ships.
+
+<Callout type="warn">
+	WordPress never offers a *lower* version than the one installed. Going from nightly back to stable
+	before the next stable release means downloading the stable zip and re-uploading it by hand.
+</Callout>
+
+## Checking which channel a site is on
+
+**MrDemonWolf → General** shows the installed version and the resolved channel, along with a
+reminder of the constant to set. The channel is read-only in the admin on purpose: it is a
+deployment decision, not a per-user preference.

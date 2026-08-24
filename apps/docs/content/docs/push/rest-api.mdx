@@ -1,0 +1,67 @@
+---
+title: Push REST API
+description: Endpoints, authentication and permissions for the tailsignal/v1 namespace.
+---
+
+import { Callout } from "fumadocs-ui/components/callout";
+
+Namespace: `tailsignal/v1`. Base URL: `https://your-site.example/wp-json/tailsignal/v1`.
+
+## Two tiers of access
+
+| Tier   | Routes                                                  | How it is authorised           |
+| ------ | ------------------------------------------------------- | ------------------------------ |
+| Public | `/register`, `/register/status`                         | The Expo push token itself     |
+| Admin  | `/send`, `/stats`, `/devices/export`, `/devices/import` | `tailsignal_manage` capability |
+
+<Callout type="warn">
+	The device routes register `permission_callback` as `__return_true` deliberately. The app has no
+	WordPress user, so it cannot authenticate. The Expo push token acts as the bearer credential: it
+	is issued by Expo, cryptographically random, and validated with `ExpoSDK\Utils::isExpoPushToken`
+	before use, so it cannot be enumerated. Knowing a token only lets you manage *that* device — it
+	grants no read access to the device list and no ability to send.
+</Callout>
+
+Admin routes accept any standard WordPress authentication: a logged-in cookie plus nonce, or an
+application password over HTTP Basic. Failing the capability check returns `403 tailsignal_forbidden`.
+
+## `POST /register`
+
+```json
+{
+	"expo_token": "ExponentPushToken[xxxxxxxxxxxxxxxxxxxxxx]",
+	"device_type": "ios",
+	"device_model": "iPhone 15 Pro",
+	"os_version": "18.2",
+	"app_version": "1.4.0",
+	"locale": "en-US",
+	"timezone": "America/Chicago",
+	"user_label": "Nathanial's phone"
+}
+```
+
+`expo_token` and `device_type` are required; `device_type` must be `ios` or `android`. Everything
+else is optional. Re-registering an existing token updates that device.
+
+## `DELETE /register`
+
+Takes `expo_token` and marks the device inactive so it stops receiving sends.
+
+## `GET /register/status`
+
+Takes `expo_token` and reports whether it is registered and active. Use it on app launch to decide
+whether to prompt for notification permission again.
+
+## Admin routes
+
+| Route             | Method | Purpose                             |
+| ----------------- | ------ | ----------------------------------- |
+| `/send`           | POST   | Send or schedule a notification.    |
+| `/stats`          | GET    | Device and delivery counts.         |
+| `/devices/export` | GET    | CSV of the device list.             |
+| `/devices/import` | POST   | CSV upload; MIME-checked, CSV only. |
+
+## Disabled module
+
+With the Push module switched off under **MrDemonWolf → General**, none of these routes are
+registered and all of them return `404`.

@@ -1,0 +1,38 @@
+---
+title: Devices
+description: How devices register, and how to manage them.
+---
+
+import { Callout } from "fumadocs-ui/components/callout";
+
+## Registration
+
+The app registers itself by POSTing its Expo push token to
+[`/tailsignal/v1/register`](/docs/push/rest-api#post-register). Registering the same token twice
+updates the existing row rather than creating a duplicate.
+
+Alongside the token a device may report its type (`ios` or `android`), model, OS version, app
+version, locale, timezone and a user-facing label.
+
+## Managing devices
+
+**MrDemonWolf → Devices** lists every registered device with its platform, label and status. From
+there you can relabel a device, flag it as a development device, delete one, or bulk-delete a
+selection.
+
+Devices are soft-managed by an `is_active` flag: unregistering marks a device inactive so it stops
+receiving sends, without discarding its history.
+
+## Development devices
+
+A device flagged **dev** is the only kind that receives anything while Dev mode is on. Flag your own
+phone, turn Dev mode on, and you can exercise the whole pipeline against a live site safely.
+
+## Import and export
+
+CSV import and export are available from **Push Settings**, and over the REST API for admins.
+
+<Callout type="info">
+	Uploaded files are checked by MIME sniffing, not just by extension, and only CSV types are
+	accepted.
+</Callout>

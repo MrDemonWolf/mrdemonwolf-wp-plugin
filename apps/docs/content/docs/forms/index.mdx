@@ -1,0 +1,53 @@
+---
+title: Forms
+description: Accept form submissions from the MrDemonWolf app over the REST API.
+---
+
+import { Callout } from "fumadocs-ui/components/callout";
+
+The Forms module lets an external client — the MrDemonWolf app — read a form's field list and submit
+to it, without the form's own JavaScript or a browser session. Submissions are handed to the site's
+form builder and recorded in a searchable entries table.
+
+This module was the **PackRelay** plugin.
+
+## How a submission is authorised
+
+There is no API key and no `Authorization` header. Three independent checks gate every submission:
+
+<Callout type="info">
+	Firebase App Check attests that the request came from a genuine build of your app. It is not a
+	user login, and it does not identify a person.
+</Callout>
+
+1. **Form ID allow-list** — the form must be listed in **Forms Settings**, so an attacker cannot walk
+   arbitrary form IDs.
+2. **Firebase App Check** — the request body must carry an `app_check_token`, which is verified
+   server-side against your Firebase project before anything is written.
+3. **Origin allow-list** — browser clients are additionally constrained by the CORS origins you list.
+
+## Settings
+
+**MrDemonWolf → Forms Settings**:
+
+| Setting                     | Purpose                                                                                                                                 |
+| --------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| Form provider               | Which builder submissions go to: Divi, WPForms or Gravity Forms.                                                                        |
+| Firebase project ID         | The project App Check tokens are validated against. Defaults to `mrdemonwolf-official-app`.                                             |
+| Allowed form IDs            | Comma-separated list of forms that may be submitted to.                                                                                 |
+| Allowed origins             | Comma-separated CORS origins, for example `https://app.example.com` or `capacitor://localhost`. Blank blocks all cross-origin requests. |
+| Notification email          | Where submission notifications are sent.                                                                                                |
+| Notification subject / body | Templates for that email.                                                                                                               |
+
+All of these live in a single `packrelay_settings` option.
+
+## Entries
+
+**MrDemonWolf → Form Entries** lists everything received, filterable by provider and source, with a
+detail view and a CSV export. Both REST submissions and ordinary front-end Divi submissions are
+captured.
+
+<Callout type="warn">
+	CSV cells beginning `=`, `+`, `-` or `@` are prefixed with an apostrophe on export, so a
+	submission cannot turn into a formula when the file is opened in a spreadsheet.
+</Callout>

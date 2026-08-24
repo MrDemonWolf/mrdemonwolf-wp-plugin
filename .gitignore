@@ -1,0 +1,31 @@
+# Dependencies
+node_modules/
+apps/plugin/vendor/
+
+# Build output
+.next/
+out/
+dist/
+.source/
+.turbo/
+apps/plugin/build/
+*.zip
+
+# Test / coverage
+coverage/
+.phpunit.result.cache
+apps/plugin/.phpunit.cache/
+
+# Env & local config
+.env
+.env.*
+!.env.example
+phpunit.xml
+phpcs.xml
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/

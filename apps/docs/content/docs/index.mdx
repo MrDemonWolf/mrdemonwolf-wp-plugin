@@ -1,0 +1,53 @@
+---
+title: Overview
+description: What the MrDemonWolf WordPress plugin does and how it is put together.
+---
+
+import { Callout } from "fumadocs-ui/components/callout";
+
+<Callout type="info">
+	One plugin, two modules. **Forms** accepts submissions from the MrDemonWolf app; **Push** sends
+	Expo notifications to it. Either can be switched off without uninstalling.
+</Callout>
+
+## What it does
+
+This plugin is the bridge between the MrDemonWolf WordPress site and the MrDemonWolf app.
+
+- **Forms** exposes REST endpoints so the app can list a form's fields and submit to it. Submissions
+  are handed to whichever form builder the site uses — Divi, WPForms or Gravity Forms — and are also
+  recorded in an entries table with a CSV export.
+- **Push** keeps a registry of devices that have opted into notifications, groups them, and sends
+  Expo push messages either on demand, on a schedule, or automatically when a post is published.
+
+## Where it came from
+
+Both halves shipped as separate plugins before:
+
+| Was        | Is now               |
+| ---------- | -------------------- |
+| PackRelay  | The **Forms** module |
+| TailSignal | The **Push** module  |
+
+The module code was carried over unchanged. REST namespaces (`packrelay/v1`, `tailsignal/v1`),
+option names, database tables and the `tailsignal_manage` capability are all identical, so the app
+keeps working and existing sites keep their data. See [Migrating](/docs/migrating).
+
+## Requirements
+
+|           |                                   |
+| --------- | --------------------------------- |
+| WordPress | 6.0 or newer (tested against 7.1) |
+| PHP       | 8.1 or newer                      |
+| Licence   | GPL-2.0-or-later                  |
+
+The Forms module additionally needs whichever form plugin you point it at, and a Firebase project
+for App Check. The Push module needs nothing beyond WordPress; an Expo access token is optional.
+
+## Admin layout
+
+Everything lives under a single **MrDemonWolf** menu:
+
+- **General** — turn modules on and off, and see which update channel the site is on.
+- **Form Entries**, **Forms Settings** — the Forms module.
+- **Push**, **Send**, **Devices**, **Groups**, **History**, **Push Settings** — the Push module.

@@ -1,0 +1,45 @@
+---
+title: Push
+description: Send Expo push notifications to the MrDemonWolf app from WordPress.
+---
+
+import { Callout } from "fumadocs-ui/components/callout";
+
+The Push module is a self-hosted notification system. Devices register themselves against your site,
+you group and target them from wp-admin, and messages are delivered through Expo's push service.
+There is no third-party notification vendor holding your device list.
+
+This module was the **TailSignal** plugin.
+
+## What it stores
+
+Six tables under the `{prefix}tailsignal_` prefix: devices, device metadata, groups, the
+device-to-group mapping, notifications, and per-send history.
+
+## Settings
+
+**MrDemonWolf → Push Settings**:
+
+| Setting                | Purpose                                                                           |
+| ---------------------- | --------------------------------------------------------------------------------- |
+| Dev mode               | Restrict every send to devices flagged as development devices.                    |
+| Expo access token      | Optional. Better set as a [constant](/docs/configuration#mrdw_expo_access_token). |
+| Auto-notify on publish | Send automatically when a post is published.                                      |
+| Default title / body   | Templates, with placeholders.                                                     |
+| Use featured image     | Attach the post's featured image to the notification.                             |
+
+The portfolio post type has its own copy of the auto-notify, title, body and image settings.
+
+<Callout type="warn">
+	Turn **Dev mode** on while testing. With it on, nothing reaches real users' devices no matter what
+	you send.
+</Callout>
+
+## Permissions
+
+Everything in wp-admin and every write endpoint is gated on the `tailsignal_manage` capability,
+which activation grants to administrators. Grant it to another role with:
+
+```php
+get_role( 'editor' )->add_cap( 'tailsignal_manage' );
+```

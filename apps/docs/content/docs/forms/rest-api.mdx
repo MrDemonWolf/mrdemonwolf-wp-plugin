@@ -1,0 +1,70 @@
+---
+title: Forms REST API
+description: Endpoints, authentication and error codes for the packrelay/v1 namespace.
+---
+
+import { Callout } from "fumadocs-ui/components/callout";
+
+Namespace: `packrelay/v1`. Base URL: `https://your-site.example/wp-json/packrelay/v1`.
+
+## Authentication
+
+<Callout type="warn">
+	Both routes register `permission_callback` as `__return_true`, so they are reachable without a
+	WordPress login. That is intentional — the app has no WordPress user. Authorisation happens inside
+	the handler: the form ID must be allow-listed, and the App Check token is verified before anything
+	is written. A request without a valid token is rejected with `403`.
+</Callout>
+
+## `GET /forms/{form_id}/fields`
+
+Returns the field list for a form so the client can render it.
+
+`form_id` must match `^\d+(?::(?:\d+|[a-f0-9-]{36}))?$` — a numeric ID, optionally suffixed with a
+Divi form index or a UUID.
+
+## `POST /submit/{form_id}`
+
+Submits a form.
+
+```json
+{
+	"app_check_token": "<firebase-app-check-token>",
+	"fields": {
+		"name": "Ada Lovelace",
+		"email": "ada@example.com",
+		"message": "Hello"
+	}
+}
+```
+
+- `app_check_token` — **required**, in the body, not a header.
+- `fields` — **required**, an object of field ID to value. Values must be scalar; nested arrays or
+  objects are rejected with `invalid_fields`.
+
+### Responses
+
+| Status | Code             | Meaning                                                       |
+| ------ | ---------------- | ------------------------------------------------------------- |
+| 200    | —                | Submission accepted and stored.                               |
+| 400    | `missing_fields` | `fields` was absent or not an object.                         |
+| 400    | `invalid_fields` | A field value was not scalar.                                 |
+| 400    | `invalid_email`  | A field typed `email` did not contain a valid address.        |
+| 403    | _App Check code_ | The App Check token was missing, malformed or did not verify. |
+| 404    | `form_not_found` | The form does not exist, or is not allow-listed.              |
+
+## CORS
+
+`OPTIONS` is handled on both routes for preflight. Response headers are emitted only for origins
+listed in **Allowed origins**; with that setting blank, no cross-origin request is permitted.
+
+## Hooks
+
+`packrelay_appcheck_verified` fires after a token verifies, with the app ID, form ID and token —
+useful for auditing.
+
+```php
+add_action( 'packrelay_appcheck_verified', function ( $app_id, $form_id, $token ) {
+	error_log( "App Check OK for form {$form_id} from app {$app_id}" );
+}, 10, 3 );
+```

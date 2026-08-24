@@ -1,0 +1,51 @@
+---
+title: Sending notifications
+description: Manual sends, scheduling, auto-notify and templates.
+---
+
+import { Callout } from "fumadocs-ui/components/callout";
+
+## Manual send
+
+**MrDemonWolf → Send**. Fill in a title and body — both required — optionally an image URL and a
+JSON data payload, choose a target, and send.
+
+The JSON in the data field is validated before anything is dispatched; a malformed payload is
+rejected with an error rather than sent.
+
+## Scheduling
+
+Give a send a future date and time and it is stored as `scheduled` and dispatched by the
+`tailsignal_send_scheduled` cron event. Scheduled sends can be cancelled from **History** while they
+are still pending.
+
+<Callout type="info">
+	Scheduled sends depend on WP-Cron, which on a quiet site only runs when someone visits it. For
+	punctual delivery, disable WP-Cron and drive `wp cron event run --due-now` from a real crontab.
+</Callout>
+
+## Automatic sends on publish
+
+With auto-notify on, a notification goes out when a post transitions to `publish`. Per post, the
+editor sidebar box can override the title and body, attach the featured image, or suppress the
+notification entirely. A post that has already notified is flagged so an edit-and-republish does not
+send twice.
+
+## Template placeholders
+
+Usable in the default title and body:
+
+| Placeholder   | Replaced with             |
+| ------------- | ------------------------- |
+| `{title}`     | The post title            |
+| `{excerpt}`   | The post excerpt          |
+| `{author}`    | The author's display name |
+| `{site_name}` | The site title            |
+
+## Delivery receipts
+
+Expo returns a ticket per message, not a final result. The `tailsignal_check_receipts` cron event
+collects those tickets later and records the outcome, so **History** shows what actually arrived
+rather than just what was accepted for delivery.
+
+Tokens Expo reports as permanently invalid are deactivated automatically.

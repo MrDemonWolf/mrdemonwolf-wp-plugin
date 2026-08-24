@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.5/phpunit.xsd"
+	bootstrap="tests/push/bootstrap.php"
+	cacheDirectory=".phpunit.cache"
+	colors="true"
+	beStrictAboutTestsThatDoNotTestAnything="true"
+>
+	<testsuites>
+		<testsuite name="Push">
+			<directory prefix="Test_" suffix=".php">tests/push</directory>
+		</testsuite>
+	</testsuites>
+	<source>
+		<include>
+			<directory suffix=".php">modules/push/includes</directory>
+			<directory suffix=".php">modules/push/admin</directory>
+			<directory suffix=".php">modules/push/rest-api</directory>
+		</include>
+		<exclude>
+			<directory suffix=".php">modules/push/admin/partials</directory>
+		</exclude>
+	</source>
+</phpunit>

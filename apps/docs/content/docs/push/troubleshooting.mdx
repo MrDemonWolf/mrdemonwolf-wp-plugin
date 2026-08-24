@@ -1,0 +1,55 @@
+---
+title: Troubleshooting
+description: Common problems and where to look.
+---
+
+## Nothing arrives on any device
+
+- Check whether **Dev mode** is on. It silently limits every send to dev-flagged devices.
+- Check **History**. If the send is `scheduled`, WP-Cron has not fired yet.
+- Confirm the device is `active` on the **Devices** screen. Unregistering deactivates it.
+
+## Nothing arrives on one device
+
+Look at that device's row in **History**. Expo reports per-token errors on the delivery receipt, and
+a token it declares permanently invalid is deactivated automatically — usually because the app was
+uninstalled or the token was rotated. The fix is to re-register from the app.
+
+## Scheduled sends fire late
+
+WP-Cron only runs when the site gets traffic. On a quiet site, set
+
+```php
+define( 'DISABLE_WP_CRON', true );
+```
+
+and run it from a real crontab instead:
+
+```bash
+*/5 * * * * cd /path/to/wordpress && wp cron event run --due-now --quiet
+```
+
+## REST routes return 404
+
+- The module is disabled under **MrDemonWolf → General**.
+- Or permalinks need flushing — visit **Settings → Permalinks** and save.
+
+## Admin routes return 403
+
+The account lacks `tailsignal_manage`. Activation grants it to administrators only.
+
+## Everything returns 403 on the Forms module
+
+The App Check token is missing, expired or issued by a different Firebase project than the one set
+in **Forms Settings**. App Check tokens are short-lived; make sure the app fetches a fresh one rather
+than caching it.
+
+## The plugin will not load at all
+
+An admin notice naming PackRelay or TailSignal means the predecessor is still active. Deactivate it —
+see [migrating](/docs/migrating).
+
+## CSV import is rejected
+
+Files are checked by MIME sniffing, not extension. A `.csv` exported as XLSX by a spreadsheet app
+will fail; re-export as genuine CSV.
