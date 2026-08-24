@@ -105,13 +105,9 @@ attested too, both sides need changing together.
 
 `app.config.ts` references both:
 
-```ts
-ios: {
-	googleServicesFile: "./GoogleService-Info.plist";
-}
-android: {
-	googleServicesFile: "./google-services.json";
-}
+```text
+ios.googleServicesFile     = "./GoogleService-Info.plist"
+android.googleServicesFile = "./google-services.json"
 ```
 
 Neither file exists in the working tree. They were gitignored in `ceffd97` and removed
