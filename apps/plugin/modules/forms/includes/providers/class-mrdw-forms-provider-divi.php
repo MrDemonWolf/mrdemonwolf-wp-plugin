@@ -366,11 +366,45 @@ class MRDW_Forms_Provider_Divi extends MRDW_Forms_Provider {
 					'label'    => $atts['field_title'] ?? '',
 					'type'     => $type,
 					'required' => 'off' !== ( $atts['required_mark'] ?? 'on' ),
+					'choices'  => $this->parse_choices( $atts ),
 				);
 			}
 		}
 
 		return $fields;
+	}
+
+	/**
+	 * Normalize Divi 4/5 option attributes into accepted values.
+	 *
+	 * @param array $attrs Field attributes.
+	 * @return array
+	 */
+	private function parse_choices( $attrs ) {
+		$raw = $attrs['checkbox_options'] ?? ( $attrs['checkboxOptions'] ?? ( $attrs['select_options'] ?? ( $attrs['selectOptions'] ?? ( $attrs['options'] ?? array() ) ) ) );
+
+		if ( is_string( $raw ) ) {
+			$decoded = rawurldecode( $raw );
+			$json    = json_decode( $decoded, true );
+			$raw     = is_array( $json ) ? $json : preg_split( '/\|\||\r?\n/', $decoded );
+		}
+
+		if ( ! is_array( $raw ) ) {
+			return array();
+		}
+
+		$choices = array();
+		foreach ( $raw as $choice ) {
+			if ( is_array( $choice ) ) {
+				$value  = $choice['value'] ?? '';
+				$choice = '' !== (string) $value ? $value : ( $choice['label'] ?? ( $choice['text'] ?? '' ) );
+			}
+			if ( is_scalar( $choice ) && '' !== (string) $choice ) {
+				$choices[] = (string) $choice;
+			}
+		}
+
+		return array_values( array_unique( $choices ) );
 	}
 
 	/**
@@ -476,6 +510,7 @@ class MRDW_Forms_Provider_Divi extends MRDW_Forms_Provider {
 					'label'    => $attrs['fieldTitle'] ?? ( $attrs['field_title'] ?? '' ),
 					'type'     => $type,
 					'required' => 'off' !== ( $attrs['requiredMark'] ?? ( $attrs['required_mark'] ?? 'on' ) ),
+					'choices'  => $this->parse_choices( $attrs ),
 				);
 			}
 		}

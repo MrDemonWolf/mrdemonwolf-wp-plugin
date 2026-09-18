@@ -57,6 +57,16 @@ class MRDW_Forms_Provider_WPForms extends MRDW_Forms_Provider {
 					'type'     => $field['type'] ?? '',
 					'label'    => $field['label'] ?? '',
 					'required' => ! empty( $field['required'] ),
+					'choices'  => array_values(
+						array_map(
+							function ( $choice ) {
+								$value = $choice['value'] ?? '';
+
+								return (string) ( '' !== (string) $value ? $value : ( $choice['label'] ?? '' ) );
+							},
+							$field['choices'] ?? array()
+						)
+					),
 				);
 			}
 		}

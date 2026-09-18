@@ -65,6 +65,18 @@ class ProviderDiviTest extends TestCase {
 		$this->assertFalse( $form );
 	}
 
+	public function test_get_form_normalizes_choice_values(): void {
+		$content = '[et_pb_contact_form title="Contact"]'
+			. '[et_pb_contact_field field_title="Department" field_type="select" checkbox_options="%5B%7B%22value%22%3A%22Sales%22%7D%2C%7B%22value%22%3A%22Support%22%7D%5D" /]'
+			. '[/et_pb_contact_form]';
+
+		Functions\when( 'get_post' )->justReturn( (object) array( 'post_content' => $content ) );
+
+		$form = $this->provider->get_form( '42:0' );
+
+		$this->assertSame( array( 'Sales', 'Support' ), $form['fields'][0]['choices'] );
+	}
+
 	public function test_get_form_returns_false_when_post_not_found(): void {
 		Functions\expect( 'get_post' )
 			->with( 99 )

@@ -83,6 +83,15 @@ class MRDW_Admin {
 			)
 		);
 
+		register_setting(
+			self::SETTINGS_GROUP,
+			MRDW_Forms_Settings::OPTION_NAME,
+			array(
+				'type'              => 'array',
+				'sanitize_callback' => array( __CLASS__, 'sanitize_shared_settings' ),
+			)
+		);
+
 		add_settings_section(
 			'mrdw_modules_section',
 			__( 'Modules', 'mrdw' ),
@@ -117,6 +126,50 @@ class MRDW_Admin {
 				'label_for'   => 'mrdw_module_push',
 			)
 		);
+
+		add_settings_section(
+			'mrdw_security_section',
+			__( 'Security', 'mrdw' ),
+			'__return_false',
+			self::MENU_SLUG
+		);
+
+		add_settings_field(
+			'mrdw_firebase_project_id',
+			__( 'Firebase project ID', 'mrdw' ),
+			array( __CLASS__, 'render_firebase_project_field' ),
+			self::MENU_SLUG,
+			'mrdw_security_section'
+		);
+	}
+
+	/**
+	 * Preserve Forms settings while updating the shared App Check project.
+	 *
+	 * @param array $input Submitted shared settings.
+	 * @return array
+	 */
+	public static function sanitize_shared_settings( $input ) {
+		$settings                        = get_option( MRDW_Forms_Settings::OPTION_NAME, MRDW_Forms_Settings::get_defaults() );
+		$settings['firebase_project_id'] = sanitize_text_field( $input['firebase_project_id'] ?? '' );
+
+		return $settings;
+	}
+
+	/**
+	 * Render the shared Firebase project field.
+	 */
+	public static function render_firebase_project_field() {
+		$settings = MRDW_Forms_Settings::get_settings();
+		?>
+		<input
+			type="text"
+			class="regular-text"
+			name="<?php echo esc_attr( MRDW_Forms_Settings::OPTION_NAME . '[firebase_project_id]' ); ?>"
+			value="<?php echo esc_attr( $settings['firebase_project_id'] ?? '' ); ?>"
+		/>
+		<p class="description"><?php echo esc_html__( 'Used to verify Firebase App Check for form requests and push registration.', 'mrdw' ); ?></p>
+		<?php
 	}
 
 	/**

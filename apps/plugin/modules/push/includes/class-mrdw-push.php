@@ -47,6 +47,7 @@ class MRDW_Push {
 	private function define_rest_hooks() {
 		$rest = new MRDW_Push_REST_Controller();
 		$this->loader->add_action( 'rest_api_init', $rest, 'register_routes' );
+		$this->loader->add_filter( 'rest_allowed_cors_headers', $rest, 'allow_appcheck_header' );
 		$this->loader->add_filter( 'rest_pre_serve_request', $rest, 'serve_csv_response', 10, 4 );
 	}
 
