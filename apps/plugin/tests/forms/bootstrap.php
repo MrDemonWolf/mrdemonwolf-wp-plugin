@@ -96,6 +96,7 @@ if ( ! class_exists( 'WP_REST_Request' ) ) {
 		private $params  = array();
 		private $headers = array();
 		private $route   = '';
+		private $body    = '';
 
 		public function __construct( $method = 'GET', $route = '' ) {
 			$this->route = $route;
@@ -119,6 +120,14 @@ if ( ! class_exists( 'WP_REST_Request' ) ) {
 
 		public function get_route() {
 			return $this->route;
+		}
+
+		public function set_body( $body ) {
+			$this->body = $body;
+		}
+
+		public function get_body() {
+			return $this->body;
 		}
 
 		public function get_json_params() {

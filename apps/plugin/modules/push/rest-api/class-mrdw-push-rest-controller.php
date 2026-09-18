@@ -12,11 +12,27 @@ if ( ! defined( 'ABSPATH' ) ) {
 class MRDW_Push_REST_Controller {
 
 	/**
+	 * App Check verifier.
+	 *
+	 * @var MRDW_Forms_AppCheck
+	 */
+	private $appcheck;
+
+	/**
 	 * Namespace.
 	 *
 	 * @var string
 	 */
 	protected $namespace = 'mrdw/v1';
+
+	/**
+	 * Constructor.
+	 *
+	 * @param MRDW_Forms_AppCheck|null $appcheck Optional verifier for testing.
+	 */
+	public function __construct( $appcheck = null ) {
+		$this->appcheck = $appcheck ?: new MRDW_Forms_AppCheck();
+	}
 
 	/**
 	 * Register REST API routes.
@@ -112,6 +128,18 @@ class MRDW_Push_REST_Controller {
 				'permission_callback' => array( $this, 'check_admin_permission' ),
 			)
 		);
+	}
+
+	/**
+	 * Allow browser clients to send Firebase App Check.
+	 *
+	 * @param array $headers Allowed REST CORS headers.
+	 * @return array
+	 */
+	public function allow_appcheck_header( $headers ) {
+		$headers[] = 'X-Firebase-AppCheck';
+
+		return array_unique( $headers );
 	}
 
 	/**
@@ -324,6 +352,15 @@ class MRDW_Push_REST_Controller {
 		$rate_check = $this->check_rate_limit();
 		if ( is_wp_error( $rate_check ) ) {
 			return $rate_check;
+		}
+
+		$appcheck_result = $this->appcheck->verify( $request->get_header( 'X-Firebase-AppCheck' ), 0 );
+		if ( ! $appcheck_result['success'] ) {
+			return new WP_Error(
+				$appcheck_result['code'],
+				$appcheck_result['message'],
+				array( 'status' => 403 )
+			);
 		}
 
 		$data = array(

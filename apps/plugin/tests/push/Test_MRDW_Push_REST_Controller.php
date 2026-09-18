@@ -10,6 +10,8 @@ use Brain\Monkey\Functions;
 require_once dirname( __DIR__, 2 ) . '/modules/push/includes/class-mrdw-push-db.php';
 require_once dirname( __DIR__, 2 ) . '/modules/push/includes/class-mrdw-push-expo.php';
 require_once dirname( __DIR__, 2 ) . '/modules/push/includes/class-mrdw-push-notification.php';
+require_once dirname( __DIR__, 2 ) . '/modules/forms/includes/class-mrdw-forms-settings.php';
+require_once dirname( __DIR__, 2 ) . '/modules/forms/includes/class-mrdw-forms-appcheck.php';
 require_once dirname( __DIR__, 2 ) . '/modules/push/rest-api/class-mrdw-push-rest-controller.php';
 
 class Test_MRDW_Push_REST_Controller extends MRDW_Push_TestCase {
@@ -18,10 +20,15 @@ class Test_MRDW_Push_REST_Controller extends MRDW_Push_TestCase {
 	 * @var MRDW_Push_REST_Controller
 	 */
 	private $controller;
+	private $mock_appcheck;
 
 	protected function setUp(): void {
 		parent::setUp();
-		$this->controller = new MRDW_Push_REST_Controller();
+		$this->mock_appcheck = Mockery::mock( MRDW_Forms_AppCheck::class );
+		$this->mock_appcheck->shouldReceive( 'verify' )
+			->andReturn( array( 'success' => true, 'app_id' => 'test-app' ) )
+			->byDefault();
+		$this->controller = new MRDW_Push_REST_Controller( $this->mock_appcheck );
 	}
 
 	/**
@@ -79,6 +86,7 @@ class Test_MRDW_Push_REST_Controller extends MRDW_Push_TestCase {
 		Functions\expect( 'is_user_logged_in' )->andReturn( false );
 
 		$request = Mockery::mock( 'WP_REST_Request' );
+		$request->shouldReceive( 'get_header' )->with( 'X-Firebase-AppCheck' )->andReturn( 'valid-token' );
 		$request->shouldReceive( 'get_param' )->with( 'expo_token' )->andReturn( 'ExponentPushToken[test123]' );
 		$request->shouldReceive( 'get_param' )->with( 'device_type' )->andReturn( 'ios' );
 		$request->shouldReceive( 'get_param' )->with( 'device_model' )->andReturn( 'iPhone 16' );
@@ -99,6 +107,34 @@ class Test_MRDW_Push_REST_Controller extends MRDW_Push_TestCase {
 	}
 
 	/**
+	 * Registration rejects callers without verified App Check.
+	 */
+	public function test_register_device_requires_appcheck() {
+		Functions\when( 'get_transient' )->justReturn( false );
+		Functions\when( 'set_transient' )->justReturn( true );
+
+		$this->mock_appcheck->shouldReceive( 'verify' )
+			->with( null, 0 )
+			->once()
+			->andReturn(
+				array(
+					'success' => false,
+					'code'    => 'appcheck_missing',
+					'message' => 'App Check token is missing.',
+				)
+			);
+
+		$request = Mockery::mock( 'WP_REST_Request' );
+		$request->shouldReceive( 'get_header' )->with( 'X-Firebase-AppCheck' )->andReturn( null );
+
+		$response = $this->controller->register_device( $request );
+
+		$this->assertInstanceOf( 'WP_Error', $response );
+		$this->assertSame( 'appcheck_missing', $response->get_error_code() );
+		$this->assertSame( 403, $response->get_error_data()['status'] );
+	}
+
+	/**
 	 * Test register_device with authenticated user links user_id.
 	 */
 	public function test_register_device_authenticated() {
@@ -116,6 +152,7 @@ class Test_MRDW_Push_REST_Controller extends MRDW_Push_TestCase {
 		Functions\expect( 'get_current_user_id' )->andReturn( 42 );
 
 		$request = Mockery::mock( 'WP_REST_Request' );
+		$request->shouldReceive( 'get_header' )->with( 'X-Firebase-AppCheck' )->andReturn( 'valid-token' );
 		$request->shouldReceive( 'get_param' )->with( 'expo_token' )->andReturn( 'ExponentPushToken[auth123]' );
 		$request->shouldReceive( 'get_param' )->with( 'device_type' )->andReturn( 'android' );
 		$request->shouldReceive( 'get_param' )->with( 'device_model' )->andReturn( 'Pixel 9' );
@@ -149,6 +186,7 @@ class Test_MRDW_Push_REST_Controller extends MRDW_Push_TestCase {
 		Functions\expect( 'is_user_logged_in' )->andReturn( false );
 
 		$request = Mockery::mock( 'WP_REST_Request' );
+		$request->shouldReceive( 'get_header' )->with( 'X-Firebase-AppCheck' )->andReturn( 'valid-token' );
 		$request->shouldReceive( 'get_param' )->andReturn( '' );
 
 		$response = $this->controller->register_device( $request );
@@ -530,6 +568,7 @@ class Test_MRDW_Push_REST_Controller extends MRDW_Push_TestCase {
 		$wpdb->shouldReceive( 'insert' )->andReturn( 1 );
 
 		$request = Mockery::mock( 'WP_REST_Request' );
+		$request->shouldReceive( 'get_header' )->with( 'X-Firebase-AppCheck' )->andReturn( 'valid-token' );
 		$request->shouldReceive( 'get_param' )->with( 'expo_token' )->andReturn( 'ExponentPushToken[ratetest]' );
 		$request->shouldReceive( 'get_param' )->with( 'device_type' )->andReturn( 'ios' );
 		$request->shouldReceive( 'get_param' )->with( 'device_model' )->andReturn( '' );

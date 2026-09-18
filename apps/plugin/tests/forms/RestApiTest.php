@@ -27,6 +27,8 @@ class RestApiTest extends TestCase {
 		$this->mock_entry_store = \Mockery::mock( \MRDW_Forms_Entry_Store::class );
 
 		$this->mock_provider->shouldReceive( 'get_slug' )->andReturn( 'divi' )->byDefault();
+		Functions\when( 'get_transient' )->justReturn( false );
+		Functions\when( 'set_transient' )->justReturn( true );
 
 		$this->rest_api = new \MRDW_Forms_REST_API(
 			$this->mock_appcheck,
@@ -170,6 +172,159 @@ class RestApiTest extends TestCase {
 		$this->assertSame( 'invalid_fields', $response->data['code'] );
 	}
 
+	public function test_submit_rejects_fields_outside_form_schema(): void {
+		Functions\expect( 'apply_filters' )
+			->with( 'mrdw_forms_allowed_form_ids', \Mockery::any() )
+			->andReturnUsing( function ( $hook, $ids ) {
+				return $ids;
+			} );
+
+		$this->mock_provider->shouldReceive( 'get_form' )->andReturn(
+			array(
+				'title'  => 'Contact',
+				'fields' => array(
+					array( 'id' => '1', 'type' => 'email', 'required' => true ),
+				),
+			)
+		);
+		$this->mock_appcheck->shouldReceive( 'verify' )
+			->andReturn( array( 'success' => true, 'app_id' => 'test-app' ) );
+
+		$request = new \WP_REST_Request( 'POST', '/mrdw/v1/submit/123' );
+		$request->set_param( 'form_id', '123' );
+		$request->set_param( 'app_check_token', 'valid-token' );
+		$request->set_param( 'fields', array( '999' => 'attacker value' ) );
+
+		$response = $this->rest_api->handle_submit( $request );
+
+		$this->assertSame( 400, $response->status );
+		$this->assertSame( 'invalid_fields', $response->data['code'] );
+	}
+
+	public function test_submit_rejects_missing_required_field(): void {
+		Functions\expect( 'apply_filters' )
+			->with( 'mrdw_forms_allowed_form_ids', \Mockery::any() )
+			->andReturnUsing( function ( $hook, $ids ) {
+				return $ids;
+			} );
+
+		$this->mock_provider->shouldReceive( 'get_form' )->andReturn(
+			array(
+				'title'  => 'Contact',
+				'fields' => array(
+					array( 'id' => '1', 'type' => 'email', 'required' => true ),
+					array( 'id' => '2', 'type' => 'text', 'required' => false ),
+				),
+			)
+		);
+		$this->mock_appcheck->shouldReceive( 'verify' )
+			->andReturn( array( 'success' => true, 'app_id' => 'test-app' ) );
+
+		$request = new \WP_REST_Request( 'POST', '/mrdw/v1/submit/123' );
+		$request->set_param( 'form_id', '123' );
+		$request->set_param( 'app_check_token', 'valid-token' );
+		$request->set_param( 'fields', array( '2' => 'optional' ) );
+
+		$response = $this->rest_api->handle_submit( $request );
+
+		$this->assertSame( 400, $response->status );
+		$this->assertSame( 'missing_fields', $response->data['code'] );
+	}
+
+	public function test_submit_rejects_oversized_field(): void {
+		Functions\expect( 'apply_filters' )
+			->with( 'mrdw_forms_allowed_form_ids', \Mockery::any() )
+			->andReturnUsing( function ( $hook, $ids ) {
+				return $ids;
+			} );
+
+		$this->mock_provider->shouldReceive( 'get_form' )->andReturn(
+			array(
+				'title'  => 'Contact',
+				'fields' => array( array( 'id' => '1', 'type' => 'text', 'required' => false ) ),
+			)
+		);
+		$this->mock_appcheck->shouldReceive( 'verify' )
+			->andReturn( array( 'success' => true, 'app_id' => 'test-app' ) );
+
+		$request = new \WP_REST_Request( 'POST', '/mrdw/v1/submit/123' );
+		$request->set_param( 'form_id', '123' );
+		$request->set_param( 'app_check_token', 'valid-token' );
+		$request->set_param( 'fields', array( '1' => str_repeat( 'a', 10001 ) ) );
+
+		$response = $this->rest_api->handle_submit( $request );
+
+		$this->assertSame( 413, $response->status );
+	}
+
+	public function test_submit_rejects_oversized_request_body(): void {
+		Functions\expect( 'apply_filters' )
+			->with( 'mrdw_forms_allowed_form_ids', \Mockery::any() )
+			->andReturnUsing( function ( $hook, $ids ) {
+				return $ids;
+			} );
+
+		$request = new \WP_REST_Request( 'POST', '/mrdw/v1/submit/123' );
+		$request->set_param( 'form_id', '123' );
+		$request->set_body( str_repeat( 'a', 65537 ) );
+
+		$response = $this->rest_api->handle_submit( $request );
+
+		$this->assertSame( 413, $response->status );
+	}
+
+	public function test_submit_rejects_invalid_choice(): void {
+		Functions\expect( 'apply_filters' )
+			->with( 'mrdw_forms_allowed_form_ids', \Mockery::any() )
+			->andReturnUsing( function ( $hook, $ids ) {
+				return $ids;
+			} );
+
+		$this->mock_provider->shouldReceive( 'get_form' )->andReturn(
+			array(
+				'title'  => 'Contact',
+				'fields' => array(
+					array( 'id' => '1', 'type' => 'select', 'required' => true, 'choices' => array( 'Sales', 'Support' ) ),
+				),
+			)
+		);
+		$this->mock_appcheck->shouldReceive( 'verify' )
+			->andReturn( array( 'success' => true, 'app_id' => 'test-app' ) );
+
+		$request = new \WP_REST_Request( 'POST', '/mrdw/v1/submit/123' );
+		$request->set_param( 'form_id', '123' );
+		$request->set_param( 'app_check_token', 'valid-token' );
+		$request->set_param( 'fields', array( '1' => 'Injected' ) );
+
+		$response = $this->rest_api->handle_submit( $request );
+
+		$this->assertSame( 400, $response->status );
+		$this->assertSame( 'invalid_fields', $response->data['code'] );
+	}
+
+	public function test_submit_rate_limits_verified_clients(): void {
+		Functions\when( 'get_transient' )->justReturn( 30 );
+		Functions\expect( 'apply_filters' )
+			->with( 'mrdw_forms_allowed_form_ids', \Mockery::any() )
+			->andReturnUsing( function ( $hook, $ids ) {
+				return $ids;
+			} );
+
+		$this->mock_provider->shouldReceive( 'get_form' )->andReturn( array( 'title' => 'Contact', 'fields' => array() ) );
+		$this->mock_appcheck->shouldReceive( 'verify' )
+			->andReturn( array( 'success' => true, 'app_id' => 'test-app' ) );
+
+		$request = new \WP_REST_Request( 'POST', '/mrdw/v1/submit/123' );
+		$request->set_param( 'form_id', '123' );
+		$request->set_param( 'app_check_token', 'valid-token' );
+		$request->set_param( 'fields', array( '1' => 'value' ) );
+
+		$response = $this->rest_api->handle_submit( $request );
+
+		$this->assertSame( 429, $response->status );
+		$this->assertSame( 'rate_limited', $response->data['code'] );
+	}
+
 	public function test_handle_options_returns_200(): void {
 		$response = $this->rest_api->handle_options();
 
@@ -192,6 +347,34 @@ class RestApiTest extends TestCase {
 		$this->assertSame( 404, $response->status );
 	}
 
+	public function test_get_fields_requires_appcheck(): void {
+		Functions\expect( 'apply_filters' )
+			->with( 'mrdw_forms_allowed_form_ids', \Mockery::any() )
+			->andReturnUsing( function ( $hook, $ids ) {
+				return $ids;
+			} );
+
+		$this->mock_appcheck->shouldReceive( 'verify' )
+			->with( null, '123' )
+			->once()
+			->andReturn(
+				array(
+					'success' => false,
+					'code'    => 'appcheck_missing',
+					'message' => 'App Check token is missing.',
+				)
+			);
+
+		$request = new \WP_REST_Request( 'GET', '/mrdw/v1/forms/123/fields' );
+		$request->set_param( 'form_id', '123' );
+		$request->set_param( 'app_check_token', 'query-token-must-not-be-used' );
+
+		$response = $this->rest_api->handle_get_fields( $request );
+
+		$this->assertSame( 403, $response->status );
+		$this->assertSame( 'appcheck_missing', $response->data['code'] );
+	}
+
 	public function test_get_fields_returns_field_structure(): void {
 		Functions\expect( 'apply_filters' )
 			->with( 'mrdw_forms_allowed_form_ids', \Mockery::any() )
@@ -211,6 +394,11 @@ class RestApiTest extends TestCase {
 				)
 			);
 
+		$this->mock_appcheck->shouldReceive( 'verify' )
+			->with( 'valid-token', '123' )
+			->once()
+			->andReturn( array( 'success' => true, 'app_id' => 'test-app' ) );
+
 		// handle_get_fields returns the normalized accessor output.
 		$this->mock_provider->shouldReceive( 'get_fields' )
 			->with( '123' )
@@ -223,6 +411,7 @@ class RestApiTest extends TestCase {
 
 		$request = new \WP_REST_Request( 'GET', '/mrdw/v1/forms/123/fields' );
 		$request->set_param( 'form_id', '123' );
+		$request->set_header( 'X-Firebase-AppCheck', 'valid-token' );
 
 		$response = $this->rest_api->handle_get_fields( $request );
 
@@ -255,14 +444,17 @@ class RestApiTest extends TestCase {
 
 		$this->mock_provider->shouldReceive( 'get_form' )
 			->with( '42:0' )
-			->andReturn( array( 'title' => 'Divi Form', 'fields' => array() ) );
+			->andReturn(
+				array(
+					'title'  => 'Divi Form',
+					'fields' => array(
+						array( 'id' => '0', 'type' => 'text', 'label' => 'Name', 'required' => true ),
+					),
+				)
+			);
 
 		$this->mock_appcheck->shouldReceive( 'verify' )
 			->andReturn( array( 'success' => true, 'app_id' => 'test-app' ) );
-
-		$this->mock_provider->shouldReceive( 'get_field_types' )
-			->with( '42:0' )
-			->andReturn( array() );
 
 		$this->mock_provider->shouldReceive( 'create_entry' )
 			->andReturn( array( 'success' => true, 'entry_id' => 1 ) );

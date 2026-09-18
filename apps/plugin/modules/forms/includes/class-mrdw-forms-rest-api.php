@@ -17,6 +17,11 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class MRDW_Forms_REST_API {
 
+	/** Submission bounds. */
+	const MAX_FIELDS       = 100;
+	const MAX_FIELD_LENGTH = 10000;
+	const MAX_PAYLOAD_SIZE = 65536;
+
 	/**
 	 * REST namespace.
 	 *
@@ -129,6 +134,11 @@ class MRDW_Forms_REST_API {
 			return $this->error_response( 'form_not_found', __( 'The specified form is not available.', 'mrdw' ), 404 );
 		}
 
+		$body = $request->get_body();
+		if ( is_string( $body ) && strlen( $body ) > self::MAX_PAYLOAD_SIZE ) {
+			return $this->error_response( 'invalid_fields', __( 'The submitted request is too large.', 'mrdw' ), 413 );
+		}
+
 		// Verify the form exists via provider.
 		$form = $this->provider->get_form( $form_id );
 		if ( ! $form ) {
@@ -136,7 +146,7 @@ class MRDW_Forms_REST_API {
 		}
 
 		// Verify App Check token.
-		$token = $request->get_param( 'app_check_token' );
+		$token = $this->get_app_check_token( $request );
 
 		$appcheck_result = $this->appcheck->verify( $token, $form_id );
 		if ( ! $appcheck_result['success'] ) {
@@ -147,27 +157,20 @@ class MRDW_Forms_REST_API {
 			);
 		}
 
+		$rate_limit = $this->check_rate_limit( $form_id, $appcheck_result['app_id'] ?? '' );
+		if ( $rate_limit ) {
+			return $rate_limit;
+		}
+
 		// Validate fields.
 		$fields = $request->get_param( 'fields' );
 		if ( empty( $fields ) || ! is_array( $fields ) ) {
 			return $this->error_response( 'missing_fields', __( 'Required fields are missing from the request.', 'mrdw' ), 400 );
 		}
 
-		// Reject non-scalar field values (nested arrays/objects).
-		foreach ( $fields as $value ) {
-			if ( null !== $value && ! is_scalar( $value ) ) {
-				return $this->error_response( 'invalid_fields', __( 'Field values must be scalar.', 'mrdw' ), 400 );
-			}
-		}
-
-		// Validate email fields.
-		$form_fields = $this->provider->get_field_types( $form_id );
-		foreach ( $form_fields as $field_id => $field_type ) {
-			if ( 'email' === $field_type && isset( $fields[ $field_id ] ) && ! empty( $fields[ $field_id ] ) ) {
-				if ( ! is_email( $fields[ $field_id ] ) ) {
-					return $this->error_response( 'invalid_email', __( 'Invalid email address provided.', 'mrdw' ), 400 );
-				}
-			}
+		$field_error = $this->validate_fields( $fields, $form['fields'] ?? array() );
+		if ( $field_error ) {
+			return $field_error;
 		}
 
 		// Create entry via provider.
@@ -241,6 +244,11 @@ class MRDW_Forms_REST_API {
 			return $this->error_response( 'form_not_found', __( 'The specified form is not available.', 'mrdw' ), 404 );
 		}
 
+		$appcheck_result = $this->appcheck->verify( $request->get_header( 'X-Firebase-AppCheck' ), $form_id );
+		if ( ! $appcheck_result['success'] ) {
+			return $this->error_response( $appcheck_result['code'], $appcheck_result['message'], 403 );
+		}
+
 		$form = $this->provider->get_form( $form_id );
 		if ( ! $form ) {
 			return $this->error_response( 'form_not_found', __( 'The specified form does not exist.', 'mrdw' ), 404 );
@@ -256,7 +264,7 @@ class MRDW_Forms_REST_API {
 			200
 		);
 
-		$response->header( 'Cache-Control', 'public, max-age=300' );
+		$response->header( 'Cache-Control', 'private, no-store' );
 		$response->header( 'Vary', 'Origin' );
 
 		return $response;
@@ -302,9 +310,115 @@ class MRDW_Forms_REST_API {
 		}
 
 		header( 'Access-Control-Allow-Methods: POST, GET, OPTIONS' );
-		header( 'Access-Control-Allow-Headers: Content-Type' );
+		header( 'Access-Control-Allow-Headers: Content-Type, X-Firebase-AppCheck' );
 
 		return $served;
+	}
+
+	/**
+	 * Read App Check from the standard header, with the legacy body parameter as fallback.
+	 *
+	 * @param \WP_REST_Request $request REST request.
+	 * @return string|null
+	 */
+	private function get_app_check_token( $request ) {
+		$token = $request->get_header( 'X-Firebase-AppCheck' );
+
+		return $token ?: $request->get_param( 'app_check_token' );
+	}
+
+	/**
+	 * Enforce the normalized provider schema and payload bounds.
+	 *
+	 * @param array $fields      Submitted fields.
+	 * @param array $form_fields Normalized provider fields.
+	 * @return \WP_REST_Response|null
+	 */
+	private function validate_fields( $fields, $form_fields ) {
+		if ( count( $fields ) > self::MAX_FIELDS ) {
+			return $this->error_response( 'invalid_fields', __( 'Too many fields were submitted.', 'mrdw' ), 400 );
+		}
+
+		$schema     = array();
+		$total_size = 0;
+		foreach ( $form_fields as $index => $field ) {
+			$field_id            = isset( $field['id'] ) ? (string) $field['id'] : (string) $index;
+			$schema[ $field_id ] = $field;
+		}
+
+		foreach ( $fields as $field_id => $value ) {
+			$field_id = (string) $field_id;
+			if ( ! isset( $schema[ $field_id ] ) ) {
+				return $this->error_response( 'invalid_fields', __( 'An unknown field was submitted.', 'mrdw' ), 400 );
+			}
+			if ( null !== $value && ! is_scalar( $value ) ) {
+				return $this->error_response( 'invalid_fields', __( 'Field values must be scalar.', 'mrdw' ), 400 );
+			}
+
+			$value_length = strlen( (string) $value );
+			$total_size  += strlen( $field_id ) + $value_length;
+			if ( $value_length > self::MAX_FIELD_LENGTH || $total_size > self::MAX_PAYLOAD_SIZE ) {
+				return $this->error_response( 'invalid_fields', __( 'The submitted field data is too large.', 'mrdw' ), 413 );
+			}
+
+			$type = $schema[ $field_id ]['type'] ?? '';
+			if ( 'email' === $type && '' !== (string) $value && ! is_email( $value ) ) {
+				return $this->error_response( 'invalid_email', __( 'Invalid email address provided.', 'mrdw' ), 400 );
+			}
+
+			$choices = $schema[ $field_id ]['choices'] ?? array();
+			if ( in_array( $type, array( 'select', 'radio' ), true ) && ! in_array( (string) $value, $choices, true ) ) {
+				return $this->error_response( 'invalid_fields', __( 'An invalid field choice was submitted.', 'mrdw' ), 400 );
+			}
+		}
+
+		if ( 'gravityforms' !== $this->provider->get_slug() ) {
+			foreach ( $schema as $field_id => $field ) {
+				if ( ! empty( $field['required'] ) && ( ! array_key_exists( $field_id, $fields ) || '' === trim( (string) $fields[ $field_id ] ) ) ) {
+					return $this->error_response( 'missing_fields', __( 'Required fields are missing from the request.', 'mrdw' ), 400 );
+				}
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * Limit verified submissions per app, form, and network address.
+	 *
+	 * @param string $form_id Form ID.
+	 * @param string $app_id  Verified Firebase app ID.
+	 * @return \WP_REST_Response|null
+	 */
+	private function check_rate_limit( $form_id, $app_id ) {
+		global $wpdb;
+
+		$ip        = isset( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) : 'unknown';
+		$key       = 'mrdw_forms_rate_' . md5( $ip . '|' . $app_id . '|' . $form_id );
+		$lock_name = 'mrdw_forms_' . md5( $key );
+		$locked    = false;
+
+		if ( isset( $wpdb ) && method_exists( $wpdb, 'get_var' ) ) {
+			$locked = '1' === (string) $wpdb->get_var( $wpdb->prepare( 'SELECT GET_LOCK(%s, 2)', $lock_name ) );
+			if ( ! $locked ) {
+				return $this->error_response( 'rate_limited', __( 'Too many submissions. Please try again later.', 'mrdw' ), 429 );
+			}
+		}
+
+		try {
+			$count = (int) get_transient( $key );
+			if ( $count >= 30 ) {
+				return $this->error_response( 'rate_limited', __( 'Too many submissions. Please try again later.', 'mrdw' ), 429 );
+			}
+
+			set_transient( $key, $count + 1, 60 );
+
+			return null;
+		} finally {
+			if ( $locked ) {
+				$wpdb->get_var( $wpdb->prepare( 'SELECT RELEASE_LOCK(%s)', $lock_name ) );
+			}
+		}
 	}
 
 	/**

@@ -12,8 +12,8 @@ Own your data. Keep your pack in the loop.
 
 - **Forms module** - REST endpoints that let an external app read a form's
   fields and submit to it, routed into Divi, WPForms, or Gravity Forms.
-- **App Check authorisation** - Submissions carry a Firebase App Check token
-  that is verified server-side, backed by form-ID and CORS origin allow-lists.
+- **App Check authorisation** - Form requests and device registration carry a Firebase App Check
+  token that is verified server-side, backed by form-ID and CORS origin allow-lists.
 - **Entry storage** - Every submission, REST or front-end, is recorded in a
   filterable admin table with a formula-safe CSV export.
 - **Push module** - A self-hosted Expo notification system with a device
@@ -62,16 +62,17 @@ Full documentation:
 
 ### REST endpoints
 
-| Endpoint                                  | Method       | Access          |
-| ----------------------------------------- | ------------ | --------------- |
-| `/wp-json/mrdw/v1/forms/{form_id}/fields` | GET          | App Check token |
-| `/wp-json/mrdw/v1/submit/{form_id}`       | POST         | App Check token |
-| `/wp-json/mrdw/v1/register`               | POST, DELETE | Expo push token |
-| `/wp-json/mrdw/v1/register/status`        | GET          | Expo push token |
-| `/wp-json/mrdw/v1/send`                   | POST         | `mrdw_manage`   |
-| `/wp-json/mrdw/v1/stats`                  | GET          | `mrdw_manage`   |
-| `/wp-json/mrdw/v1/devices/export`         | GET          | `mrdw_manage`   |
-| `/wp-json/mrdw/v1/devices/import`         | POST         | `mrdw_manage`   |
+| Endpoint                                  | Method | Access          |
+| ----------------------------------------- | ------ | --------------- |
+| `/wp-json/mrdw/v1/forms/{form_id}/fields` | GET    | App Check token |
+| `/wp-json/mrdw/v1/submit/{form_id}`       | POST   | App Check token |
+| `/wp-json/mrdw/v1/register`               | POST   | App Check token |
+| `/wp-json/mrdw/v1/register`               | DELETE | Expo push token |
+| `/wp-json/mrdw/v1/register/status`        | GET    | Expo push token |
+| `/wp-json/mrdw/v1/send`                   | POST   | `mrdw_manage`   |
+| `/wp-json/mrdw/v1/stats`                  | GET    | `mrdw_manage`   |
+| `/wp-json/mrdw/v1/devices/export`         | GET    | `mrdw_manage`   |
+| `/wp-json/mrdw/v1/devices/import`         | POST   | `mrdw_manage`   |
 
 ### Configuration constants
 
