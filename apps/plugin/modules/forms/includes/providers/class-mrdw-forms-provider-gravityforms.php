@@ -71,6 +71,16 @@ class MRDW_Forms_Provider_GravityForms extends MRDW_Forms_Provider {
 					'type'     => $field->type ?? '',
 					'label'    => $field->label ?? '',
 					'required' => ! empty( $field->isRequired ),
+					'choices'  => array_values(
+						array_map(
+							function ( $choice ) {
+								$value = $choice['value'] ?? '';
+
+								return (string) ( '' !== (string) $value ? $value : ( $choice['text'] ?? '' ) );
+							},
+							$field->choices ?? array()
+						)
+					),
 				);
 			}
 		}

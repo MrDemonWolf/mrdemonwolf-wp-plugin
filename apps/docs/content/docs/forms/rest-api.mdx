@@ -20,6 +20,9 @@ Namespace: `mrdw/v1`. Base URL: `https://your-site.example/wp-json/mrdw/v1`.
 
 Returns the field list for a form so the client can render it.
 
+Send the Firebase token in the `X-Firebase-AppCheck` header. Authenticated metadata responses use
+`Cache-Control: private, no-store`.
+
 `form_id` must match `^\d+(?::(?:\d+|[a-f0-9-]{36}))?$` — a numeric ID, optionally suffixed with a
 Divi form index or a UUID.
 
@@ -29,7 +32,6 @@ Submits a form.
 
 ```json
 {
-	"app_check_token": "<firebase-app-check-token>",
 	"fields": {
 		"name": "Ada Lovelace",
 		"email": "ada@example.com",
@@ -38,9 +40,11 @@ Submits a form.
 }
 ```
 
-- `app_check_token` — **required**, in the body, not a header.
+- `X-Firebase-AppCheck` — **required** request header. POST also accepts the legacy
+  `app_check_token` body field.
 - `fields` — **required**, an object of field ID to value. Values must be scalar; nested arrays or
-  objects are rejected with `invalid_fields`.
+  objects, unknown IDs, invalid choices, and oversized payloads are rejected with `invalid_fields`.
+  Required fields are enforced before storage.
 
 ### Responses
 
@@ -48,10 +52,12 @@ Submits a form.
 | ------ | ---------------- | ------------------------------------------------------------- |
 | 200    | —                | Submission accepted and stored.                               |
 | 400    | `missing_fields` | `fields` was absent or not an object.                         |
-| 400    | `invalid_fields` | A field value was not scalar.                                 |
+| 400    | `invalid_fields` | The submitted fields did not match the configured form.       |
 | 400    | `invalid_email`  | A field typed `email` did not contain a valid address.        |
 | 403    | _App Check code_ | The App Check token was missing, malformed or did not verify. |
 | 404    | `form_not_found` | The form does not exist, or is not allow-listed.              |
+| 413    | `invalid_fields` | The submitted field data exceeded the payload limit.          |
+| 429    | `rate_limited`   | The verified client exceeded the submission rate limit.       |
 
 ## CORS
 

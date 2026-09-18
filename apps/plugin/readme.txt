@@ -4,7 +4,7 @@ Tags: rest-api, push-notifications, expo, gravity-forms, divi
 Requires at least: 6.0
 Tested up to: 7.1
 Requires PHP: 8.3
-Stable tag: 2.1.0
+Stable tag: 2.2.0
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -53,9 +53,8 @@ routes, and its stored data is left untouched.
 = Why are some REST routes public? =
 
 The app has no WordPress user, so it cannot log in. Authorisation happens inside the handler instead:
-form submissions must carry a verified Firebase App Check token, and device routes are authorised by
-the device's own Expo push token, which is cryptographically random and grants access to that device
-only.
+form requests and new device registrations must carry a verified Firebase App Check token. Device
+status and deletion use the device's own cryptographically random Expo push token.
 
 = Where do updates come from? =
 
@@ -68,6 +67,15 @@ Define `MRDW_EXPO_ACCESS_TOKEN` in wp-config.php. The settings field then shows 
 option cannot be written.
 
 == Changelog ==
+
+= 2.2.0 =
+* Security: form metadata and push registration now require Firebase App Check.
+* Security: REST form submissions reject unknown, missing required, invalid choice, nested, and
+  oversized field data before storage or notification delivery.
+* Security: form submissions are limited to 30 verified requests per minute per app, form, and IP.
+* Added: Firebase project configuration on the shared General screen, including Push-only sites.
+* Changed: authenticated form metadata is no longer publicly cacheable.
+* Changed: push clients must send Firebase App Check in the X-Firebase-AppCheck header.
 
 = 2.1.0 =
 * Changed: the Expo PHP SDK is replaced by direct calls to Expo's API over the WordPress HTTP API.
@@ -107,6 +115,10 @@ option cannot be written.
 * Fixed: missing wp_unslash() on several admin request reads; unsanitised bulk-action input.
 
 == Upgrade Notice ==
+
+= 2.2.0 =
+Update the MrDemonWolf app before installing this release. Push registration now requires a Firebase
+App Check token in the X-Firebase-AppCheck header.
 
 = 2.1.0 =
 No action needed. If you send notification images, note that image URLs must now be HTTPS and on a

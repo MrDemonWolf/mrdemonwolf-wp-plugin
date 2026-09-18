@@ -3,6 +3,31 @@
 All notable changes to this project are documented here. This project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.2.0] - 2026-09-18
+
+### Security
+
+- Form metadata and push device registration now require verified Firebase App Check tokens.
+- Form submissions reject unknown fields, missing required fields, invalid choices, nested values,
+  and requests larger than 64 KiB before any provider write or notification.
+- Verified form submissions are limited to 30 requests per minute per Firebase app, form, and IP,
+  with a database lock preventing concurrent requests from bypassing the counter.
+
+### Added
+
+- Firebase project configuration on the shared General screen, so Push-only installations can
+  configure App Check without enabling Forms.
+- Normalized choice values for Divi, WPForms, and Gravity Forms REST submissions.
+
+### Changed
+
+- Form metadata accepts App Check only through `X-Firebase-AppCheck` and returns
+  `Cache-Control: private, no-store`.
+- Push registration requires `X-Firebase-AppCheck`. Update the official app before deploying this
+  plugin release.
+
+[2.2.0]: https://github.com/MrDemonWolf/mrdemonwolf-wp-plugin/releases/tag/v2.2.0
+
 ## [2.1.0] - 2026-08-24
 
 ### Changed
